@@ -130,13 +130,12 @@ flat_files/
 *.json
 
 ### SCP upload script
-*.txt
+*push.txt
 
 ### RISE files
 /rise
 *RISE.json
 
 ### GIS files
-/gis
 *.topojson
 *.geojson
