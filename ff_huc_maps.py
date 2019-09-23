@@ -207,13 +207,13 @@ def add_upstream_layer(huc_map, huc_geojson, buffer_geojson):
 
 def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
     if not hu6_geojson_path:
-        hu6_geojosn_path = 'https://gist.githubusercontent.com/beautah/01dd026c5b8fac1434959dfc48f775b5/raw/2e9e8a70ced3a1eca40cb0c2061fa689e9c44248/HUC6.geojson'
+        hu6_geojson_path = 'https://gist.githubusercontent.com/beautah/01dd026c5b8fac1434959dfc48f775b5/raw/2e9e8a70ced3a1eca40cb0c2061fa689e9c44248/HUC6.geojson'
     huc6_style = lambda x: {
         'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
     }
 
     folium.GeoJson(
-        hu6_geojosn_path,
+        hu6_geojson_path,
         name='HUC 6',
         embed=embed,
         style_function = huc6_style
