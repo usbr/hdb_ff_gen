@@ -243,42 +243,43 @@ def create_huc_maps(hdb_meta, site_type_dir):
             huc12_geo_dicts[huc2] = json.load(f)
 
     for idx, row in hdb_meta.iterrows():
-        print(row)
-        huc12 = str(row['site_metadata.hydrologic_unit'])
-        huc2 = huc12[:2]
+
+        huc12 = row['site_metadata.hydrologic_unit']
         site_name = row['site_metadata.site_name']
         site_id = row['site_id']
         print(f'Creating map for {site_name}...')
         lat = float(row['site_metadata.lat'])
         lon = float(row['site_metadata.longi'])
         lat_long = [lat, lon]
-
-        huc_dict = deepcopy(huc12_geo_dicts[huc2])
-        upstream_huc_list = get_upstream_basin(huc12, huc_dict)
-#        huc_topojson = get_upstream_geo(huc2, upstream_huc_list, huc_dict)
-        geo_df = huc12_geo_dfs[huc2]
-        geo_df = geo_df[geo_df['HUC12'].isin(upstream_huc_list)]
-        geo_df = combine_polygons(geo_df, site_name)
-        huc_geojson = json.loads(geo_df.to_json())
-        buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
-
         huc_map = folium.Map(
             tiles='Stamen Terrain',
             location=lat_long,
             zoom_start=9
         )
-
-        add_hu6_layer(huc_map, './gis/HUC6.geojson', True)
-        add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
         add_hdb_marker(huc_map, row)
-        add_awdb_markers(huc_map, snow_sites)
-        lats = snow_sites['latitude'].to_list() + [lat]
-        longs = snow_sites['longitude'].to_list() + [lon]
-        bounds = get_bounds(lats, longs)
-        if bounds:
-            huc_map.fit_bounds(bounds)
 
-        folium.LayerControl().add_to(huc_map)
+        if huc12:
+            huc12 = str(huc12)
+            huc2 = huc12[:2]
+            huc_dict = deepcopy(huc12_geo_dicts[huc2])
+            upstream_huc_list = get_upstream_basin(huc12, huc_dict)
+    #        huc_topojson = get_upstream_geo(huc2, upstream_huc_list, huc_dict)
+            geo_df = huc12_geo_dfs[huc2]
+            geo_df = geo_df[geo_df['HUC12'].isin(upstream_huc_list)]
+            geo_df = combine_polygons(geo_df, site_name)
+            huc_geojson = json.loads(geo_df.to_json())
+            buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
+
+            add_hu6_layer(huc_map, './gis/HUC6.geojson', True)
+            add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
+            add_awdb_markers(huc_map, snow_sites)
+            lats = snow_sites['latitude'].to_list() + [lat]
+            longs = snow_sites['longitude'].to_list() + [lon]
+            bounds = get_bounds(lats, longs)
+            if bounds:
+                huc_map.fit_bounds(bounds)
+
+            folium.LayerControl().add_to(huc_map)
         maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
         makedirs(maps_dir, exist_ok=True)
         huc_map.save(

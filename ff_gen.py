@@ -181,7 +181,7 @@ if __name__ == '__main__':
 
     schema = sys.argv[-1]
     if schema == sys.argv[0]:
-        schema = 'default'
+        schema = 'prod_eco'#'default'
 
     with open('ff_config.json', 'r') as fp:
         ff_config = json.load(fp)[schema]
@@ -289,16 +289,16 @@ if __name__ == '__main__':
                 df = df.reindex(idx)
                 df['datetime'] = df.index
 
-                make_rise(
-                    df.copy(),
-                    db_name,
-                    site_names[i],
-                    datatype_names[i],
-                    interval,
-                    14,
-                    rise_dir,
-                    logger
-                )
+#                make_rise(
+#                    df.copy(),
+#                    db_name,
+#                    site_names[i],
+#                    datatype_names[i],
+#                    interval,
+#                    14,
+#                    rise_dir,
+#                    logger
+#                )
                 make_chart(
                     df.copy(),
                     meta,

@@ -46,6 +46,9 @@ if __name__ == '__main__':
         100081, 100089, 100120, 100001, 100010, 100017, 100104, 100100, 100031,
         100049, 100053, 100118, 100163, 100257]
 
+    eco_gages = [
+        100090, 100055, 100011, 100062, 100027, 100047, 100111, 100073]
+
     all_res_data = list(
         set(crsp_reservoirs + pao_reservoirs + aao_reservoirs + misc_reservoirs)
     )
@@ -64,6 +67,13 @@ if __name__ == '__main__':
     res_data_types = [
         49, 25, 29, 30, 49, 39, 40, 43, 46, 17, 42, 33, 34, 15, 1197, 1198, 47,
         123, 124, 1501
+    ]
+
+    eco_res_data_types = [
+        17, 49
+    ]
+    eco_gage_data_types = [
+        19
     ]
 
     gage_data_types = [19, 20]
@@ -130,7 +140,13 @@ if __name__ == '__main__':
     prod_requests_eco = {
         'ECO_RESERVOIR_DATA': {
             'sids': eco_reservoirs,
-            'dids': res_data_types,
+            'dids': eco_res_data_types,
+            'interval': 'day',
+            'period': 'por'
+        },
+        'ECO_GAUGE_DATA': {
+            'sids': eco_gages,
+            'dids': eco_gage_data_types,
             'interval': 'day',
             'period': 'por'
         }
