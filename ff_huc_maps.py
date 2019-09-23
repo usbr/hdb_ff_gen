@@ -243,6 +243,7 @@ def create_huc_maps(hdb_meta, site_type_dir):
             huc12_geo_dicts[huc2] = json.load(f)
 
     for idx, row in hdb_meta.iterrows():
+        print(row)
         huc12 = str(row['site_metadata.hydrologic_unit'])
         huc2 = huc12[:2]
         site_name = row['site_metadata.site_name']

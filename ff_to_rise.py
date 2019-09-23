@@ -29,6 +29,7 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
         inplace=True
     )
 
+    df['dateTime'] = df['dateTime'].dt.strftime('%Y-%m-%d %H:%M:%S')
     df['sourceCode'] = db_name
     df['locationSourceCode'] = site_name
     df['parameterSourceCode'] = datatype_name
@@ -97,3 +98,4 @@ if __name__ == '__main__':
                 40,
                 rise_dir
               )
+            break
