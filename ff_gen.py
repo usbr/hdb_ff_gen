@@ -327,7 +327,7 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-#        create_huc_maps(df_meta.copy(), site_type_dir)
+        create_huc_maps(df_meta.copy(), site_type_dir)
         make_sitemap(site_type, df_meta, data_dir, logger)
 
     make_nav(data_dir, logger)
