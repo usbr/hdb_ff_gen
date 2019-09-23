@@ -175,13 +175,25 @@ def make_webmap(data_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
+def make_huc_maps(df_meta, site_type_dir):
+    try:
+        huc_map_str = create_huc_maps(df_meta, site_type_dir)
+        print(huc_map_str)
+        logger.info(huc_map_str)
+    except Exception as err:
+        webmap_err = (
+            f'Error creating huc maps - {err}'
+        )
+        print(webmap_err)
+        logger.info(webmap_err)
+
 if __name__ == '__main__':
 
     this_dir = path.dirname(path.realpath(__file__))
 
     schema = sys.argv[-1]
     if schema == sys.argv[0]:
-        schema = 'prod_eco'#'default'
+        schema = 'default'
 
     with open('ff_config.json', 'r') as fp:
         ff_config = json.load(fp)[schema]
@@ -204,7 +216,7 @@ if __name__ == '__main__':
     schema_str = (
         f'\nUsing "{schema}" schema...\n\n'
         f'  Pushing files to: {data_dir.replace(this_dir, "..")} '
-        f'@ {dt.now().strftime("%x %X")} '
+        f' @ {dt.now().strftime("%x %X")} '
     )
     print(schema_str)
     logger.info(schema_str)
@@ -327,7 +339,7 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-        create_huc_maps(df_meta.copy(), site_type_dir)
+        make_huc_maps(df_meta.copy(), site_type_dir)
         make_sitemap(site_type, df_meta, data_dir, logger)
 
     make_nav(data_dir, logger)
