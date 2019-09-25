@@ -226,7 +226,8 @@ def get_snow_meta(snow_meta_url=None):
     return snow_meta
 
 def create_huc_maps(hdb_meta, site_type_dir):
-#    this_dir = path.dirname(path.realpath(__file__))
+    this_dir = path.dirname(path.realpath(__file__))
+    gis_path = path.join(this_dir, 'gis')
     hdb_meta.drop_duplicates(subset='site_id', inplace=True)
     snow_meta = get_snow_meta()
 #    huc2_geo_df = gpd.read_file(r'./gis/HUC2.topojson')
@@ -237,7 +238,8 @@ def create_huc_maps(hdb_meta, site_type_dir):
     huc12_geo_dfs = {}
     huc12_geo_dicts = {}
     for huc2 in huc2_list:
-        topo_json_path = f'./gis/{huc2}_HUC12.topojson'
+
+        topo_json_path = path.join(gis_path, f'{huc2}_HUC12.topojson')
         huc12_geo_dfs[huc2] = gpd.read_file(topo_json_path)
         with open(topo_json_path) as f:
             huc12_geo_dicts[huc2] = json.load(f)
@@ -269,8 +271,8 @@ def create_huc_maps(hdb_meta, site_type_dir):
             geo_df = combine_polygons(geo_df, site_name)
             huc_geojson = json.loads(geo_df.to_json())
             buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
-
-            add_hu6_layer(huc_map, './gis/HUC6.geojson', True)
+            huc6_path = path.join(gis_path, 'HUC6.geojson')
+            add_hu6_layer(huc_map, huc6_path, True)
             add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
             add_awdb_markers(huc_map, snow_sites)
             lats = snow_sites['latitude'].to_list() + [lat]
@@ -287,18 +289,17 @@ def create_huc_maps(hdb_meta, site_type_dir):
         )
 
 if __name__ == '__main__':
-    print('write at least a simple test case')
+    print('very weak test to follow...')
     this_dir = path.dirname(path.realpath(__file__))
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
-    meta_path = './test/data/test_hdb_metadata.csv'
-    meta_path = r'C:\Users\buriona\Documents\pyHDB\hdb_ff_gen\flat_files\ECO_RESERVOIR_DATA\meta.csv'
-    site_type_path = r'C:\Users\buriona\Documents\pyHDB\hdb_ff_gen\flat_files\ECO_RESERVOIR_DATA'
+    meta_path = path.join(this_dir, 'test', 'data', 'test_hdb_metadata.csv')
+    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
+    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)
 #    use_obj_types = [7]
 #    hdb_meta = hdb_meta[
 #        hdb_meta['site_metadata.objecttype_id'].isin(use_obj_types)
 #    ]
-
-
+    create_huc_maps(hdb_meta, site_type_dir)
 
