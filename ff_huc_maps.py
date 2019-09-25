@@ -183,7 +183,7 @@ def define_buffer(geo_df, snow_meta, min_snotels=3, max_buffer=0.3):
         snotels = get_snotels(geo_df, snow_meta)
         snow_sites = snotels[snotels['stationTriplet'].str.contains('SNTL')]
         snow_sites_cnt = len(snow_sites)
-    print(f'   {snow_sites_cnt} snotels using a {round(buffer, 2)} deg buffer')
+    print(f'      {snow_sites_cnt} snotels using a {round(buffer, 2)} deg buffer')
     return buffer_geojson, snow_sites
 
 def add_upstream_layer(huc_map, huc_geojson, buffer_geojson):
@@ -249,7 +249,7 @@ def create_huc_maps(hdb_meta, site_type_dir):
         huc12 = row['site_metadata.hydrologic_unit']
         site_name = row['site_metadata.site_name']
         site_id = row['site_id']
-        print(f'Creating map for {site_name}...')
+        print(f'    Creating map for {site_name}...')
         lat = float(row['site_metadata.lat'])
         lon = float(row['site_metadata.longi'])
         lat_long = [lat, lon]
