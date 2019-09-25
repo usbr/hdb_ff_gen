@@ -5,15 +5,15 @@ Created on Wed May  1 09:42:27 2019
 @author: buriona
 """
 
+from datetime import datetime as dt
+from datetime import date
 import pandas as pd
 import numpy as np
 import plotly
 import plotly.graph_objs as go
-from datetime import datetime as dt
-from datetime import date
 from hdb_api.hdb_utils import datatype_units, get_wy, is_leap_year
 
-def get_log_scale_dd(traces):
+def get_log_scale_dd():
     log_scale_dd = [
         {
             'active': 0,
@@ -163,7 +163,7 @@ def create_wy_traces(df, datatype_name, units):
         df_temp = df[wy]
         x_vals = df_temp.index
         y_vals = df_temp.values
-        show_trace = visible[wy == curr_wy or wy == curr_wy - 1]
+        show_trace = visible[wy in [curr_wy, curr_wy - 1]]
         if get_chart_type(datatype_name, units) == 'bar':
             trace = bar_trace(x_vals, y_vals, show_trace, f'{wy}')
         else:
@@ -404,7 +404,7 @@ def create_chart(df, meta):
             t=50,
             pad=5
         ),
-        updatemenus=get_log_scale_dd(traces)
+        updatemenus=get_log_scale_dd()
     )
 
     fig = go.Figure(

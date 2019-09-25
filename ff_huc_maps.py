@@ -287,6 +287,7 @@ def create_huc_maps(hdb_meta, site_type_dir):
         huc_map.save(
             path.join(maps_dir,f'{site_id}_huc.html')
         )
+    return f'   Created HUC maps for {site_type_dir} successfully'
 
 if __name__ == '__main__':
     print('very weak test to follow...')

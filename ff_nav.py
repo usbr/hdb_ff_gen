@@ -12,21 +12,21 @@ from pathlib import Path
 import pandas as pd
 from ff_dash import create_dash
 
-bor_flavicon = r'https://www.usbr.gov/img/favicon.ico'
-bor_seal = r'https://www.usbr.gov/uc/water/ff/static/img/US-DOI-BOR-Seal.svg'
-bootstrap_css = r'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/4.3.1/bootstrap.min.css'
-bootstrap_js = r'https://www.usbr.gov/uc/water/ff/static/js/bootstrap/4.3.1/bootstrap.bundle.min.js'
-jquery_js = r'https://www.usbr.gov/uc/water/ff/static/js/jquery/3.4.0/jquery.min.js'
+BOR_FLAVICON = r'https://www.usbr.gov/img/favicon.ico'
+BOR_SEAL = r'https://www.usbr.gov/uc/water/ff/static/img/US-DOI-BOR-Seal.svg'
+BOOTSTRAP_CSS = r'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/4.3.1/bootstrap.min.css'
+BOOTSTRAP_JS = r'https://www.usbr.gov/uc/water/ff/static/js/bootstrap/4.3.1/bootstrap.bundle.min.js'
+JQUERY_JS = r'https://www.usbr.gov/uc/water/ff/static/js/jquery/3.4.0/jquery.min.js'
 
-header_str = f'''
+HEADER_STR = f'''
 <!DOCTYPE html>
 <html>
     <head>
           <meta name="viewport" content="width=device-width, initial-scale=1">
-          <link rel="icon" href="{bor_flavicon}">
-          <link rel="stylesheet" href="{bootstrap_css}">
-          <script src="{jquery_js}"></script>
-          <script src="{bootstrap_js}"></script>''' + '''
+          <link rel="icon" href="{BOR_FLAVICON}">
+          <link rel="stylesheet" href="{BOOTSTRAP_CSS}">
+          <script src="{JQUERY_JS}"></script>
+          <script src="{BOOTSTRAP_JS}"></script>''' + '''
 
     <style>
         .dropdown-submenu {
@@ -43,11 +43,11 @@ header_str = f'''
 <body>
 <div class="container">
 ''' + f'''
-<img src="{bor_seal}" style="width: 25%" class="img-responsive mx-auto d-block" alt="BOR Logo">
+<img src="{BOR_SEAL}" style="width: 25%" class="img-responsive mx-auto d-block" alt="BOR Logo">
     <h2>HDB Flat File Navigator</h2>
 '''
 
-footer_str = '''
+FOOTER_STR = '''
 <a href="./ff_gen.log" class="btn btn-success mt-3" role="button">LOG FILE</a>
 </div>
 <script>
@@ -141,7 +141,7 @@ def create_nav(data_dir, nav_filename=None):
 
     nl = '\n'
     nav_html_str = (
-        f'{header_str}{nl}{get_updt_str()}{nl}{buttons_str}{nl}{footer_str}'
+        f'{HEADER_STR}{nl}{get_updt_str()}{nl}{buttons_str}{nl}{FOOTER_STR}'
     )
     write_nav_dict = {
         Path(data_dir, nav_filename): nav_html_str
@@ -152,8 +152,8 @@ def create_nav(data_dir, nav_filename=None):
 
 def write_file(write_dict):
     for filepath, html_str in write_dict.items():
-        with open(filepath, 'w') as f:
-            f.write(html_str)
+        with open(filepath, 'w') as file:
+            file.write(html_str)
 
 def create_chart_dd(button_label, site_id, charts, data_dir):
     chart_href = Path(data_dir, button_label, site_id, 'charts')

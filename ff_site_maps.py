@@ -89,7 +89,7 @@ def create_map(site_type, meta, data_dir):
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
         sitetype_map.save(map_path)
-        return f'Created map for {site_type}'
+        return f'Created site map for {site_type}'
     else:
         return 'Failed to create map for {site_type}, no sites with coordinates'
 

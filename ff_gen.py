@@ -8,12 +8,13 @@ Created on Fri Feb 15 13:54:32 2019
 import time
 import json
 import sys
+from os import path, makedirs
+from datetime import datetime as dt
+from logging.handlers import TimedRotatingFileHandler
 import logging
 import pandas as pd
 import numpy as np
 import plotly as py
-from datetime import datetime as dt
-from os import path, makedirs
 from ff_nav import create_nav
 from ff_site_maps import create_map
 from ff_charts import create_chart
@@ -23,7 +24,7 @@ from ff_huc_maps import create_huc_maps
 from ff_to_rise import ff_to_rise
 from hdb_api.hdb_utils import get_eng_config
 from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries
-from logging.handlers import TimedRotatingFileHandler
+
 
 def get_plot_config(img_filename):
     return {
@@ -175,7 +176,7 @@ def make_webmap(data_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
-def make_huc_maps(df_meta, site_type_dir):
+def make_huc_maps(df_meta, site_type_dir, logger):
     try:
         huc_map_str = create_huc_maps(df_meta, site_type_dir)
         print(huc_map_str)
@@ -255,6 +256,7 @@ if __name__ == '__main__':
         site_names = df_meta[site_label].tolist()
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
+        make_huc_maps(df_meta.copy(), site_type_dir, logger)
 
         for i, sdi in enumerate(sdis):
             bt = time.time()
@@ -339,8 +341,8 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-        make_huc_maps(df_meta.copy(), site_type_dir)
-        make_sitemap(site_type, df_meta, data_dir, logger)
+        make_huc_maps(df_meta.copy(), site_type_dir, logger)
+        make_sitemap(site_type, df_meta.copy(), data_dir, logger)
 
     make_nav(data_dir, logger)
 
