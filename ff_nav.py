@@ -182,7 +182,7 @@ def create_data_dd(button_label, site_id, data, data_dir, meta, data_format):
             data_id,
             meta
         )
-        data_label = data_label.upper()
+        data_label = str(data_label).upper()
         site_data_dd_href = Path(data_href, data_name)
         data_menu_dict[data_label] = site_data_dd_href
 
@@ -309,6 +309,6 @@ def get_site_submenu_str(data_dir, site_data, site_id, button_label, meta):
 if __name__ == '__main__':
     this_dir = os.path.dirname(os.path.realpath(__file__))
     data_dir = os.path.join(this_dir, 'flat_files')
-    data_dir = r'C:\Users\buriona\Documents\flat_files'
+#    data_dir = r'C:\Users\buriona\Documents\flat_files'
     sys_out = create_nav(data_dir)
     print(sys_out)
