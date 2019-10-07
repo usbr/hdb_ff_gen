@@ -275,12 +275,16 @@ def create_huc_maps(hdb_meta, site_type_dir):
             add_hu6_layer(huc_map, huc6_path, True)
             add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
             add_awdb_markers(huc_map, snow_sites)
-            lats = snow_sites['latitude'].to_list() + [lat]
-            longs = snow_sites['longitude'].to_list() + [lon]
-            bounds = get_bounds(lats, longs)
+#            lats = snow_sites['latitude'].to_list() + [lat]
+#            longs = snow_sites['longitude'].to_list() + [lon]
+#            bounds = get_bounds(lats, longs)
+            bounds_list = geo_df['geometry'][0].bounds
+            bounds = [
+                (bounds_list[1], bounds_list[0]),
+                (bounds_list[3], bounds_list[2])
+            ]
             if bounds:
                 huc_map.fit_bounds(bounds)
-
             folium.LayerControl().add_to(huc_map)
         maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
         makedirs(maps_dir, exist_ok=True)
@@ -294,9 +298,10 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
-    meta_path = path.join(this_dir, 'test', 'data', 'test_hdb_metadata.csv')
-    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
-    meta_path = path.join(site_type_dir, 'meta.csv')
+    site_type_dir = path.join(this_dir, 'test', 'data')
+    meta_path = path.join(site_type_dir, 'res_meta.csv')
+#    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
+#    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)
 #    use_obj_types = [7]
 #    hdb_meta = hdb_meta[
