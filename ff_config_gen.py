@@ -60,7 +60,7 @@ if __name__ == '__main__':
         729, 731, 733, 734, 735, 736, 738, 739, 742, 743, 757, 1732, 767, 1709,
         771, 772, 773, 774, 776, 777, 783, 786, 787, 789, 799, 802, 1711, 1736,
         859, 1723, 1705, 1719, 900, 1708, 1713, 907, 1715, 1730, 451, 1722,
-        3028, 3029, 726, 1513, 1514, 1710, 1534
+        3028, 3029, 726, 1513, 1514, 1710, 1534, 3876
     ]
 
     usgs_gages = list(set(usgs_gages))
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         19
     ]
 
-    gage_data_types = [19, 20]
+    gage_data_types = [19, 20, 31]
 
     lbo_sites = [60000, 60001, 60002, 60003, 60004, 60005, 60006, 60007,
                  60008, 60009, 60010, 60011, 60012, 60013, 60014, 60015,
@@ -138,15 +138,15 @@ if __name__ == '__main__':
     }
 
     prod_requests_v2 = {
-        'GAUGE_DATA': {
-            'sids': usgs_gages,
-            'dids':gage_data_types,
-            'interval': 'day',
-            'period': 'por'
-        },
         'RESERVOIR_DATA': {
             'sids': all_res_data,
             'dids': res_data_types,
+            'interval': 'day',
+            'period': 'por'
+        },
+        'GAUGE_DATA': {
+            'sids': usgs_gages,
+            'dids':gage_data_types,
             'interval': 'day',
             'period': 'por'
         }
@@ -249,6 +249,6 @@ if __name__ == '__main__':
     }
 
     with open('ff_config.json', 'w') as fp:
-        json.dump(config_json, fp, indent=4, sort_keys=True)
+        json.dump(config_json, fp, indent=4, sort_keys=False)
 
     print('Succesfully created ff_config.json')
