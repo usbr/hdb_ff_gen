@@ -10,6 +10,7 @@ import json
 import sys
 from os import path, makedirs
 from datetime import datetime as dt
+from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 import logging
 import pandas as pd
@@ -188,6 +189,25 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
+def get_data(hdb_ts, sdi, interval, json_filename, period='por'):
+    if str(period).isnumeric() and path.exists(json_filename):
+        s_date = dt.today()
+        e_date = s_date - timedelta(days=period)
+        df_local = pd.read_json(json_filename, orient='split')
+        df_hdb = hdb_ts.series(
+            hdb, sdi=sdi, interval=interval, t1=s_date, t2=e_date
+        )
+        df_local.index = df_local['datetime']
+        df_local.index.rename('datetime', inplace=True)
+        df = df_hdb.combine_first(df_local)
+    else:
+        df = hdb_ts.series(
+            hdb, sdi=sdi, interval=interval, t1=period, t2=period
+        )
+    df.dropna(inplace=True)
+    return df
+
+
 if __name__ == '__main__':
 
     this_dir = path.dirname(path.realpath(__file__))
@@ -233,7 +253,7 @@ if __name__ == '__main__':
         interval = type_config['interval']
         if interval not in ['instant', 'hour', 'day', 'month', 'year']:
             interval = 'day'
-        period = type_config['period'].upper()
+        period = type_config['period'].lower()
         sids = type_config['sids']
         dids = type_config['dids']
 
@@ -288,15 +308,8 @@ if __name__ == '__main__':
             chart_filename = chart_filename.replace(' ', '_')
             json_filename = json_filename.replace(' ', '_')
 
-            df = ts.series(
-                hdb,
-                sdi=sdi,
-                interval=interval,
-                t1=period,
-                t2=period
-            )
+            df = get_data(ts, sdi, interval, json_filename, period=period)
 
-            df.dropna(inplace=True)
             if not df.empty:
                 idx = pd.date_range(df.index.min(), df.index.max())
                 df = df.reindex(idx)
@@ -313,14 +326,14 @@ if __name__ == '__main__':
 #                    logger
 #                )
                 make_chart(
-                    df.copy(),
+                    df,
                     meta,
                     chart_filename,
                     img_filename,
                     logger
                 )
-                make_csv(df.copy(), csv_filename, logger)
-                make_json(df.copy(), json_filename, logger)
+                make_csv(df, csv_filename, logger)
+                make_json(df, json_filename, logger)
 
                 et = time.time()
 
