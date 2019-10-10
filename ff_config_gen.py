@@ -249,6 +249,6 @@ if __name__ == '__main__':
     }
 
     with open('ff_config.json', 'w') as fp:
-        json.dump(config_json, fp, indent=4, sort_keys=False)
+        json.dump(config_json, fp, indent=4, sort_keys=True)
 
     print('Succesfully created ff_config.json')

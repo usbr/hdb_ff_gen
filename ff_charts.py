@@ -251,7 +251,6 @@ def create_stat_traces(df, datatype_name, units):
                 linetype
             )
         traces.append(trace)
-
     return traces
 
 def get_anno_text(df, df_stats, units):
@@ -304,11 +303,10 @@ def create_chart(df, meta):
     units = datatype_units.get(datatype_id, 'UNKNOWN UNITS').upper()
 
     df_wy = serial_to_wy(df, datatype_name)
-
     chart_type = get_chart_type(datatype_name, units)
     if chart_type == 'bar':
         df_wy = df_wy.resample('1M').sum(min_count=25)
-
+    df_wy.dropna(axis='columns', how='all', inplace=True)
     percentiles = [0.10, 0.30, 0.50, 0.70, 0.90]
     df_30yr = df_wy.filter(items=range(1980, 2011), axis='columns')
     if get_chart_type(datatype_name, units) == 'scatter':
@@ -464,15 +462,16 @@ if __name__ == '__main__':
             )
             print(err_str)
 
-    site_id = 917
-    sdi = 1791
-    datatype_id = 29
+    site_id = 731
+    sdi = 1567
+    datatype_id = 20
     this_dir = path.dirname(path.realpath(__file__))
-    data_dir = path.join(this_dir, 'flat_files')
-    site_dir = path.join(data_dir, 'RESERVOIR_DATA', f'{site_id}')
+    test_dir = path.join(this_dir, 'test')
+    data_dir = path.join(test_dir, 'data')
+    site_dir = path.join(data_dir, f'{site_id}')
     chart_dir = path.join(site_dir, 'charts')
     csv_path = path.join(site_dir, 'csv', f'{datatype_id}.csv')
-    meta_path = path.join(data_dir, 'RESERVOIR_DATA', 'meta.csv')
+    meta_path = path.join(data_dir, 'meta.csv')
     if path.exists(csv_path) and path.exists(meta_path):
         df_meta = pd.read_csv(meta_path)
         meta = df_meta[df_meta['site_datatype_id'] == sdi].iloc[0]
