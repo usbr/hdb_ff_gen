@@ -139,3 +139,6 @@ flat_files/
 ### GIS files
 *.topojson
 *.geojson
+
+### profile result files
+*.Result
