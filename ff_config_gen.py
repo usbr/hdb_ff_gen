@@ -176,6 +176,36 @@ if __name__ == '__main__':
         }
     }
 
+    prod_requests_daily = {
+        'RESERVOIR_DATA': {
+            'sids': all_res_data,
+            'dids': res_data_types,
+            'interval': 'day',
+            'period': 40
+        },
+        'GAUGE_DATA': {
+            'sids': usgs_gages,
+            'dids':gage_data_types,
+            'interval': 'day',
+            'period': 40
+        }
+    }
+
+    prod_requests_weekly = {
+        'RESERVOIR_DATA': {
+            'sids': all_res_data,
+            'dids': res_data_types,
+            'interval': 'day',
+            'period': 'por'
+        },
+        'GAUGE_DATA': {
+            'sids': usgs_gages,
+            'dids':gage_data_types,
+            'interval': 'day',
+            'period': 'por'
+        }
+    }
+
     prod_requests_lc = {
         'LC_RESERVOIR_DATA': {
             'sids': lc_reservoirs,
@@ -220,6 +250,18 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_v2,
+            'sftp_push': True
+        },
+        'prod_daily': {
+            'alt_path': None,
+            'hdb': 'uc',
+            'requests': prod_requests_daily,
+            'sftp_push': True
+        },
+        'prod_weekly': {
+            'alt_path': None,
+            'hdb': 'uc',
+            'requests': prod_requests_weekly,
             'sftp_push': True
         },
         'prod_rhel': {

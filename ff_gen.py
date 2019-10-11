@@ -10,7 +10,6 @@ import json
 import sys
 from os import path, makedirs
 from datetime import datetime as dt
-from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 import logging
 import pandas as pd
@@ -189,20 +188,21 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
-def get_data(hdb_ts, sdi, interval, json_filename, period='por'):
-    if str(period).isnumeric() and path.exists(json_filename):
-        s_date = dt.today()
-        e_date = s_date - timedelta(days=period)
+def get_data(hdb_ts, sdi, interval, json_filename, period='POR'):
+    if period.isnumeric() and path.exists(json_filename):
         df_local = pd.read_json(json_filename, orient='split')
+        df_local.index = df_local['datetime']
+        df_local.index.rename('datetime', inplace=True)
+        e_date = dt.today()
+        last_data_date = df_local.iloc[-1]['datetime']
+        s_date = last_data_date - np.timedelta64(period, 'D')
         df_hdb = hdb_ts.series(
             hdb, sdi=sdi, interval=interval, t1=s_date, t2=e_date
         )
-        df_local.index = df_local['datetime']
-        df_local.index.rename('datetime', inplace=True)
         df = df_hdb.combine_first(df_local)
     else:
         df = hdb_ts.series(
-            hdb, sdi=sdi, interval=interval, t1=period, t2=period
+            hdb, sdi=sdi, interval=interval, t1='POR', t2='POR'
         )
     df.dropna(inplace=True)
     return df
@@ -243,7 +243,11 @@ if __name__ == '__main__':
     logger.info(schema_str)
 
     for site_type, type_config in ff_config['requests'].items():
-        folder_str = (f'\n  Populating "{site_type}" folder...\n')
+        period = str(type_config['period']).upper()
+        folder_str = (
+            f'\n  Populating "{site_type}" folder, '
+            f'using a refresh period of {period}...\n'
+        )
         print(folder_str)
         logger.info(folder_str)
 
@@ -253,7 +257,7 @@ if __name__ == '__main__':
         interval = type_config['interval']
         if interval not in ['instant', 'hour', 'day', 'month', 'year']:
             interval = 'day'
-        period = type_config['period'].lower()
+
         sids = type_config['sids']
         dids = type_config['dids']
 
@@ -282,7 +286,8 @@ if __name__ == '__main__':
 
             created_site_str = (
                 f'    Creating flat files for '
-                f'{site_names[i]} - {datatype_names[i]}...'
+                f'{site_names[i]} - {datatype_names[i]}'
+
             )
             print(created_site_str)
             logger.info(created_site_str)

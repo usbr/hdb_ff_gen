@@ -443,7 +443,8 @@ if __name__ == '__main__':
                 include_plotlyjs=plotly_js,
                 config=get_plot_config(img_filename),
                 filename=chart_filename,
-                auto_open=False
+                auto_open=False,
+                validate=False
             )
 
             flavicon = (
