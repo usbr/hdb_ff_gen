@@ -29,7 +29,8 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
         inplace=True
     )
 
-    df['dateTime'] = df['dateTime'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    df['dateTime'] = pd.to_datetime(df['dateTime'])
+    df['dateTime'] = df['dateTime'].dt.strftime('%Y-%m-%d %H:%M:%S-07:00')
     df['sourceCode'] = db_name
     df['locationSourceCode'] = site_name
     df['parameterSourceCode'] = datatype_name
@@ -42,7 +43,7 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
         'resultType': 'observed',
         'timeStep': interval
     }
-    df['resultAttributes'] = [resultAttributes]*len(df)
+    df['resultAttributes'] = [resultAttributes] * len(df)
     df['modelRunName'] = None
     df['modelRunDateTime'] = None
     df['modelRunDescription'] = None

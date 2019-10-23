@@ -87,7 +87,7 @@ def make_chart(df, meta, chart_filename, img_filename, logger, plotly_js=None):
 
         flavicon = (
             f'<link rel="shortcut icon" '
-            f'href="https://www.usbr.gov/img/favicon.ico"></head>'
+            f'href="https://www.usbr.gov/uc/water/ff/static/img/favicon.ico"></head>'
         )
         with open(chart_filename, 'r') as html_file:
             chart_file_str = html_file.read()
@@ -223,6 +223,10 @@ if __name__ == '__main__':
     if not data_dir:
         data_dir = path.join(this_dir, 'flat_files')
 
+    rise_sites = ff_config['rise_sites']
+    if not rise_sites:
+        rise_sites = []
+
     makedirs(data_dir, exist_ok=True)
     rise_dir = path.join(this_dir, 'rise')
     makedirs(rise_dir, exist_ok=True)
@@ -320,16 +324,17 @@ if __name__ == '__main__':
                 df = df.reindex(idx)
                 df['datetime'] = df.index
 
-#                make_rise(
-#                    df.copy(),
-#                    db_name,
-#                    site_names[i],
-#                    datatype_names[i],
-#                    interval,
-#                    14,
-#                    rise_dir,
-#                    logger
-#                )
+                if site_ids[i] in rise_sites:
+                    make_rise(
+                        df.copy(),
+                        db_name,
+                        site_names[i],
+                        datatype_names[i],
+                        interval,
+                        40,
+                        rise_dir,
+                        logger
+                    )
                 make_chart(
                     df,
                     meta,
@@ -373,7 +378,7 @@ if __name__ == '__main__':
         pub_script_name = 'ff_scp_push.txt'
         sync_files(this_dir, pub_script_name, logger)
         rise_script_name = 'ff_rise_push.txt'
-#        sync_files(this_dir, rise_script_name, logger)
+        sync_files(this_dir, rise_script_name, logger)
 
     logger.info(('-- * ' * 25 + '\n')*2)
 

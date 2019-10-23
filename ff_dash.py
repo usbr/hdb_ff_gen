@@ -14,8 +14,9 @@ label_unit_dict = {
 
 datatype_common_names_rev = {v: k for k, v in datatype_common_names.items()}
 
-bor_flavicon = r'https://www.usbr.gov/img/favicon.ico'
-bor_seal = r'https://www.usbr.gov/uc/water/ff/static/img/US-DOI-BOR-Seal.svg'
+bor_flavicon = r'https://www.usbr.gov/uc/water/ff/static/img/favicon.ico'
+#bor_seal = r'https://www.usbr.gov/uc/water/ff/static/img/US-DOI-BOR-Seal.svg'
+bor_seal = r'https://www.usbr.gov/uc/water/ff/static/img/BofR-horiz-pms.png'
 bootstrap_css = r'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/4.3.1/bootstrap.min.css'
 bootstrap_js = r'https://www.usbr.gov/uc/water/ff/static/js/bootstrap/4.3.1/bootstrap.bundle.min.js'
 jquery_js = r'https://www.usbr.gov/uc/water/ff/static/js/jquery/3.4.0/jquery.min.js'

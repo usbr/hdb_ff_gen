@@ -77,6 +77,8 @@ if __name__ == '__main__':
         set(crsp_reservoirs + pao_reservoirs + aao_reservoirs + misc_reservoirs)
     )
 
+    uc_rise_sites = list(set(all_res_data) - set(misc_reservoirs))
+
     usgs_gages = [
         451, 716, 726, 729, 731, 733, 734, 735, 736, 737, 738, 739, 740, 742,
         743, 757, 767, 771, 772, 773, 774, 776, 777, 783, 786, 787, 788, 789,
@@ -250,72 +252,84 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_v2,
+            'rise_sites': uc_rise_sites,
             'sftp_push': True
         },
         'prod_daily': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_daily,
+            'rise_sites': uc_rise_sites,
             'sftp_push': True
         },
         'prod_weekly': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_weekly,
+            'rise_sites': None,
             'sftp_push': True
         },
         'prod_rhel': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': prod_requests_v2,
+            'rise_sites': None,
             'sftp_push': False
         },
         'prod_lc': {
             'alt_path': None,
             'hdb': 'lc',
             'requests': prod_requests_lc,
+            'rise_sites': None,
             'sftp_push': False
         },
         'prod_eco': {
             'alt_path': None,
             'hdb': 'eco',
             'requests': prod_requests_eco,
+            'rise_sites': None,
             'sftp_push': False
         },
         'local': {
             'alt_path': None,
             'hdb': 'uc',
-            'requests': prod_requests_v2,
-            'sftp_push': False
+            'requests': prod_requests_weekly,
+            'rise_sites': uc_rise_sites,
+            'sftp_push': True
         },
         'default': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_v2,
+            'rise_sites': None,
             'sftp_push': False
         },
         'testing': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': testing_requests,
+            'rise_sites': None,
             'sftp_push': False
         },
         'one_off': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': one_off_requests,
+            'rise_sites': None,
             'sftp_push': False
         },
         'lbo': {
             'alt_path': r'C:\Users\buriona\Documents',
             'hdb': 'lbo',
             'requests': lbo_requests,
+            'rise_sites': None,
             'sftp_push': False
         },
         'snow': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': snow_requests,
+            'rise_sites': None,
             'sftp_push': False
         }
     }

@@ -320,8 +320,7 @@ def create_chart(df, meta):
     traces = traces + stat_traces
 
     bor_seal_url = (
-        f'https://upload.wikimedia.org/wikipedia/commons/d/d0/'
-        f'US-DOI-BureauOfReclamation-Seal.svg'
+        r'https://www.usbr.gov/uc/water/ff/static/img/BofR-shield-cmyk.png'
     )
 
     seal_image = [{
@@ -335,7 +334,7 @@ def create_chart(df, meta):
         'yanchor': 'top',
         'xanchor': 'left',
         'opacity': 0.25,
-        'layer': 'below'
+        'layer': 'above'
     }]
 
     annotation = [
@@ -449,7 +448,7 @@ if __name__ == '__main__':
 
             flavicon = (
                 f'<link rel="shortcut icon" '
-                f'href="https://www.usbr.gov/img/favicon.ico"></head>'
+                f'href="https://www.usbr.gov/uc/water/ff/static/img/favicon.ico"></head>'
             )
             with open(chart_filename, 'r') as html_file:
                 chart_file_str = html_file.read()

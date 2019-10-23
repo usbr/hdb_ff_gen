@@ -12,8 +12,8 @@ from pathlib import Path
 import pandas as pd
 from ff_dash import create_dash
 
-BOR_FLAVICON = r'https://www.usbr.gov/img/favicon.ico'
-BOR_SEAL = r'https://www.usbr.gov/uc/water/ff/static/img/US-DOI-BOR-Seal.svg'
+BOR_FLAVICON = r'https://www.usbr.gov/uc/water/ff/static/img/favicon.ico'
+BOR_SEAL = r'https://www.usbr.gov/uc/water/ff/static/img/BofR-horiz-pms.png'
 BOOTSTRAP_CSS = r'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/4.3.1/bootstrap.min.css'
 BOOTSTRAP_JS = r'https://www.usbr.gov/uc/water/ff/static/js/bootstrap/4.3.1/bootstrap.bundle.min.js'
 JQUERY_JS = r'https://www.usbr.gov/uc/water/ff/static/js/jquery/3.4.0/jquery.min.js'
