@@ -323,17 +323,17 @@ if __name__ == '__main__':
                 df = df.reindex(idx)
                 df['datetime'] = df.index
 
-                if site_ids[i] in rise_sites:
-                    make_rise(
-                        df.copy(),
-                        db_name,
-                        site_names[i],
-                        datatype_names[i],
-                        interval,
-                        40,
-                        rise_dir,
-                        logger
-                    )
+#                if site_ids[i] in rise_sites:
+#                    make_rise(
+#                        df.copy(),
+#                        db_name,
+#                        site_names[i],
+#                        datatype_names[i],
+#                        interval,
+#                        40,
+#                        rise_dir,
+#                        logger
+#                    )
                 make_chart(
                     df,
                     meta,

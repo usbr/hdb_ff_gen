@@ -176,28 +176,28 @@ def get_js_refs():
 def get_dash_body(site_name, site_id, chart_names):
     return f'''
 <body>
-<nav class="navbar navbar-light fixed-top bg-light flex-md-nowrap p-auto">
-    <a class="btn btn-outline-primary" target="_blank" href="#huc">{site_name}</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
+<nav class="navbar navbar-light fixed-top bg-light navbar-expand p-auto flex-md-nowrap">
+  <a class="btn btn-outline-primary" target="_blank" href="#huc">{site_name}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+  <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
+    <ul class="navbar-nav  mr-auto">
       <li class="nav-item">
         <a class="nav-link ml-3" href="{get_map_url()}">Overview Map</a>
         </li>
       <li class="nav-item">
-        <a class="nav-link ml-3" href="{get_home_url()}">Navigator</a>
+        <a class="nav-link ml-3" href="{get_home_url()}l">Navigator</a>
       </li>
     </ul>
   </div>
 </nav>
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar mt-2">
+    <nav class="sidebar col-md-2 mt-2">
       <div class="sidebar-sticky">
-        <a href="https://www.usbr.gov/uc/water/index.html">
-          <img src="{bor_seal}" class="img-fluid sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted" alt="Reclamation Seal">
+        <a class="sidebar-heading d-flex px-3 mt-4 mb-1" href="https://www.usbr.gov/uc/water/index.html">
+          <img src="{bor_seal}" class="img-fluid" alt="Reclamation Seal">
         </a>
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
           <span>Maps</span>
