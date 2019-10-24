@@ -9,7 +9,7 @@ from os import path
 import folium
 from folium.plugins import FloatImage
 import pandas as pd
-from ff_utils import get_bor_seal
+from ff_utils import get_bor_seal, get_favicon
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
 
@@ -23,6 +23,18 @@ default_css = get_default_css()
 #folium.folium._default_css = default_css
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
+
+def add_optional_tilesets(folium_map):
+    tilesets = [
+        'OpenStreetMap',
+        'Stamen Toner',
+        'Stamen Watercolor',
+        'CartoDB positron',
+        'CartoDB dark_matter',
+    ]
+
+    for tileset in tilesets:
+        folium.TileLayer(tileset).add_to(folium_map)
 
 def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
     if not hu6_geojson_path:
@@ -107,14 +119,32 @@ def create_map(site_type, meta, data_dir):
     if bounds:
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
-        folium.LayerControl().add_to(sitetype_map)
         add_hu6_layer(sitetype_map, huc6_path, True)
-#        FloatImage(
-#            get_bor_seal(orient='shield'),
-#            bottom=1,
-#            left=1
-#        ).add_to(sitetype_map)
+        add_optional_tilesets(sitetype_map)
+        folium.LayerControl().add_to(sitetype_map)
+        FloatImage(
+            get_bor_seal(orient='shield'),
+            bottom=1,
+            left=1
+        ).add_to(sitetype_map)
         sitetype_map.save(map_path)
+        flavicon = (
+            f'<link rel="shortcut icon" '
+            f'href="{get_favicon()}"></head>'
+        )
+        with open(map_path, 'r') as html_file:
+            chart_file_str = html_file.read()
+
+        with open(map_path, 'w') as html_file:
+            chart_file_str = chart_file_str.replace(r'</head>', flavicon)
+            replace_str = (
+                '''left:1%;
+                        max-width:10%;
+                        max-height:10%;'''
+            )
+            chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
+            html_file.write(chart_file_str)
+
         return f'Created site map for {site_type}'
     else:
         return 'Failed to create map for {site_type}, no sites with coordinates'

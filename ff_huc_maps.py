@@ -31,6 +31,18 @@ default_css = get_default_css()
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
 
+def add_optional_tilesets(folium_map):
+    tilesets = [
+        'OpenStreetMap',
+        'Stamen Toner',
+        'Stamen Watercolor',
+        'CartoDB positron',
+        'CartoDB dark_matter',
+    ]
+
+    for tileset in tilesets:
+        folium.TileLayer(tileset).add_to(folium_map)
+
 def get_upstream_basin(huc12, to_huc_table):
     if huc12:
         huc12 = str(huc12)
@@ -288,17 +300,34 @@ def create_huc_maps(hdb_meta, site_type_dir):
             ]
             if bounds:
                 huc_map.fit_bounds(bounds)
+            add_optional_tilesets(huc_map)
             folium.LayerControl().add_to(huc_map)
-#            FloatImage(
-#                get_bor_seal(orient='shield'),
-#                bottom=1,
-#                left=1
-#            ).add_to(huc_map)
+            FloatImage(
+                get_bor_seal(orient='shield'),
+                bottom=1,
+                left=1
+            ).add_to(huc_map)
         maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
         makedirs(maps_dir, exist_ok=True)
-        huc_map.save(
-            path.join(maps_dir,f'{site_id}_huc.html')
+        map_path = path.join(maps_dir,f'{site_id}_huc.html')
+        huc_map.save(map_path)
+        flavicon = (
+            f'<link rel="shortcut icon" '
+            f'href="{get_favicon()}"></head>'
         )
+        with open(map_path, 'r') as html_file:
+            chart_file_str = html_file.read()
+
+        with open(map_path, 'w') as html_file:
+            chart_file_str = chart_file_str.replace(r'</head>', flavicon)
+            replace_str = (
+                '''left:1%;
+                        max-width:10%;
+                        max-height:10%;'''
+            )
+            chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
+            html_file.write(chart_file_str)
+
     return f'   Created HUC maps for {site_type_dir} successfully'
 
 if __name__ == '__main__':
