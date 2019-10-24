@@ -19,6 +19,7 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
     rise_timestamp_str = dt.now().strftime('%Y%m%d%H%M%S')
     rise_filename = f'{db_name}_{rise_timestamp_str}.json'
     if num_records:
+
         df = df.tail(num_records)
     df.rename(
         index=str,

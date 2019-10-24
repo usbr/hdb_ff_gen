@@ -11,12 +11,14 @@ from datetime import datetime as dt
 from pathlib import Path
 import pandas as pd
 from ff_dash import create_dash
+from ff_utils import get_favicon, get_bor_seal, get_bootstrap
 
-BOR_FLAVICON = r'https://www.usbr.gov/uc/water/ff/static/img/favicon.ico'
-BOR_SEAL = r'https://www.usbr.gov/uc/water/ff/static/img/BofR-horiz-pms.png'
-BOOTSTRAP_CSS = r'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/4.3.1/bootstrap.min.css'
-BOOTSTRAP_JS = r'https://www.usbr.gov/uc/water/ff/static/js/bootstrap/4.3.1/bootstrap.bundle.min.js'
-JQUERY_JS = r'https://www.usbr.gov/uc/water/ff/static/js/jquery/3.4.0/jquery.min.js'
+BOR_FLAVICON = get_favicon()
+BOR_SEAL = get_bor_seal()
+bootstrap = get_bootstrap()
+BOOTSTRAP_CSS = bootstrap['css']
+BOOTSTRAP_JS = bootstrap['js']
+JQUERY_JS = bootstrap['jquery']
 
 HEADER_STR = f'''
 <!DOCTYPE html>

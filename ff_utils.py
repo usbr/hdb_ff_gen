@@ -5,32 +5,59 @@ Created on Fri Sep 13 15:26:04 2019
 @author: buriona
 """
 
+STATIC_URL = f'https://www.usbr.gov/uc/water/ff/static'
+
+def get_plotly_js():
+    return f'{STATIC_URL}/js/plotly/1.47.4/plotly.min.js'
+
+def get_bootstrap():
+    return {
+        'css': f'{STATIC_URL}/css/bootstrap/4.3.1/bootstrap.min.css',
+        'js': f'{STATIC_URL}/js/bootstrap/4.3.1/bootstrap.bundle.min.js',
+        'jquery': f'{STATIC_URL}/js/jquery/3.4.0/jquery.min.js'
+    }
+
+def get_favicon():
+    return f'{STATIC_URL}/img/favicon.ico'
+
+def get_bor_seal(orient='default', grey=False):
+    color = 'cmyk'
+    if grey:
+        color = 'grey'
+    seal_dict = {
+        'default': f'BofR-horiz-{color}.png',
+        'shield': f'BofR-shield-cmyk.png',
+        'vert': f'BofR-vert-{color}.png',
+        'horz': f'BofR-horiz-{color}.png'
+        }
+    return f'{STATIC_URL}/img/{seal_dict[orient]}'
+
 def get_bor_js():
     return [
         ('leaflet',
-         'https://www.usbr.gov/uc/water/ff/static/js/leaflet/leaflet.js'),
+         f'{STATIC_URL}/js/leaflet/leaflet.js'),
         ('jquery',
-         'https://www.usbr.gov/uc/water/ff/static/js/jquery/3.4.0/jquery.min.js'),
+         f'{STATIC_URL}/js/jquery/3.4.0/jquery.min.js'),
         ('bootstrap',
-         'https://www.usbr.gov/uc/water/ff/static/js/bootstrap/3.2.0/js/bootstrap.min.js'),
+         f'{STATIC_URL}/js/bootstrap/3.2.0/js/bootstrap.min.js'),
         ('awesome_markers',
-         'https://www.usbr.gov/uc/water/ff/static/js/leaflet/leaflet.awesome-markers.js'),  # noqa
+         f'{STATIC_URL}/js/leaflet/leaflet.awesome-markers.js'),  # noqa
         ]
 
 def get_bor_css():
     return [
         ('leaflet_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/leaflet/leaflet.css'),
+         f'{STATIC_URL}/css/leaflet/leaflet.css'),
         ('bootstrap_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/3.2.0/css/bootstrap.min.css'),
+         f'{STATIC_URL}/css/bootstrap/3.2.0/css/bootstrap.min.css'),
         ('bootstrap_theme_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/bootstrap/3.2.0/css/bootstrap-theme.min.css'),  # noqa
+         f'{STATIC_URL}/css/bootstrap/3.2.0/css/bootstrap-theme.min.css'),  # noqa
         ('awesome_markers_font_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/font-awesome.min.css'),  # noqa
+         f'{STATIC_URL}/css/font-awesome.min.css'),  # noqa
         ('awesome_markers_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/leaflet/leaflet.awesome-markers.css'),  # noqa
+         f'{STATIC_URL}/css/leaflet/leaflet.awesome-markers.css'),  # noqa
         ('awesome_rotate_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/leaflet/leaflet.awesome.rotate.css'),  # noqa
+         f'{STATIC_URL}/css/leaflet/leaflet.awesome.rotate.css'),  # noqa
         ]
 
 def get_default_js():
@@ -54,7 +81,7 @@ def get_default_css():
         ('bootstrap_theme_css',
          'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css'),  # noqa
         ('awesome_markers_font_css',
-         'https://www.usbr.gov/uc/water/ff/static/css/font-awesome.min.css'),
+         f'{STATIC_URL}/css/font-awesome.min.css'),
          ('awesome_markers_font_css',
          'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),  # noqa
         ('awesome_markers_css',

@@ -22,6 +22,7 @@ from ff_scp_push import push_scp
 from ff_webmap_gen import create_webmap
 from ff_huc_maps import create_huc_maps
 from ff_to_rise import ff_to_rise
+from ff_utils import get_favicon, get_plotly_js
 from hdb_api.hdb_utils import get_eng_config
 from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries
 
@@ -72,9 +73,7 @@ def sync_files(this_dir, script_name, logger):
 
 def make_chart(df, meta, chart_filename, img_filename, logger, plotly_js=None):
     if not plotly_js:
-        plotly_js = (
-            r'https://www.usbr.gov/uc/water/ff/static/js/plotly/1.47.4/plotly.min.js'
-        )
+        plotly_js = get_plotly_js()
     try:
         fig = create_chart(df.copy(), meta)
         py.offline.plot(
@@ -87,7 +86,7 @@ def make_chart(df, meta, chart_filename, img_filename, logger, plotly_js=None):
 
         flavicon = (
             f'<link rel="shortcut icon" '
-            f'href="https://www.usbr.gov/uc/water/ff/static/img/favicon.ico"></head>'
+            f'href="{get_favicon()}"></head>'
         )
         with open(chart_filename, 'r') as html_file:
             chart_file_str = html_file.read()

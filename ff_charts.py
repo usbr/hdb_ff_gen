@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import plotly
 import plotly.graph_objs as go
+from ff_utils import get_favicon, get_bor_seal
 from hdb_api.hdb_utils import datatype_units, get_wy, is_leap_year
 
 def get_log_scale_dd():
@@ -319,12 +320,8 @@ def create_chart(df, meta):
 
     traces = traces + stat_traces
 
-    bor_seal_url = (
-        r'https://www.usbr.gov/uc/water/ff/static/img/BofR-shield-cmyk.png'
-    )
-
     seal_image = [{
-        'source': bor_seal_url,
+        'source': get_bor_seal(orient='shield'),
         'xref': 'paper',
         'yref': 'paper',
         'x': 0.01,
@@ -334,7 +331,7 @@ def create_chart(df, meta):
         'yanchor': 'top',
         'xanchor': 'left',
         'opacity': 0.25,
-        'layer': 'above'
+        'layer': 'below'
     }]
 
     annotation = [
@@ -448,7 +445,7 @@ if __name__ == '__main__':
 
             flavicon = (
                 f'<link rel="shortcut icon" '
-                f'href="https://www.usbr.gov/uc/water/ff/static/img/favicon.ico"></head>'
+                f'href="{get_favicon()}"></head>'
             )
             with open(chart_filename, 'r') as html_file:
                 chart_file_str = html_file.read()

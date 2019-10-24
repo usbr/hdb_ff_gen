@@ -7,16 +7,18 @@ Created on Wed Aug  7 08:14:46 2019
 
 from collections import OrderedDict
 import folium
+from folium.plugins import FloatImage
 import pandas as pd
-from requests import get as req_get
+#from requests import get as req_get
 from os import path, makedirs
 from copy import deepcopy
 import geopandas as gpd
 import json
 from shapely.geometry import Point
 from shapely.ops import cascaded_union
-from ff_map_utils import get_bor_js, get_bor_css
-from ff_map_utils import get_default_js, get_default_css
+from ff_utils import STATIC_URL, get_favicon, get_bor_seal
+from ff_utils import get_bor_js, get_bor_css
+from ff_utils import get_default_js, get_default_css
 
 bor_js = get_bor_js()
 bor_css = get_bor_css()
@@ -207,7 +209,7 @@ def add_upstream_layer(huc_map, huc_geojson, buffer_geojson):
 
 def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
     if not hu6_geojson_path:
-        hu6_geojson_path = 'https://gist.githubusercontent.com/beautah/01dd026c5b8fac1434959dfc48f775b5/raw/2e9e8a70ced3a1eca40cb0c2061fa689e9c44248/HUC6.geojson'
+        hu6_geojson_path = f'{STATIC_URL}/gis/HUC6.geojson'
     huc6_style = lambda x: {
         'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
     }
@@ -216,7 +218,8 @@ def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
         hu6_geojson_path,
         name='HUC 6',
         embed=embed,
-        style_function = huc6_style
+        style_function=huc6_style,
+        show=False
     ).add_to(huc_map)
 
 def get_snow_meta(snow_meta_url=None):
@@ -271,8 +274,8 @@ def create_huc_maps(hdb_meta, site_type_dir):
             geo_df = combine_polygons(geo_df, site_name)
             huc_geojson = json.loads(geo_df.to_json())
             buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
-            huc6_path = path.join(gis_path, 'HUC6.geojson')
-            add_hu6_layer(huc_map, huc6_path, True)
+#            huc6_path = path.join(gis_path, 'HUC6.geojson')
+            add_hu6_layer(huc_map)
             add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
             add_awdb_markers(huc_map, snow_sites)
 #            lats = snow_sites['latitude'].to_list() + [lat]
@@ -286,6 +289,11 @@ def create_huc_maps(hdb_meta, site_type_dir):
             if bounds:
                 huc_map.fit_bounds(bounds)
             folium.LayerControl().add_to(huc_map)
+#            FloatImage(
+#                get_bor_seal(orient='shield'),
+#                bottom=1,
+#                left=1
+#            ).add_to(huc_map)
         maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
         makedirs(maps_dir, exist_ok=True)
         huc_map.save(
