@@ -9,6 +9,7 @@ from os import path
 import folium
 from folium.plugins import FloatImage
 import pandas as pd
+from ff_utils import get_fa_icon
 from ff_utils import get_bor_seal, get_favicon
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
@@ -77,6 +78,7 @@ def add_markers(sitetype_map, meta):
     for index, row in meta_no_dups.iterrows():
         try:
             site_id = row['site_id']
+            obj_type = int(row['site_metadata.objecttype_id'])
             lat = float(row['site_metadata.lat'])
             lon = float(row['site_metadata.longi'])
             elev = row['site_metadata.elevation']
@@ -87,17 +89,20 @@ def add_markers(sitetype_map, meta):
                   <embed class="embed-responsive-item" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
                 </div>'''
 
+            icon = get_fa_icon(obj_type)
             popup_html = (
                 f'{embed}'
                 f'Latitude: {round(lat, 3)}, '
                 f'Longitude: {round(lon, 3)}, '
                 f'Elevation: {elev} <br>'
             )
-
-            icon = 'tint'
+            popup = folium.map.Popup(
+                html=popup_html,
+                max_width='75%'
+            )
             folium.Marker(
                 location=lat_long,
-                popup=popup_html,
+                popup=popup,
                 tooltip=site_name,
                 icon=folium.Icon(icon=icon, prefix='fa')
             ).add_to(sitetype_map)

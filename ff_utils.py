@@ -83,12 +83,35 @@ def get_default_css():
         ('awesome_markers_font_css',
          f'{STATIC_URL}/css/font-awesome.min.css'),
          ('awesome_markers_font_css',
-         'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),  # noqa
+         'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'),  # noqa
         ('awesome_markers_css',
          'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),  # noqa
         ('awesome_rotate_css',
          'https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css'),  # noqa
         ]
+
+def get_fa_icon(obj_type='default'):
+    fa_dict = {
+        'default': 'map-pin',
+        1: 'sitemap',
+        2: 'umbrella',
+        3: 'arrow-down',
+        4: 'exchange',
+        5: 'plug',
+        6: 'arrows-v',
+        7: 'tint',
+        8: 'snowflake-o',
+        9: 'tachometer',
+        10: 'cogs',
+        11: 'arrows-h',
+        12: 'rss',
+        13: 'flask',
+        14: 'table',
+        15: 'info',
+        20: 'exchange'
+    }
+    fa_icon = fa_dict.get(obj_type, 'map-pin')
+    return fa_icon
 
 if __name__ == '__main__':
     print('Just a utility module')

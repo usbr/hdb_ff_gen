@@ -16,6 +16,7 @@ import geopandas as gpd
 import json
 from shapely.geometry import Point
 from shapely.ops import cascaded_union
+from ff_utils import get_fa_icon
 from ff_utils import STATIC_URL, get_favicon, get_bor_seal
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
@@ -27,7 +28,7 @@ default_js = get_default_js()
 default_css = get_default_css()
 
 #folium.folium._default_js = default_js
-#folium.folium._default_css = default_css
+folium.folium._default_css = default_css
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
 
@@ -84,6 +85,7 @@ def get_bounds(lats, longs):
 def add_hdb_marker(huc_map, row):
         try:
 #            site_id = row['site_id']
+            obj_type = int(row['site_metadata.objecttype_id'])
             lat = float(row['site_metadata.lat'])
             lon = float(row['site_metadata.longi'])
             elev = row['site_metadata.elevation']
@@ -103,7 +105,7 @@ def add_hdb_marker(huc_map, row):
                 f'<span class="text-nowrap">Elevation: {elev}</span><br>'
             )
 
-            icon = 'tint'
+            icon = get_fa_icon(obj_type)
             folium.Marker(
                 location=lat_long,
                 popup=popup_html,
@@ -127,7 +129,7 @@ def add_awdb_markers(huc_map, meta):
             site_triplet_arr = site_triplet.split(":")
             site_id = site_triplet_arr[0]
             state = site_triplet_arr[1]
-#            network = site_triplet_arr[2]
+            network = site_triplet_arr[2]
             lat = float(row['latitude'])
             lon = float(row['longitude'])
             elev = row['elevation']
@@ -137,6 +139,8 @@ def add_awdb_markers(huc_map, meta):
             site_href = f'{site_href_base}{site_id}'
             charts_href_base = 'https://www.nrcs.usda.gov/Internet/WCIS/siteCharts/POR/'
             wteq_href = f'{charts_href_base}/WTEQ/{state}/{site_name}.html'
+            if network == 'SCAN':
+                wteq_href = ''
             prec_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
             tavg_href = f'{charts_href_base}/TAVG/{state}/{site_name}.html'
 
@@ -147,31 +151,25 @@ def add_awdb_markers(huc_map, meta):
                 f'<span class="text-nowrap">Longitude: {round(lon, 3)}</span><br>'
                 f'<span class="text-nowrap">Elevation: {elev}</span><br>'
 #                f'{get_embed(wteq_href)}<br>'
-                f'<a href="{wteq_href}" target="_blank">Snow Chart</a><br>'
-                f'<a href="{prec_href}" target="_blank">Precip. Chart</a><br>'
-                f'<a href="{tavg_href}" target="_blank">Temp. Chart</a><br>'
+                f'<a href="{wteq_href}" target="NRCS DATA">Snow Chart</a><br>'
+                f'<a href="{prec_href}" target="NRCS DATA">Precip. Chart</a><br>'
+                f'<a href="{tavg_href}" target="NRCS DATA">Temp. Chart</a><br>'
 
             )
 
-            icon = 'umbrella'
+            icon = 'snowflake-o'
+            color = 'green'
+            if network == 'SCAN':
+                icon = 'umbrella'
+                color = 'yellow'
             folium.Marker(
                 location=lat_long,
                 popup=popup_html,
                 tooltip=site_name,
-                icon=folium.Icon(icon=icon, prefix='fa', color='green')
+                icon=folium.Icon(icon=icon, prefix='fa', color=color)
             ).add_to(huc_map)
         except (ValueError, TypeError):
             pass
-
-def combine_polygons(geo_df, huc_name):
-    polygons = geo_df['geometry']
-    geometry = gpd.GeoSeries(cascaded_union(polygons))
-    df = pd.DataFrame({'Name': [huc_name]})
-    return gpd.GeoDataFrame(df, geometry=geometry)
-
-def get_buffer_geojson(geo_df, snow_meta, buffer):
-    geo_df.geometry = geo_df['geometry'].buffer(buffer)
-    return json.loads(geo_df.to_json())
 
 def get_snotels(geo_df, snow_meta):
     snotels = []
@@ -182,6 +180,22 @@ def get_snotels(geo_df, snow_meta):
             if polygon.contains(point):
                 snotels.append(snotel['stationTriplet'])
     return snow_meta[snow_meta['stationTriplet'].isin(snotels)]
+
+def get_snow_meta(snow_meta_url=None):
+    if not snow_meta_url:
+        snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/ALL/metadata.json'
+    snow_meta = pd.read_json(snow_meta_url)
+    return snow_meta
+
+def combine_polygons(geo_df, huc_name):
+    polygons = geo_df['geometry']
+    geometry = gpd.GeoSeries(cascaded_union(polygons))
+    df = pd.DataFrame({'Name': [huc_name]})
+    return gpd.GeoDataFrame(df, geometry=geometry)
+
+def get_buffer_geojson(geo_df, snow_meta, buffer):
+    geo_df.geometry = geo_df['geometry'].buffer(buffer)
+    return json.loads(geo_df.to_json())
 
 def define_buffer(geo_df, snow_meta, min_snotels=3, max_buffer=0.3):
     snow_sites_cnt = 0
@@ -195,7 +209,7 @@ def define_buffer(geo_df, snow_meta, min_snotels=3, max_buffer=0.3):
             buffer
         )
         snotels = get_snotels(geo_df, snow_meta)
-        snow_sites = snotels[snotels['stationTriplet'].str.contains('SNTL')]
+        snow_sites = snotels[snotels['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
         snow_sites_cnt = len(snow_sites)
     print(f'      {snow_sites_cnt} snotels using a {round(buffer, 2)} deg buffer')
     return buffer_geojson, snow_sites
@@ -233,12 +247,6 @@ def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
         style_function=huc6_style,
         show=False
     ).add_to(huc_map)
-
-def get_snow_meta(snow_meta_url=None):
-    if not snow_meta_url:
-        snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/WTEQ/metadata.json'
-    snow_meta = pd.read_json(snow_meta_url)
-    return snow_meta
 
 def create_huc_maps(hdb_meta, site_type_dir):
     this_dir = path.dirname(path.realpath(__file__))

@@ -15,7 +15,7 @@ if __name__ == '__main__':
     one_off_sites = [919, 743]
     one_off_datatypes = [19, 20, 34, 33]
 
-    testing_sites = [917, 729]
+    testing_sites = [917, 729, 919, 721]
     testing_datatypes = [29, 30, 49, 42, 43, 17, 19, 20]
 
     crsp_reservoirs = [
