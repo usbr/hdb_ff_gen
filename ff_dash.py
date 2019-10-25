@@ -71,14 +71,14 @@ def get_chart_navbar_links(chart_names):
 
 def create_map_embed(site_id):
     embed = f'''          <div id="huc" class="tab-pane active show fade in embed-responsive embed-responsive-16by9" role="tabpanel">
-            <embed class="embed-responsive-item" src="./maps/{site_id}_huc.html" scrolling="no" frameborder="0" allowfullscreen></embed>
+            <embed class="embed-responsive-item" src="./maps/{site_id}_huc.html"></embed>
           </div>'''
     return embed
 
 def create_embed(chart_name):
     jumpto = chart_name.replace(' ', '_')
     embed = f'''          <div id="{jumpto}" class="tab-pane fade in embed-responsive embed-responsive-16by9" role="tabpanel">
-            <embed class="embed-responsive-item" src="./charts/{chart_name}.html" scrolling="no" frameborder="0" allowfullscreen></embed>
+            <embed class="embed-responsive-item" src="./charts/{chart_name}.html"></embed>
           </div>'''
     return embed
 

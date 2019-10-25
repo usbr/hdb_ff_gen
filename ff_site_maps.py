@@ -10,6 +10,7 @@ import folium
 from folium.plugins import FloatImage
 import pandas as pd
 from ff_utils import get_fa_icon
+from ff_utils import add_optional_tilesets, add_huc_layer
 from ff_utils import get_bor_seal, get_favicon
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
@@ -24,33 +25,6 @@ default_css = get_default_css()
 #folium.folium._default_css = default_css
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
-
-def add_optional_tilesets(folium_map):
-    tilesets = [
-        'OpenStreetMap',
-        'Stamen Toner',
-        'Stamen Watercolor',
-        'CartoDB positron',
-        'CartoDB dark_matter',
-    ]
-
-    for tileset in tilesets:
-        folium.TileLayer(tileset).add_to(folium_map)
-
-def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
-    if not hu6_geojson_path:
-        hu6_geojson_path = 'https://gist.githubusercontent.com/beautah/01dd026c5b8fac1434959dfc48f775b5/raw/2e9e8a70ced3a1eca40cb0c2061fa689e9c44248/HUC6.geojson'
-    huc6_style = lambda x: {
-        'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
-    }
-
-    folium.GeoJson(
-        hu6_geojson_path,
-        name='HUC 6',
-        embed=embed,
-        style_function = huc6_style,
-        show=False
-    ).add_to(huc_map)
 
 def get_bounds(meta):
     meta_no_dups = meta.drop_duplicates(subset='site_id')
@@ -86,7 +60,7 @@ def add_markers(sitetype_map, meta):
             site_name = row['site_metadata.site_name']
             href = f'./{site_id}/dashboard.html'
             embed = f'''<div class="container embed-responsive embed-responsive-16by9">
-                  <embed class="embed-responsive-item" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
+                  <embed class="embed-responsive-item" src="{href}"></embed>
                 </div>'''
 
             icon = get_fa_icon(obj_type)
@@ -110,12 +84,9 @@ def add_markers(sitetype_map, meta):
             pass
 
 def create_map(site_type, meta, data_dir):
-    this_dir = path.dirname(path.realpath(__file__))
     sitetype_dir = path.join(data_dir, site_type)
     map_filename = f'site_map.html'
     map_path = path.join(sitetype_dir, map_filename)
-    gis_path = path.join(this_dir, 'gis')
-    huc6_path = path.join(gis_path, 'HUC6.geojson')
 
     sitetype_map = folium.Map(
         tiles='Stamen Terrain'
@@ -124,7 +95,8 @@ def create_map(site_type, meta, data_dir):
     if bounds:
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
-        add_hu6_layer(sitetype_map, huc6_path, True)
+        add_huc_layer(sitetype_map, 2)
+        add_huc_layer(sitetype_map, 6)
         add_optional_tilesets(sitetype_map)
         folium.LayerControl().add_to(sitetype_map)
         FloatImage(

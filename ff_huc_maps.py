@@ -17,7 +17,8 @@ import json
 from shapely.geometry import Point
 from shapely.ops import cascaded_union
 from ff_utils import get_fa_icon
-from ff_utils import STATIC_URL, get_favicon, get_bor_seal
+from ff_utils import add_optional_tilesets, add_huc_layer
+from ff_utils import get_favicon, get_bor_seal
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
 
@@ -31,18 +32,6 @@ default_css = get_default_css()
 folium.folium._default_css = default_css
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
-
-def add_optional_tilesets(folium_map):
-    tilesets = [
-        'OpenStreetMap',
-        'Stamen Toner',
-        'Stamen Watercolor',
-        'CartoDB positron',
-        'CartoDB dark_matter',
-    ]
-
-    for tileset in tilesets:
-        folium.TileLayer(tileset).add_to(folium_map)
 
 def get_upstream_basin(huc12, to_huc_table):
     if huc12:
@@ -74,13 +63,6 @@ def get_upstream_geo(huc2, huc_list, to_huc_table):
         ]
         to_huc_table['objects'][f'{huc2}_HUC12']['geometries'] = huc_upstream_geo
         return to_huc_table
-
-def get_bounds(lats, longs):
-    max_lat = max(lats)
-    max_long = -1 * max([abs(i) for i in longs])
-    min_lat = min(lats)
-    min_long = -1 * min([abs(i) for i in longs])
-    return [(min_lat, max_long), (max_lat, min_long)]
 
 def add_hdb_marker(huc_map, row):
         try:
@@ -161,7 +143,7 @@ def add_awdb_markers(huc_map, meta):
             color = 'green'
             if network == 'SCAN':
                 icon = 'umbrella'
-                color = 'yellow'
+                color = 'lightgreen'
             folium.Marker(
                 location=lat_long,
                 popup=popup_html,
@@ -233,31 +215,12 @@ def add_upstream_layer(huc_map, huc_geojson, buffer_geojson):
         line_opacity=0.75,
     ).add_to(huc_map)
 
-def add_hu6_layer(huc_map, hu6_geojson_path=None, embed=False):
-    if not hu6_geojson_path:
-        hu6_geojson_path = f'{STATIC_URL}/gis/HUC6.geojson'
-    huc6_style = lambda x: {
-        'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
-    }
-
-    folium.GeoJson(
-        hu6_geojson_path,
-        name='HUC 6',
-        embed=embed,
-        style_function=huc6_style,
-        show=False
-    ).add_to(huc_map)
-
 def create_huc_maps(hdb_meta, site_type_dir):
     this_dir = path.dirname(path.realpath(__file__))
     gis_path = path.join(this_dir, 'gis')
     hdb_meta.drop_duplicates(subset='site_id', inplace=True)
     snow_meta = get_snow_meta()
-#    huc2_geo_df = gpd.read_file(r'./gis/HUC2.topojson')
     huc2_list = [str(i) for i in [10, 11, 13, 14, 15, 16, 17, 18]]
-#    huc6_topo_path = path.join(this_dir, 'gis', 'HUC6.topojson')
-#    with open(huc6_topo_path) as f:
-#        huc6_topojson = json.load(f)
     huc12_geo_dfs = {}
     huc12_geo_dicts = {}
     for huc2 in huc2_list:
@@ -288,19 +251,15 @@ def create_huc_maps(hdb_meta, site_type_dir):
             huc2 = huc12[:2]
             huc_dict = deepcopy(huc12_geo_dicts[huc2])
             upstream_huc_list = get_upstream_basin(huc12, huc_dict)
-    #        huc_topojson = get_upstream_geo(huc2, upstream_huc_list, huc_dict)
             geo_df = huc12_geo_dfs[huc2]
             geo_df = geo_df[geo_df['HUC12'].isin(upstream_huc_list)]
             geo_df = combine_polygons(geo_df, site_name)
             huc_geojson = json.loads(geo_df.to_json())
             buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
-#            huc6_path = path.join(gis_path, 'HUC6.geojson')
-            add_hu6_layer(huc_map)
+            add_huc_layer(huc_map, 2)
+            add_huc_layer(huc_map, 6)
             add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
             add_awdb_markers(huc_map, snow_sites)
-#            lats = snow_sites['latitude'].to_list() + [lat]
-#            longs = snow_sites['longitude'].to_list() + [lon]
-#            bounds = get_bounds(lats, longs)
             bounds_list = geo_df['geometry'][0].bounds
             bounds = [
                 (bounds_list[1], bounds_list[0]),

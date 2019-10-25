@@ -4,6 +4,7 @@ Created on Fri Sep 13 15:26:04 2019
 
 @author: buriona
 """
+import folium
 
 STATIC_URL = f'https://www.usbr.gov/uc/water/ff/static'
 
@@ -112,6 +113,36 @@ def get_fa_icon(obj_type='default'):
     }
     fa_icon = fa_dict.get(obj_type, 'map-pin')
     return fa_icon
+
+def add_optional_tilesets(folium_map):
+    tilesets = [
+        'OpenStreetMap',
+        'Stamen Toner',
+        'Stamen Watercolor',
+        'CartoDB positron',
+        'CartoDB dark_matter',
+    ]
+
+    for tileset in tilesets:
+        folium.TileLayer(tileset).add_to(folium_map)
+
+def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False):
+    try:
+        if not huc_geojson_path:
+            huc_geojson_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
+        huc_style = lambda x: {
+            'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
+        }
+
+        folium.GeoJson(
+            huc_geojson_path,
+            name=f'HUC {level}',
+            embed=embed,
+            style_function=huc_style,
+            show=False
+        ).add_to(huc_map)
+    except Exception as err:
+        print(f'Could not add HUC {level} layer to map! - {err}')
 
 if __name__ == '__main__':
     print('Just a utility module')
