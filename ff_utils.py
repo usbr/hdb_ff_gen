@@ -114,6 +114,21 @@ def get_fa_icon(obj_type='default'):
     fa_icon = fa_dict.get(obj_type, 'map-pin')
     return fa_icon
 
+def get_icon_color(row):
+    obj_owner = 'BOR'
+    if row:
+        if row['site_metadata.scs_id'].iloc[0]:
+            obj_owner = 'NRCS'
+        if row['site_metadata.usgs_id'].iloc[0]:
+            obj_owner = 'USGS'
+    color_dict = {
+        'BOR': 'blue',
+        'NRCS': 'red',
+        'USGS': 'green',
+    }
+    icon_color = color_dict.get(obj_owner, 'black')
+    return icon_color
+
 def add_optional_tilesets(folium_map):
     tilesets = [
         'OpenStreetMap',
@@ -122,7 +137,6 @@ def add_optional_tilesets(folium_map):
         'CartoDB positron',
         'CartoDB dark_matter',
     ]
-
     for tileset in tilesets:
         folium.TileLayer(tileset).add_to(folium_map)
 

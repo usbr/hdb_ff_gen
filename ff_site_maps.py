@@ -11,7 +11,7 @@ from folium.plugins import FloatImage
 import pandas as pd
 from ff_utils import get_fa_icon
 from ff_utils import add_optional_tilesets, add_huc_layer
-from ff_utils import get_bor_seal, get_favicon
+from ff_utils import get_bor_seal, get_favicon, get_icon_color
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
 
@@ -64,6 +64,7 @@ def add_markers(sitetype_map, meta):
                 </div>'''
 
             icon = get_fa_icon(obj_type)
+            color = get_icon_color(row)
             popup_html = (
                 f'{embed}'
                 f'Latitude: {round(lat, 3)}, '
@@ -78,7 +79,7 @@ def add_markers(sitetype_map, meta):
                 location=lat_long,
                 popup=popup,
                 tooltip=site_name,
-                icon=folium.Icon(icon=icon, prefix='fa')
+                icon=folium.Icon(icon=icon, prefix='fa', color=color)
             ).add_to(sitetype_map)
         except (ValueError, TypeError):
             pass

@@ -16,7 +16,7 @@ import geopandas as gpd
 import json
 from shapely.geometry import Point
 from shapely.ops import cascaded_union
-from ff_utils import get_fa_icon
+from ff_utils import get_fa_icon, get_icon_color
 from ff_utils import add_optional_tilesets, add_huc_layer
 from ff_utils import get_favicon, get_bor_seal
 from ff_utils import get_bor_js, get_bor_css
@@ -88,11 +88,12 @@ def add_hdb_marker(huc_map, row):
             )
 
             icon = get_fa_icon(obj_type)
+            color = get_icon_color(row)
             folium.Marker(
                 location=lat_long,
                 popup=popup_html,
                 tooltip=site_name,
-                icon=folium.Icon(icon=icon, prefix='fa', color='blue')
+                icon=folium.Icon(icon=icon, prefix='fa', color=color)
             ).add_to(huc_map)
         except (ValueError, TypeError):
             pass
@@ -119,10 +120,8 @@ def add_awdb_markers(huc_map, meta):
             site_name = row['name']
             site_href_base = 'https://wcc.sc.egov.usda.gov/nwcc/site?sitenum='
             site_href = f'{site_href_base}{site_id}'
-            charts_href_base = 'https://www.nrcs.usda.gov/Internet/WCIS/siteCharts/POR/'
+            charts_href_base = 'https://www.nrcs.usda.gov/Internet/WCIS/siteCharts/POR'
             wteq_href = f'{charts_href_base}/WTEQ/{state}/{site_name}.html'
-            if network == 'SCAN':
-                wteq_href = ''
             prec_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
             tavg_href = f'{charts_href_base}/TAVG/{state}/{site_name}.html'
 
@@ -140,10 +139,10 @@ def add_awdb_markers(huc_map, meta):
             )
 
             icon = 'snowflake-o'
-            color = 'green'
+            color = get_icon_color(row)
             if network == 'SCAN':
                 icon = 'umbrella'
-                color = 'lightgreen'
+                color = f'light{color}'
             folium.Marker(
                 location=lat_long,
                 popup=popup_html,
