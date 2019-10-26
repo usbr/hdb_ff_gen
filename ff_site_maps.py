@@ -65,6 +65,7 @@ def add_markers(sitetype_map, meta):
 
             icon = get_fa_icon(obj_type)
             color = get_icon_color(row)
+            print(color)
             popup_html = (
                 f'{embed}'
                 f'Latitude: {round(lat, 3)}, '

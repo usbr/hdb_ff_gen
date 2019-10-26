@@ -116,7 +116,7 @@ def get_fa_icon(obj_type='default'):
 
 def get_icon_color(row):
     obj_owner = 'BOR'
-    if row:
+    if not row.empty:
         if row['site_metadata.scs_id'].iloc[0]:
             obj_owner = 'NRCS'
         if row['site_metadata.usgs_id'].iloc[0]:
