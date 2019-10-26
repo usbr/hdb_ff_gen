@@ -139,7 +139,7 @@ def add_awdb_markers(huc_map, meta):
             )
 
             icon = 'snowflake-o'
-            color = get_icon_color(row)
+            color = 'green'
             if network == 'SCAN':
                 icon = 'umbrella'
                 color = f'light{color}'
