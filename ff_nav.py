@@ -75,83 +75,6 @@ def remove_items(key_list, items_dict):
         items_dict.pop(key, None)
     return items_dict
 
-def create_nav(data_dir, nav_filename=None):
-    nl = '\n'
-    if not nav_filename:
-        nav_filename = 'ff_nav.html'
-
-    basepath = os.path.basename(os.path.normpath(data_dir))
-    walk_dict = get_folders(data_dir)[basepath]
-    to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv']
-    walk_dict = remove_items(to_remove, walk_dict)
-    button_str_list = []
-    for button_label, dd_items in walk_dict.items():
-        if dd_items:
-            to_remove = ['huc_maps']
-            dd_items = remove_items(to_remove, dd_items)
-            button_path_abs = Path(data_dir, button_label)
-            meta_path = Path(button_path_abs, 'meta.csv')
-            meta = pd.read_csv(meta_path)
-            button_path = Path('.', button_label)
-            meta_path = Path(button_path, 'meta.csv')
-            map_path = Path(button_path, 'site_map.html')
-            meta_menu_entry = get_menu_entry('METADATA', meta_path)
-            map_menu_entry = get_menu_entry('SITE MAP', map_path)
-            site_menu_list = [meta_menu_entry, map_menu_entry]
-            site_name_dict = {
-                get_site_name(int(k), meta): k for k, v in dd_items.items() if v
-            }
-
-            for site_name, site_id in sorted(site_name_dict.items()):
-                site_path = Path(button_path, site_id)
-                site_path_abs = Path(button_path_abs, site_id)
-                dash_html_str = create_dash(site_name, site_id, site_path_abs)
-                dash_filename = 'dashboard.html'
-                dash_path_abs = Path(site_path_abs, dash_filename)
-                dash_path = Path(site_path, dash_filename)
-                dash_write_dict = {
-                    dash_path_abs: dash_html_str
-                }
-                write_file(dash_write_dict)
-                dash_menu_entry = get_menu_entry('DASHBOARD', dash_path)
-                site_label = f'&bull; {site_name}'
-                site_submenu_list = [dash_menu_entry]
-                site_submenu_list.append(
-                    get_site_submenu_str(
-                        '.',
-                        dd_items[site_id],
-                        site_id,
-                        button_label,
-                        meta
-                    )
-                )
-                site_submenu_str = '\n'.join(site_submenu_list)
-                site_dd = get_sub_menus(
-                    site_label,
-                    site_path,
-                    sub_menu_dd=site_submenu_str
-                )
-                site_menu_list.append(site_dd)
-            sites_dd_str = '\n'.join(site_menu_list)
-            folder_button = get_button(
-                button_label.replace('_', ' '),
-                sites_dd_str
-            )
-            button_str_list.append(folder_button)
-
-    buttons_str = '\n'.join([i for i in button_str_list if i])
-
-    nl = '\n'
-    nav_html_str = (
-        f'{HEADER_STR}{nl}{get_updt_str()}{nl}{buttons_str}{nl}{FOOTER_STR}'
-    )
-    write_nav_dict = {
-        Path(data_dir, nav_filename): nav_html_str
-    }
-    write_file(write_nav_dict)
-
-    return f'\nNavigation files created.'
-
 def write_file(write_dict):
     for filepath, html_str in write_dict.items():
         with open(filepath, 'w') as file:
@@ -307,6 +230,83 @@ def get_site_submenu_str(data_dir, site_data, site_id, button_label, meta):
     )
 
     return site_submenu_str
+
+def create_nav(data_dir, nav_filename=None):
+    nl = '\n'
+    if not nav_filename:
+        nav_filename = 'ff_nav.html'
+
+    basepath = os.path.basename(os.path.normpath(data_dir))
+    walk_dict = get_folders(data_dir)[basepath]
+    to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv']
+    walk_dict = remove_items(to_remove, walk_dict)
+    button_str_list = []
+    for button_label, dd_items in walk_dict.items():
+        if dd_items:
+            to_remove = ['huc_maps']
+            dd_items = remove_items(to_remove, dd_items)
+            button_path_abs = Path(data_dir, button_label)
+            meta_path = Path(button_path_abs, 'meta.csv')
+            meta = pd.read_csv(meta_path)
+            button_path = Path('.', button_label)
+            meta_path = Path(button_path, 'meta.csv')
+            map_path = Path(button_path, 'site_map.html')
+            meta_menu_entry = get_menu_entry('METADATA', meta_path)
+            map_menu_entry = get_menu_entry('SITE MAP', map_path)
+            site_menu_list = [meta_menu_entry, map_menu_entry]
+            site_name_dict = {
+                get_site_name(int(k), meta): k for k, v in dd_items.items() if v
+            }
+
+            for site_name, site_id in sorted(site_name_dict.items()):
+                site_path = Path(button_path, site_id)
+                site_path_abs = Path(button_path_abs, site_id)
+                dash_html_str = create_dash(site_name, site_id, site_path_abs)
+                dash_filename = 'dashboard.html'
+                dash_path_abs = Path(site_path_abs, dash_filename)
+                dash_path = Path(site_path, dash_filename)
+                dash_write_dict = {
+                    dash_path_abs: dash_html_str
+                }
+                write_file(dash_write_dict)
+                dash_menu_entry = get_menu_entry('DASHBOARD', dash_path)
+                site_label = f'&bull; {site_name}'
+                site_submenu_list = [dash_menu_entry]
+                site_submenu_list.append(
+                    get_site_submenu_str(
+                        '.',
+                        dd_items[site_id],
+                        site_id,
+                        button_label,
+                        meta
+                    )
+                )
+                site_submenu_str = '\n'.join(site_submenu_list)
+                site_dd = get_sub_menus(
+                    site_label,
+                    site_path,
+                    sub_menu_dd=site_submenu_str
+                )
+                site_menu_list.append(site_dd)
+            sites_dd_str = '\n'.join(site_menu_list)
+            folder_button = get_button(
+                button_label.replace('_', ' '),
+                sites_dd_str
+            )
+            button_str_list.append(folder_button)
+
+    buttons_str = '\n'.join([i for i in button_str_list if i])
+
+    nl = '\n'
+    nav_html_str = (
+        f'{HEADER_STR}{nl}{get_updt_str()}{nl}{buttons_str}{nl}{FOOTER_STR}'
+    )
+    write_nav_dict = {
+        Path(data_dir, nav_filename): nav_html_str
+    }
+    write_file(write_nav_dict)
+
+    return f'\nNavigation files created.'
 
 if __name__ == '__main__':
     this_dir = os.path.dirname(os.path.realpath(__file__))

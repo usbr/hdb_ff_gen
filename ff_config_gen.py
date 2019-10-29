@@ -276,6 +276,20 @@ if __name__ == '__main__':
             'rise_sites': None,
             'sftp_push': False
         },
+        'prod_rhel_daily': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'uc',
+            'requests': prod_requests_daily,
+            'rise_sites': None,
+            'sftp_push': False
+        },
+        'prod_rhel_weekly': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'uc',
+            'requests': prod_requests_weekly,
+            'rise_sites': None,
+            'sftp_push': False
+        },
         'prod_lc': {
             'alt_path': None,
             'hdb': 'lc',
