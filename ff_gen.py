@@ -283,8 +283,7 @@ if __name__ == '__main__':
         site_names = df_meta[site_label].tolist()
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-        make_huc_maps(df_meta.copy(), site_type_dir, logger)
-        sys.exit(0)
+
         for i, sdi in enumerate(sdis):
             bt = time.time()
 
@@ -363,7 +362,8 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-        make_huc_maps(df_meta.copy(), site_type_dir, logger)
+        if not period.isnumeric():
+            make_huc_maps(df_meta.copy(), site_type_dir, logger)
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
 
     make_nav(data_dir, logger)
