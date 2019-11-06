@@ -161,14 +161,17 @@ def create_wy_traces(df, datatype_name, units):
     traces = []
     water_years = df.columns.tolist()
     for wy in water_years:
+        color = None
+        if str(wy) == str(curr_wy):
+            color = 'rgb(0,0,0)'
         df_temp = df[wy]
         x_vals = df_temp.index
         y_vals = df_temp.values
         show_trace = visible[wy in [curr_wy, curr_wy - 1]]
         if get_chart_type(datatype_name, units) == 'bar':
-            trace = bar_trace(x_vals, y_vals, show_trace, f'{wy}')
+            trace = bar_trace(x_vals, y_vals, show_trace, f'{wy}', color)
         else:
-            trace = scatter_trace(x_vals, y_vals, show_trace, f'{wy}')
+            trace = scatter_trace(x_vals, y_vals, show_trace, f'{wy}', color)
         traces.append(trace)
 
     return traces
@@ -432,7 +435,7 @@ if __name__ == '__main__':
             plotly_js = (
                 r'https://www.usbr.gov/uc/water/ff/static/js/plotly/1.48.2/plotly-latest.min.js'
             )
-        try:
+        if True:#try:
             fig = create_chart(df.copy(), meta)
             plotly.offline.plot(
                 fig,
@@ -453,15 +456,15 @@ if __name__ == '__main__':
             with open(chart_filename, 'w') as html_file:
                 html_file.write(chart_file_str.replace(r'</head>', flavicon))
 
-        except Exception as err:
-            err_str = (
-                f'     Error creating chart - {chart_filename} - {err}'
-            )
-            print(err_str)
+#        except Exception as err:
+#            err_str = (
+#                f'     Error creating chart - {chart_filename} - {err}'
+#            )
+#            print(err_str)
 
     site_id = 731
-    sdi = 1567
-    datatype_id = 20
+    sdi = 1332
+    datatype_id = 19
     this_dir = path.dirname(path.realpath(__file__))
     test_dir = path.join(this_dir, 'test')
     data_dir = path.join(test_dir, 'data')
