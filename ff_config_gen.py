@@ -314,7 +314,7 @@ if __name__ == '__main__':
         'default': {
             'alt_path': None,
             'hdb': 'uc',
-            'requests': testing_requests,
+            'requests': prod_requests_v2,#testing_requests,
             'rise_sites': None,
             'sftp_push': False
         },
