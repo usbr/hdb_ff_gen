@@ -7,7 +7,7 @@ Created on Fri May 31 07:43:40 2019
 
 from os import path
 import folium
-from folium.plugins import FloatImage
+from folium.plugins import FloatImage, MousePosition
 import pandas as pd
 from ff_utils import get_fa_icon
 from ff_utils import add_optional_tilesets, add_huc_layer
@@ -105,6 +105,7 @@ def create_map(site_type, meta, data_dir):
             bottom=1,
             left=1
         ).add_to(sitetype_map)
+        MousePosition(prefix="Location: ").add_to(sitetype_map)
         sitetype_map.save(map_path)
         flavicon = (
             f'<link rel="shortcut icon" '

@@ -266,7 +266,7 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_weekly,
-            'rise_sites': None,
+            'rise_sites': uc_rise_sites,
             'sftp_push': True
         },
         'prod_rhel': {

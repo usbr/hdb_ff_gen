@@ -7,7 +7,7 @@ Created on Wed Aug  7 08:14:46 2019
 
 from collections import OrderedDict
 import folium
-from folium.plugins import FloatImage
+from folium.plugins import FloatImage, MousePosition
 import pandas as pd
 #from requests import get as req_get
 from os import path, makedirs
@@ -273,6 +273,7 @@ def create_huc_maps(hdb_meta, site_type_dir):
                 bottom=1,
                 left=1
             ).add_to(huc_map)
+            MousePosition(prefix="Location: ").add_to(huc_map)
         maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
         makedirs(maps_dir, exist_ok=True)
         map_path = path.join(maps_dir,f'{site_id}_huc.html')

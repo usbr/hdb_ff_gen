@@ -18,9 +18,8 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
     curr_date_str = dt.now().strftime('%Y-%m-%d %H:%M:00')
     rise_timestamp_str = dt.now().strftime('%Y%m%d%H%M%S')
     rise_filename = f'{db_name}_{rise_timestamp_str}.json'
-    if num_records:
-
-        df = df.tail(num_records)
+    if num_records.isnumeric():
+        df = df.tail(int(num_records))
     df.rename(
         index=str,
         columns={
@@ -39,7 +38,7 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
     df['modelRunSourceCode'] = None
     df['modelRunMemberSourceCode'] = None
     df['status'] = None
-    df['lastUpdate'] = curr_date_str
+    df['lastUpdate'] = f'{curr_date_str}-07:00'
     resultAttributes = {
         'resultType': 'observed',
         'timeStep': interval
