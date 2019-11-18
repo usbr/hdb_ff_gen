@@ -375,8 +375,8 @@ if __name__ == '__main__':
     )
 
     if ff_config['sftp_push']:
-        pub_script_name = 'ff_scp_push.txt'
-        sync_files(this_dir, pub_script_name, logger)
+#        pub_script_name = 'ff_scp_push.txt'
+#        sync_files(this_dir, pub_script_name, logger)
         rise_script_name = 'ff_rise_push.txt'
         sync_files(this_dir, rise_script_name, logger)
 
