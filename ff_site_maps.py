@@ -26,6 +26,28 @@ default_css = get_default_css()
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
 
+def clean_coords(coord_series, neg=False):
+    results = []
+    for idx, coord in coord_series.iteritems():
+        if not str(coord).isnumeric():
+            coord_strs = str(coord).split(' ')
+            coord_digits = []
+            for coord_str in coord_strs:
+                coord_digit = ''.join([ch for ch in coord_str if ch.isdigit() or ch == '.'])
+                coord_digits.append(float(coord_digit))
+            if len(coord_digits) == 3:
+                results.append(coord_digits[0] + (coord_digits[1] + coord_digits[2] / 60) / 60)
+            elif len(coord_digits) == 2:
+                results.append(coord_digits[0] + (coord_digits[1] / 60))
+            elif len(coord_digits) == 1:
+                results.append(coord_digits[0])
+        else:
+            results.append(coord)
+    if neg:
+        results[:] = [-1 * result if result > 0 else result for result  in results]
+    clean_series = pd.Series(results, index=coord_series.index)
+    return clean_series
+
 def get_bounds(meta):
     meta_no_dups = meta.drop_duplicates(subset='site_id')
     lats = []
@@ -49,6 +71,7 @@ def get_bounds(meta):
 
 def add_markers(sitetype_map, meta):
     meta_no_dups = meta.drop_duplicates(subset='site_id')
+    
     for index, row in meta_no_dups.iterrows():
         try:
             site_id = row['site_id']
@@ -85,6 +108,9 @@ def add_markers(sitetype_map, meta):
             pass
 
 def create_map(site_type, meta, data_dir):
+    meta = meta.drop_duplicates(subset='site_id')
+    # meta['site_metadata.lat'] = clean_coords(meta['site_metadata.lat'])
+    # meta['site_metadata.longi'] = clean_coords(meta['site_metadata.longi'], True)
     sitetype_dir = path.join(data_dir, site_type)
     map_filename = f'site_map.html'
     map_path = path.join(sitetype_dir, map_filename)

@@ -37,11 +37,17 @@ if __name__ == '__main__':
         1998, 1999, 2000, 948, 2002, 2003, 2005
     ]
 
-    lc_reservoirs = [
-        1037, 3446, 3620, 1022, 1469, 1034, 3840, 4074, 919, 2745, 923, 921,
-        3258, 922, 1103, 1038, 3579, 3578, 1033, 1099
+    lc_gages = [
+        1097, 1018, 1061, 1254, 1060, 751, 1016, 1014, 3432, 3434, 1015, 
+        3433, 1008, 1104
     ]
-
+    
+    lc_gage_datatypes = [19, 66]
+    
+    lc_reservoirs = [921, 922, 923]
+    
+    lc_res_datatypes = [43, 17, 49]
+    
     eco_reservoirs = [
         100001, 100065, 100002, 100081, 100010, 100089, 100156, 100120, 100091,
         100017, 100100, 100257, 100003, 100038, 100031, 100113, 100032, 100049,
@@ -95,7 +101,7 @@ if __name__ == '__main__':
 
     res_data_types = [
         15, 17, 25, 29, 30, 31, 32, 33, 34, 39, 40, 42, 43, 46, 47, 49, 49,
-        123, 124, 1197, 1198, 1501
+        123, 124, 1197, 1198, 1501, 89
     ]
 
     eco_res_data_types = [17, 49]
@@ -209,9 +215,15 @@ if __name__ == '__main__':
     }
 
     prod_requests_lc = {
-        'LC_RESERVOIR_DATA': {
+        'RESERVOIR_DATA': {
             'sids': lc_reservoirs,
-            'dids': res_data_types,
+            'dids': lc_res_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        },
+        'GAUGE_DATA': {
+            'sids': lc_gages,
+            'dids':lc_gage_datatypes,
             'interval': 'day',
             'period': 'por'
         }
