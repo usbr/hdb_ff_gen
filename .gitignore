@@ -120,6 +120,8 @@ dmypy.json
 ### Python Patch
 .venv/
 
+### pylint folder
+.pylint.d/
 ### hdb and ff config json files ###
 *config.json
 
