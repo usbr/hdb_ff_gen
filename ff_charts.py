@@ -262,7 +262,7 @@ def get_anno_text(df, df_stats, units):
     last_row = df.loc[df[curr_wy].last_valid_index()]
     curr_month = last_row.name.month
     curr_cal_yr = get_cal_yr(curr_month, curr_wy)
-    last_date = f'{last_row.name.strftime("%b %d, %Y")}, {curr_cal_yr}'
+    last_date = f'{last_row.name.strftime("%b %d")}, {curr_cal_yr}'
     last_data = round(last_row.iloc[-1], 2)
     last_year_data = round(last_row.iloc[-2], 2)
     stats_row = df_stats.loc[last_row.name]
