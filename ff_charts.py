@@ -473,7 +473,7 @@ if __name__ == '__main__':
     site_dir = path.join(data_dir, f'{site_id}')
     chart_dir = path.join(site_dir, 'charts')
     csv_path = path.join(site_dir, 'csv', f'{datatype_id}.csv')
-    meta_path = path.join(data_dir, 'meta.csv')
+    meta_path = path.join(data_dir, 'gauge_meta.csv')
     if path.exists(csv_path) and path.exists(meta_path):
         df_meta = pd.read_csv(meta_path)
         meta = df_meta[df_meta['site_datatype_id'] == sdi].iloc[0]
