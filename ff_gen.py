@@ -158,7 +158,7 @@ def make_sitemap(site_type, df_meta, data_dir, logger):
         logger.info(map_str)
     except Exception as err:
         map_str = (
-            f'Error creating leaflet map file for {site_type} - {err}'
+            f'Error creating leaflet site map file for {site_type} - {err}'
         )
         print(map_str)
         logger.info(map_str)
@@ -170,7 +170,7 @@ def make_webmap(data_dir, logger):
         logger.info(webmap_str)
     except Exception as err:
         webmap_err = (
-            f'Error creating webmap - {err}'
+            f'Error creating webmap for {data_dir} - {err}'
         )
         print(webmap_err)
         logger.info(webmap_err)
@@ -182,7 +182,7 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         logger.info(huc_map_str)
     except Exception as err:
         webmap_err = (
-            f'Error creating huc maps - {err}'
+            f'Error creating huc maps in {site_type_dir} - {err}'
         )
         print(webmap_err)
         logger.info(webmap_err)
@@ -362,10 +362,10 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
+        make_sitemap(site_type, df_meta.copy(), data_dir, logger)
         if not period.isnumeric():
             make_huc_maps(df_meta.copy(), site_type_dir, logger)
-        make_sitemap(site_type, df_meta.copy(), data_dir, logger)
-
+        
     make_nav(data_dir, logger)
 
     make_webmap(data_dir, logger)

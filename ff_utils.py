@@ -5,6 +5,9 @@ Created on Fri Sep 13 15:26:04 2019
 @author: buriona
 """
 import folium
+import pandas as pd
+# import geopandas as gpd
+from shapely.geometry import Point
 
 STATIC_URL = f'https://www.usbr.gov/uc/water/ff/static'
 
@@ -157,6 +160,50 @@ def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False):
         ).add_to(huc_map)
     except Exception as err:
         print(f'Could not add HUC {level} layer to map! - {err}')
+
+def clean_coords(coord_series, force_neg=False):
+    
+    coord_series = coord_series.apply(
+        pd.to_numeric, 
+        errors='ignore', 
+        downcast='float'
+    )
+    if not coord_series.apply(type).eq(str).any():
+        if force_neg:
+            return -coord_series.abs()
+        return coord_series
+    results = []
+    for idx, coord in coord_series.iteritems():
+        if not str(coord).isnumeric():
+            coord_strs = str(coord).split(' ')
+            coord_digits = []
+            for coord_str in coord_strs:
+                coord_digit = ''.join([ch for ch in coord_str if ch.isdigit() or ch == '.'])
+                coord_digits.append(float(coord_digit))
+            dec = None
+            coord_dec = 0
+            for i in reversed(range(0, len(coord_digits))):
+                if dec:
+                    coord_dec = abs(coord_digits[i]) + dec
+                dec = coord_digits[i] / 60
+            if str(coord)[0] == '-':
+                coord_dec = -1 * coord_dec
+            results.append(coord_dec)
+        else:
+            results.append(coord)
+    if force_neg:
+        results[:] = [-1 * result if result > 0 else result for result  in results]
+    clean_series = pd.Series(results, index=coord_series.index)
+    return clean_series
+
+def get_huc(geo_df, lat, lon, level='12'):
+
+    for idx, row in geo_df.iterrows():
+        polygon = row['geometry']
+        point = Point(lon, lat)
+        if polygon.contains(point):
+            return row[f'HUC{level}']
+    return None
 
 if __name__ == '__main__':
     print('Just a utility module')

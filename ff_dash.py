@@ -184,10 +184,10 @@ def get_dash_body(site_name, site_id, chart_names):
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav  mr-auto">
       <li class="nav-item">
-        <a class="nav-link ml-3" href="{get_map_url()}">Overview Map</a>
+        <a class="nav-link-primary ml-3" href="{get_map_url()}">Overview Map</a>
         </li>
       <li class="nav-item">
-        <a class="nav-link ml-3" href="{get_home_url()}l">Navigator</a>
+        <a class="nav-link-primary ml-3" href="{get_home_url()}l">Navigator</a>
       </li>
     </ul>
   </div>

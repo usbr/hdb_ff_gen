@@ -12,7 +12,7 @@ import numpy as np
 import plotly
 import plotly.graph_objs as go
 from ff_utils import get_favicon, get_bor_seal
-from hdb_api.hdb_utils import datatype_units, get_wy, is_leap_year
+from hdb_api.hdb_utils import datatype_units, get_wy, is_leap_year, get_cal_yr
 
 def get_log_scale_dd():
     log_scale_dd = [
@@ -258,9 +258,11 @@ def create_stat_traces(df, datatype_name, units):
     return traces
 
 def get_anno_text(df, df_stats, units):
-    curr_year = max(df.columns)
-    last_row = df.loc[df[curr_year].last_valid_index()]
-    last_date = f'{last_row.name.strftime("%b %d")}, {curr_year}'
+    curr_wy = max(df.columns)
+    last_row = df.loc[df[curr_wy].last_valid_index()]
+    curr_month = last_row.name.month
+    curr_cal_yr = get_cal_yr(curr_month, curr_wy)
+    last_date = f'{last_row.name.strftime("%b %d, %Y")}, {curr_cal_yr}'
     last_data = round(last_row.iloc[-1], 2)
     last_year_data = round(last_row.iloc[-2], 2)
     stats_row = df_stats.loc[last_row.name]

@@ -10,10 +10,12 @@ import folium
 from folium.plugins import FloatImage, MousePosition
 import pandas as pd
 from ff_utils import get_fa_icon
-from ff_utils import add_optional_tilesets, add_huc_layer
+from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords
 from ff_utils import get_bor_seal, get_favicon, get_icon_color
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
+
+pd.options.mode.chained_assignment = None
 
 bor_js = get_bor_js()
 bor_css = get_bor_css()
@@ -26,33 +28,11 @@ default_css = get_default_css()
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
 
-def clean_coords(coord_series, neg=False):
-    results = []
-    for idx, coord in coord_series.iteritems():
-        if not str(coord).isnumeric():
-            coord_strs = str(coord).split(' ')
-            coord_digits = []
-            for coord_str in coord_strs:
-                coord_digit = ''.join([ch for ch in coord_str if ch.isdigit() or ch == '.'])
-                coord_digits.append(float(coord_digit))
-            if len(coord_digits) == 3:
-                results.append(coord_digits[0] + (coord_digits[1] + coord_digits[2] / 60) / 60)
-            elif len(coord_digits) == 2:
-                results.append(coord_digits[0] + (coord_digits[1] / 60))
-            elif len(coord_digits) == 1:
-                results.append(coord_digits[0])
-        else:
-            results.append(coord)
-    if neg:
-        results[:] = [-1 * result if result > 0 else result for result  in results]
-    clean_series = pd.Series(results, index=coord_series.index)
-    return clean_series
-
 def get_bounds(meta):
-    meta_no_dups = meta.drop_duplicates(subset='site_id')
+    meta.drop_duplicates(subset='site_id', inplace=True)
     lats = []
     longs = []
-    for index, row in meta_no_dups.iterrows():
+    for index, row in meta.iterrows():
         try:
             lat = float(row['site_metadata.lat'])
             lon = float(row['site_metadata.longi'])
@@ -70,15 +50,15 @@ def get_bounds(meta):
     return [(min_lat, max_long), (max_lat, min_long)]
 
 def add_markers(sitetype_map, meta):
-    meta_no_dups = meta.drop_duplicates(subset='site_id')
-    
-    for index, row in meta_no_dups.iterrows():
+    meta.drop_duplicates(subset='site_id', inplace=True)
+
+    for index, row in meta.iterrows():
         try:
             site_id = row['site_id']
             obj_type = int(row['site_metadata.objecttype_id'])
             lat = float(row['site_metadata.lat'])
             lon = float(row['site_metadata.longi'])
-            elev = row['site_metadata.elevation']
+            elev = row.get('site_metadata.elevation', 'N/A')
             lat_long = [lat, lon]
             site_name = row['site_metadata.site_name']
             href = f'./{site_id}/dashboard.html'
@@ -104,13 +84,17 @@ def add_markers(sitetype_map, meta):
                 tooltip=site_name,
                 icon=folium.Icon(icon=icon, prefix='fa', color=color)
             ).add_to(sitetype_map)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as err:
+            if site_name:
+                print(f'    Could not add {site_name} to site map - {err}')
+            else:
+                print(f'    Could not add {site_id} to site map, missing site_name')
             pass
 
 def create_map(site_type, meta, data_dir):
     meta = meta.drop_duplicates(subset='site_id')
-    # meta['site_metadata.lat'] = clean_coords(meta['site_metadata.lat'])
-    # meta['site_metadata.longi'] = clean_coords(meta['site_metadata.longi'], True)
+    meta['site_metadata.lat'] = clean_coords(meta['site_metadata.lat'])
+    meta['site_metadata.longi'] = clean_coords(meta['site_metadata.longi'], True)
     sitetype_dir = path.join(data_dir, site_type)
     map_filename = f'site_map.html'
     map_path = path.join(sitetype_dir, map_filename)

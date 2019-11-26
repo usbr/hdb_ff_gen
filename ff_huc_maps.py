@@ -5,19 +5,20 @@ Created on Wed Aug  7 08:14:46 2019
 @author: buriona
 """
 
+import json
+from os import path, makedirs
+from copy import deepcopy
 from collections import OrderedDict
 import folium
 from folium.plugins import FloatImage, MousePosition
 import pandas as pd
+import numpy as np
 #from requests import get as req_get
-from os import path, makedirs
-from copy import deepcopy
 import geopandas as gpd
-import json
 from shapely.geometry import Point
 from shapely.ops import cascaded_union
 from ff_utils import get_fa_icon, get_icon_color
-from ff_utils import add_optional_tilesets, add_huc_layer
+from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords, get_huc
 from ff_utils import get_favicon, get_bor_seal
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
@@ -218,34 +219,40 @@ def create_huc_maps(hdb_meta, site_type_dir):
     this_dir = path.dirname(path.realpath(__file__))
     gis_path = path.join(this_dir, 'gis')
     hdb_meta.drop_duplicates(subset='site_id', inplace=True)
+    hdb_meta['site_metadata.lat'] = clean_coords(hdb_meta['site_metadata.lat'])
+    hdb_meta['site_metadata.longi'] = clean_coords(hdb_meta['site_metadata.longi'], True)
     snow_meta = get_snow_meta()
     huc2_list = [str(i) for i in [10, 11, 13, 14, 15, 16, 17, 18]]
     huc12_geo_dfs = {}
     huc12_geo_dicts = {}
+    topo_huc2_path = path.join(gis_path, 'HUC2.topojson')
+    huc2_geo_df = gpd.read_file(topo_huc2_path)
     for huc2 in huc2_list:
-
-        topo_json_path = path.join(gis_path, f'{huc2}_HUC12.topojson')
-        huc12_geo_dfs[huc2] = gpd.read_file(topo_json_path)
-        with open(topo_json_path) as f:
+        topo_huc12_path = path.join(gis_path, f'{huc2}_HUC12.topojson')
+        huc12_geo_dfs[huc2] = gpd.read_file(topo_huc12_path)
+        with open(topo_huc12_path) as f:
             huc12_geo_dicts[huc2] = json.load(f)
 
     for idx, row in hdb_meta.iterrows():
-
-        huc12 = row['site_metadata.hydrologic_unit']
         site_name = row['site_metadata.site_name']
-        site_id = row['site_id']
         print(f'    Creating map for {site_name}...')
+        site_id = row['site_id']
         lat = float(row['site_metadata.lat'])
         lon = float(row['site_metadata.longi'])
         lat_long = [lat, lon]
+        huc12 = row['site_metadata.hydrologic_unit']
         huc_map = folium.Map(
             tiles='Stamen Terrain',
             location=lat_long,
             zoom_start=9
         )
         add_hdb_marker(huc_map, row)
+        if not huc12 or len(str(huc12)) < 12:
+            huc2 = get_huc(huc2_geo_df, lat, lon, level='2')
+            if huc2 and huc2 in huc2_list:
+                huc12 = get_huc(huc12_geo_dfs[huc2], lat, lon, level='12')
 
-        if huc12:
+        if str(huc12).isnumeric():
             huc12 = str(huc12)
             huc2 = huc12[:2]
             huc_dict = deepcopy(huc12_geo_dicts[huc2])
@@ -255,8 +262,6 @@ def create_huc_maps(hdb_meta, site_type_dir):
             geo_df = combine_polygons(geo_df, site_name)
             huc_geojson = json.loads(geo_df.to_json())
             buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
-            add_huc_layer(huc_map, 2)
-            add_huc_layer(huc_map, 6)
             add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
             add_awdb_markers(huc_map, snow_sites)
             bounds_list = geo_df['geometry'][0].bounds
@@ -266,14 +271,17 @@ def create_huc_maps(hdb_meta, site_type_dir):
             ]
             if bounds:
                 huc_map.fit_bounds(bounds)
-            add_optional_tilesets(huc_map)
-            folium.LayerControl().add_to(huc_map)
-            FloatImage(
-                get_bor_seal(orient='shield'),
-                bottom=1,
-                left=1
-            ).add_to(huc_map)
-            MousePosition(prefix="Location: ").add_to(huc_map)
+        
+        add_huc_layer(huc_map, 2)
+        add_huc_layer(huc_map, 6) 
+        add_optional_tilesets(huc_map)
+        folium.LayerControl().add_to(huc_map)
+        FloatImage(
+            get_bor_seal(orient='shield'),
+            bottom=1,
+            left=1
+        ).add_to(huc_map)
+        MousePosition(prefix="Location: ").add_to(huc_map)
         maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
         makedirs(maps_dir, exist_ok=True)
         map_path = path.join(maps_dir,f'{site_id}_huc.html')
@@ -303,7 +311,7 @@ if __name__ == '__main__':
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
     site_type_dir = path.join(this_dir, 'test', 'data')
-    meta_path = path.join(site_type_dir, 'res_meta.csv')
+    meta_path = path.join(site_type_dir, 'meta.csv')
 #    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
 #    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)
