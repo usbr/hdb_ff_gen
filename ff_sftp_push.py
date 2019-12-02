@@ -58,7 +58,7 @@ if __name__ == '__main__':
     config_path = 'sftp_config.json'
     with open(config_path, 'r') as fp:
         sftp_configs = json.load(fp)
-    key = 'rise_win10'
+    key = 'rise'
     config_dict = sftp_configs[key]   
     scp_push_str = push_sftp(config_dict)
     print(scp_push_str)
