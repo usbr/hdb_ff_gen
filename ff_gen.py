@@ -18,14 +18,13 @@ import plotly as py
 from ff_nav import create_nav
 from ff_site_maps import create_map
 from ff_charts import create_chart
-from ff_scp_push import push_scp
+from ff_sftp_push import push_sftp
 from ff_webmap_gen import create_webmap
 from ff_huc_maps import create_huc_maps
 from ff_to_rise import ff_to_rise
 from ff_utils import get_favicon, get_plotly_js
 from hdb_api.hdb_utils import get_eng_config
 from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries
-
 
 def get_plot_config(img_filename):
     return {
@@ -58,12 +57,20 @@ def create_log(path='ff_gen.log'):
 
     return logger
 
-def sync_files(this_dir, script_name, logger):
+def sync_files(config_path, logger):
     try:
-        print(f'Attempting sftp push using {script_name}...')
-        scp_push_str = push_scp(this_dir, script_name)
-        print(scp_push_str)
-        logger.info(scp_push_str)
+        print(f'Attempting sftp push using {config_path}...')
+        with open(config_path, 'r') as fp:
+            sftp_configs = json.load(fp)
+        for key, config_dict in sftp_configs.items():
+            scp_push_str = push_sftp(
+                config_dict=config_dict,
+                delete_local=True, 
+                delete_remote=True,
+                file_type='*.json'
+            )
+            print(scp_push_str)
+            logger.info(scp_push_str)
     except Exception as err:
         sftp_push_err = (
             f'Error running file sync script - {err}'
@@ -324,13 +331,16 @@ if __name__ == '__main__':
                 df['datetime'] = df.index
 
                 if site_ids[i] in rise_sites:
+                    rise_period = str(period)
+                    if rise_period.isnumeric():
+                        rise_period = 7
                     make_rise(
                         df.copy(),
                         db_name,
                         site_names[i],
                         datatype_names[i],
                         interval,
-                        'all',
+                        rise_period,
                         rise_dir,
                         logger
                     )
@@ -373,13 +383,12 @@ if __name__ == '__main__':
     logger.info(
         f'\nFinished ff_gen @ {dt.now().strftime("%x %X")}'
     )
-
-    if ff_config['sftp_push']:
-#        pub_script_name = 'ff_scp_push.txt'
-#        sync_files(this_dir, pub_script_name, logger)
-        rise_script_name = 'ff_rise_push.txt'
-#        sync_files(this_dir, rise_script_name, logger)
+    
+    sftp_config = ff_config['sftp_push']
+    if sftp_config:
+        if type(sftp_config) == bool:
+            sync_files('sftp_config.json', logger)
+        elif type(sftp_config) == str and path.exists(sftp_config):
+            sync_files(sftp_config, logger)
 
     logger.info(('-- * ' * 25 + '\n')*2)
-
-#    push_to_tdrive(from_dir, to_dir)

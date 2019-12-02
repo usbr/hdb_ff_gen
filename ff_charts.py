@@ -257,7 +257,7 @@ def create_stat_traces(df, datatype_name, units):
         traces.append(trace)
     return traces
 
-def get_anno_text(df, df_stats, units):
+def get_anno_text(df, df_stats, units, avg_period="(81'-10')"):
     curr_wy = max(df.columns)
     last_row = df.loc[df[curr_wy].last_valid_index()]
     curr_month = last_row.name.month
@@ -292,8 +292,8 @@ def get_anno_text(df, df_stats, units):
     anno_text = (
         f'As of: {last_date}:<br>'
         f'Currently: {last_data_str} {units}<br>'
-        f"% Avg. ('81-'10): {percent_avg}%<br>"
-        f"% Median ('81-'10): {percent_median}%<br>"
+        f"% Avg. {avg_period}: {percent_avg}%<br>"
+        f"% Median {avg_period}: {percent_median}%<br>"
         f'% Last Year: {percent_last_year}%'
     )
     return anno_text
@@ -314,7 +314,12 @@ def create_chart(df, meta):
         df_wy = df_wy.resample('1M').sum(min_count=25)
     df_wy.dropna(axis='columns', how='all', inplace=True)
     percentiles = [0.10, 0.30, 0.50, 0.70, 0.90]
-    df_30yr = df_wy.filter(items=range(1980, 2011), axis='columns')
+    if (sum(el in df_wy.columns for el in range(1980, 2012)) / 30) > 0.75:
+        df_30yr = df_wy.filter(items=range(1980, 2011), axis='columns')
+        avg_period = "('81-'10)"
+    else:
+        df_30yr = df_wy.copy()
+        avg_period = f"(POR)"
     if get_chart_type(datatype_name, units) == 'scatter':
         df_30yr = interp_leap_year_data(df_30yr)
     df_30yr = df_30yr.transpose()
@@ -355,7 +360,7 @@ def create_chart(df, meta):
     ]
 
     if not stats_30yr.dropna().empty:
-        anno_text = get_anno_text(df_wy, stats_30yr, units)
+        anno_text = get_anno_text(df_wy, stats_30yr, units, avg_period)
         annotation.append(
             {
                 'x': 1,

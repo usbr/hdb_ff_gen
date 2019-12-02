@@ -4,45 +4,61 @@ Created on Fri May 17 09:24:54 2019
 
 @author: buriona
 """
-import subprocess
-from os import path
-from datetime import datetime as dt
+import pysftp
+from os import path, remove
+import glob
+import json
 
-def push_scp(script_dir=None, script_name='ff_scp_push.txt', scp_path=None):
-    if not script_dir:
-        script_dir = path.dirname(path.realpath(__file__))
-    if not scp_path:
-        scp_path = r'C:\Program Files (x86)\WinSCP\winscp.com'
-    scp_script_path = path.join(script_dir, script_name)
-    if path.isfile(scp_script_path):
-        scp_push_process = subprocess.run(
-            [scp_path, f'/script={scp_script_path}'],
-            shell=True,
-            capture_output=True,
-            text=True
-        )
-        if not scp_push_process.returncode:
-            scp_push_str = (
-                f'\nSuccesfully pushed files to remote using {script_name} - '
-                f'@ {dt.now().strftime("%x %X")}'
-            )
-        else:
-            scp_err = scp_push_process.stderr
-            scp_push_str = (
-                f'ERROR! - Failed to push files to remote via using {script_name} - {scp_err}'
-            )
-
-        return scp_push_str
-
-    scp_push_str = (
-        f'ERROR! - Could not find sync script {script_name}, failed to push to remote'
-    )
-    return scp_push_str
+def push_sftp(config_dict, del_local=True, del_remote=True, file_type='*.json'):
+    
+    if not config_dict:
+        return 'Could not push files via sftp, {config_dict} is invalid'
+    sftp_config = config_dict['sftp_config']
+    local_dir = config_dict['local_path']
+    remote_dir = config_dict['remote_path']
+    if config_dict['host_keys']:
+        cnopts = pysftp.CnOpts()
+        cnopts.hostkeys.load(config_dict['host_keys'])
+        sftp_config['cnopts'] = cnopts
+    if not sftp_config['password']:
+        del sftp_config['password']
+    else:
+        del sftp_config['private_key']
+        del sftp_config['private_key_pass']
+    
+    local_files = glob.glob(path.join(local_dir, file_type), recursive=True)
+    num_files = len(local_files)
+    results = []
+    with pysftp.Connection(**sftp_config) as sftp:
+        if del_remote:
+            print("Cleaning up old files from {sftp_config['host']}")
+            old_files = sftp.listdir(remote_dir)
+            num_old_files = len(old_files)
+            for i, file in enumerate(old_files):
+                sftp.remove(f'{remote_dir}/{file}')
+                print(f"    Deleted {file} from {sftp_config['host']} {remote_dir} ({i + 1}/{num_old_files})")
+        
+        for i, file in enumerate(local_files):
+            file = file.replace('\\', '/')
+            sftp.chdir(remote_dir)
+            try:
+                result = sftp.put(file, preserve_mtime=True)
+                results.append(result)
+                if del_local:
+                    remove(file)
+                print(f"    Pushed {file} to {sftp_config['host']} {remote_dir} ({i + 1}/{num_files})")
+            except Exception as err:
+                print(f"    PUSH FAILED: {file} to {sftp_config['host']} {remote_dir} - {err}")
+            
+    return f"Pushed {len(results)} of {num_files} files to {sftp_config['host']} {remote_dir}"
 
 if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
-#    pub_script_name = 'ff_scp_push.txt'
-#    push_scp(this_dir, pub_script_name)
-    rise_script_name = 'ff_rise_push.txt'
-    push_scp(this_dir, rise_script_name)
-    result = push_scp(this_dir, )
+    rise_dir = path.join(this_dir, 'rise')
+    config_path = 'sftp_config.json'
+    with open(config_path, 'r') as fp:
+        sftp_configs = json.load(fp)
+    key = 'rise_win10'
+    config_dict = sftp_configs[key]   
+    scp_push_str = push_sftp(config_dict)
+    print(scp_push_str)
