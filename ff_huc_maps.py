@@ -12,7 +12,7 @@ from collections import OrderedDict
 import folium
 from folium.plugins import FloatImage, MousePosition
 import pandas as pd
-import numpy as np
+# import numpy as np
 #from requests import get as req_get
 import geopandas as gpd
 from shapely.geometry import Point
@@ -129,21 +129,18 @@ def add_awdb_markers(huc_map, meta):
             popup_html = (
                 f'<b><a href="{site_href}" target="_blank">{site_name}</a></b><br>'
                 f'<span class="text-nowrap">ID: {site_triplet}</span><br>'
+                f'<span class="text-nowrap">Network: {network}</span><br>'
                 f'<span class="text-nowrap">Latitude: {round(lat, 3)}</span><br>'
                 f'<span class="text-nowrap">Longitude: {round(lon, 3)}</span><br>'
                 f'<span class="text-nowrap">Elevation: {elev}</span><br>'
-#                f'{get_embed(wteq_href)}<br>'
-                f'<a href="{wteq_href}" target="NRCS DATA">Snow Chart</a><br>'
-                f'<a href="{prec_href}" target="NRCS DATA">Precip. Chart</a><br>'
-                f'<a href="{tavg_href}" target="NRCS DATA">Temp. Chart</a><br>'
-
+                f'{get_embed(wteq_href)}<br>'
+                # f'<a href="{wteq_href}" target="NRCS DATA">Snow Chart</a><br>'
+                # f'<a href="{prec_href}" target="NRCS DATA">Precip. Chart</a><br>'
+                # f'<a href="{tavg_href}" target="NRCS DATA">Temp. Chart</a><br>'
             )
 
-            icon = 'snowflake-o'
-            color = 'red'
-            if network == 'SCAN':
-                icon = 'umbrella'
-                color = f'light{color}'
+            icon = get_fa_icon(network, source='awdb')
+            color = get_icon_color(network, source='awdb')
             folium.Marker(
                 location=lat_long,
                 popup=popup_html,
@@ -165,7 +162,7 @@ def get_snotels(geo_df, snow_meta):
 
 def get_snow_meta(snow_meta_url=None):
     if not snow_meta_url:
-        snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/ALL/metadata.json'
+        snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/WTEQ/metadata.json'
     snow_meta = pd.read_json(snow_meta_url)
     return snow_meta
 
@@ -191,7 +188,7 @@ def define_buffer(geo_df, snow_meta, min_snotels=3, max_buffer=0.3):
             buffer
         )
         snotels = get_snotels(geo_df, snow_meta)
-        snow_sites = snotels[snotels['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
+        snow_sites = snotels#snotels[snotels['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
         snow_sites_cnt = len(snow_sites)
     print(f'      {snow_sites_cnt} snotels using a {round(buffer, 2)} deg buffer')
     return buffer_geojson, snow_sites
@@ -311,7 +308,7 @@ if __name__ == '__main__':
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
     site_type_dir = path.join(this_dir, 'test', 'data')
-    meta_path = path.join(site_type_dir, 'meta.csv')
+    meta_path = path.join(site_type_dir, 'yakima_meta.csv')
 #    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
 #    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)

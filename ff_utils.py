@@ -94,54 +94,79 @@ def get_default_css():
          'https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css'),  # noqa
         ]
 
-def get_fa_icon(obj_type='default'):
-    fa_dict = {
-        'default': 'map-pin',
-        1: 'sitemap',
-        2: 'umbrella',
-        3: 'arrow-down',
-        4: 'exchange',
-        5: 'plug',
-        6: 'arrows-v',
-        7: 'tint',
-        8: 'snowflake-o',
-        9: 'tachometer',
-        10: 'cogs',
-        11: 'arrows-h',
-        12: 'rss',
-        13: 'flask',
-        14: 'table',
-        15: 'info',
-        20: 'exchange'
-    }
+def get_fa_icon(obj_type='default', source='hdb'):
+    if source.lower() == 'hdb':
+        fa_dict = {
+            'default': 'map-pin',
+            1: 'sitemap',
+            2: 'umbrella',
+            3: 'arrow-down',
+            4: 'exchange',
+            5: 'plug',
+            6: 'arrows-v',
+            7: 'tint',
+            8: 'snowflake-o',
+            9: 'tachometer',
+            10: 'cogs',
+            11: 'arrows-h',
+            12: 'rss',
+            13: 'flask',
+            14: 'table',
+            15: 'info',
+            20: 'exchange'
+        }
+    if source.lower() == 'awdb':
+        fa_dict = {
+            'default': 'map-pin',
+            'SCAN': 'umbrella',
+            'PRCP': 'umbrella',
+            'BOR': 'tint',
+            'SNTL': 'snowflake-o',
+            'SNOW': 'snowflake-o',
+            'SNTLT': 'snowflake-o',
+            'USGS': 'tachometer',
+            'MSNT': 'snowflake-o',
+            'MPRC': 'umbrella'
+        }
     fa_icon = fa_dict.get(obj_type, 'map-pin')
     return fa_icon
 
-def get_icon_color(row):
-    obj_owner = 'BOR'
-    if not row.empty:
-        if row['site_metadata.scs_id']:
-            obj_owner = 'NRCS'
-        if row['site_metadata.usgs_id']:
-            obj_owner = 'USGS'
+def get_icon_color(row, source='hdb'):
+    if source.lower() == 'hdb':
+        obj_owner = 'BOR'
+        if not row.empty:
+            if row['site_metadata.scs_id']:
+                obj_owner = 'NRCS'
+            if row['site_metadata.usgs_id']:
+                obj_owner = 'USGS'
+    if source.lower() == 'awdb':
+        obj_owner = row
     color_dict = {
         'BOR': 'blue',
         'NRCS': 'red',
         'USGS': 'green',
+        'COOP': 'gray',
+        'SNOW': 'darkred',
+        'PRCP': 'lightred',
+        'SNTLT': 'red',
+        'SCAN': 'lightred',
+        'MSNT': 'orange',
+        'MPRC': 'beige',
+        
     }
     icon_color = color_dict.get(obj_owner, 'black')
     return icon_color
 
 def add_optional_tilesets(folium_map):
     tilesets = [
-        'OpenStreetMap',
-        'Stamen Toner',
-        'Stamen Watercolor',
-        'CartoDB positron',
-        'CartoDB dark_matter',
+        'Street Map': 'OpenStreetMap',
+        'Toner': 'Stamen Toner',
+        'Watercolor': 'Stamen Watercolor',
+        'Positron': 'CartoDB positron',
+        'Dark Matter': 'CartoDB dark_matter',
     ]
-    for tileset in tilesets:
-        folium.TileLayer(tileset).add_to(folium_map)
+    for name, tileset in tilesets.items():
+        folium.TileLayer(tileset, name=name).add_to(folium_map)
 
 def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False):
     try:
@@ -150,13 +175,15 @@ def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False):
         huc_style = lambda x: {
             'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
         }
-
+        show = False
+        if level == 2:
+            show = True
         folium.GeoJson(
             huc_geojson_path,
             name=f'HUC {level}',
             embed=embed,
             style_function=huc_style,
-            show=False
+            show=show
         ).add_to(huc_map)
     except Exception as err:
         print(f'Could not add HUC {level} layer to map! - {err}')
