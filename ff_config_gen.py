@@ -293,14 +293,14 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': prod_requests_daily,
             'rise_sites': uc_rise_sites,
-            'sftp_push': False
+            'sftp_push': True
         },
         'prod_rhel_weekly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': prod_requests_weekly,
             'rise_sites': uc_rise_sites,
-            'sftp_push': False
+            'sftp_push': True
         },
         'prod_lc': {
             'alt_path': None,
