@@ -158,13 +158,13 @@ def get_icon_color(row, source='hdb'):
     return icon_color
 
 def add_optional_tilesets(folium_map):
-    tilesets = [
+    tilesets = {
         'Street Map': 'OpenStreetMap',
         'Toner': 'Stamen Toner',
         'Watercolor': 'Stamen Watercolor',
         'Positron': 'CartoDB positron',
         'Dark Matter': 'CartoDB dark_matter',
-    ]
+    }
     for name, tileset in tilesets.items():
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
