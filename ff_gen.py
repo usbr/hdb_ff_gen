@@ -333,7 +333,7 @@ if __name__ == '__main__':
                 if site_ids[i] in rise_sites:
                     rise_period = str(period)
                     if rise_period.isnumeric():
-                        rise_period = 7
+                        rise_period = '7'
                     make_rise(
                         df.copy(),
                         db_name,

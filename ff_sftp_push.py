@@ -31,7 +31,7 @@ def push_sftp(config_dict, del_local=True, del_remote=True, file_type='*.json'):
     results = []
     with pysftp.Connection(**sftp_config) as sftp:
         if del_remote:
-            print("Cleaning up old files from {sftp_config['host']}")
+            print(f"Cleaning up old files from {sftp_config['host']}")
             old_files = sftp.listdir(remote_dir)
             num_old_files = len(old_files)
             for i, file in enumerate(old_files):
