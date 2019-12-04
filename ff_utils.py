@@ -8,6 +8,7 @@ import folium
 import pandas as pd
 # import geopandas as gpd
 from shapely.geometry import Point
+from datetime import datetime
 
 STATIC_URL = f'https://www.usbr.gov/uc/water/ff/static'
 
@@ -148,7 +149,8 @@ def get_icon_color(row, source='hdb'):
         'COOP': 'gray',
         'SNOW': 'darkred',
         'PRCP': 'lightred',
-        'SNTLT': 'red',
+        'SNTL': 'red',
+        'SNTLT': 'lightred',
         'SCAN': 'lightred',
         'MSNT': 'orange',
         'MPRC': 'beige',
@@ -159,6 +161,7 @@ def get_icon_color(row, source='hdb'):
 
 def add_optional_tilesets(folium_map):
     tilesets = {
+        "Terrain": 'Stamen Terrain',
         'Street Map': 'OpenStreetMap',
         'Toner': 'Stamen Toner',
         'Watercolor': 'Stamen Watercolor',
@@ -231,6 +234,16 @@ def get_huc(geo_df, lat, lon, level='12'):
         if polygon.contains(point):
             return row[f'HUC{level}']
     return None
+
+def get_season():
+    curr_month = datetime.now().month
+    if curr_month > 3:
+        return 'spring'
+    if curr_month > 5:
+        return 'summer'
+    if curr_month > 10:
+        return 'fall'
+    return 'winter'
 
 if __name__ == '__main__':
     print('Just a utility module')

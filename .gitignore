@@ -144,3 +144,6 @@ flat_files/
 
 ### profile result files
 *.Result
+
+## static assets
+/static

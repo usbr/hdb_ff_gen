@@ -17,7 +17,7 @@ import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point
 from shapely.ops import cascaded_union
-from ff_utils import get_fa_icon, get_icon_color
+from ff_utils import get_fa_icon, get_icon_color, get_season
 from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords, get_huc
 from ff_utils import get_favicon, get_bor_seal
 from ff_utils import get_bor_js, get_bor_css
@@ -87,22 +87,27 @@ def add_hdb_marker(huc_map, row):
                 f'<span class="text-nowrap">Longitude: {round(lon, 3)}</span><br>'
                 f'<span class="text-nowrap">Elevation: {elev}</span><br>'
             )
-
+            popup = folium.map.Popup(
+                html=popup_html,
+                max_width=720
+            )
             icon = get_fa_icon(obj_type)
             color = get_icon_color(row)
             folium.Marker(
                 location=lat_long,
-                popup=popup_html,
+                popup=popup,
                 tooltip=site_name,
                 icon=folium.Icon(icon=icon, prefix='fa', color=color)
             ).add_to(huc_map)
         except (ValueError, TypeError):
             pass
 
-def get_embed(href):
-    embed = f'''<div class="container embed-responsive embed-responsive-16by9">
-          <embed class="embed-responsive-item" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
-        </div>'''
+def get_iframe(href):
+    embed = (
+        f'<div style="border: 0px none; overflow: hidden;">'
+        f'<iframe scrolling="no" style="overflow: hidden; border: 0px none; margin-right: -900px; height: 650px; width: 720px;" src="{href}" allowfullscreen></iframe>'
+        f'</div>'
+    )
     return embed
 
 def add_awdb_markers(huc_map, meta):
@@ -122,28 +127,26 @@ def add_awdb_markers(huc_map, meta):
             site_href_base = 'https://wcc.sc.egov.usda.gov/nwcc/site?sitenum='
             site_href = f'{site_href_base}{site_id}'
             charts_href_base = 'https://www.nrcs.usda.gov/Internet/WCIS/siteCharts/POR'
-            wteq_href = f'{charts_href_base}/WTEQ/{state}/{site_name}.html'
-            prec_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
-            tavg_href = f'{charts_href_base}/TAVG/{state}/{site_name}.html'
+            seasonal_href = f'{charts_href_base}/WTEQ/{state}/{site_name}.html'
+            if get_season() == 'summer':
+                seasonal_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
 
             popup_html = (
-                f'<b><a href="{site_href}" target="_blank">{site_name}</a></b><br>'
-                f'<span class="text-nowrap">ID: {site_triplet}</span><br>'
-                f'<span class="text-nowrap">Network: {network}</span><br>'
-                f'<span class="text-nowrap">Latitude: {round(lat, 3)}</span><br>'
-                f'<span class="text-nowrap">Longitude: {round(lon, 3)}</span><br>'
-                f'<span class="text-nowrap">Elevation: {elev}</span><br>'
-                f'{get_embed(wteq_href)}<br>'
-                # f'<a href="{wteq_href}" target="NRCS DATA">Snow Chart</a><br>'
-                # f'<a href="{prec_href}" target="NRCS DATA">Precip. Chart</a><br>'
-                # f'<a href="{tavg_href}" target="NRCS DATA">Temp. Chart</a><br>'
+                f'<div class="container">'
+                f'<div class="row justify-content-center">{get_iframe(seasonal_href)}</div>'
+                f'<div class="row justify-content-center">'
+                f'<div class="col"><button class="btn btn-sm btn-primary" href="{site_href}" target="_blank">Go to {site_name} Site Page...</a></div>'
+                f'</div></div>'
             )
-
+            popup = folium.map.Popup(
+                html=popup_html,
+                max_width=720
+            )
             icon = get_fa_icon(network, source='awdb')
             color = get_icon_color(network, source='awdb')
             folium.Marker(
                 location=lat_long,
-                popup=popup_html,
+                popup=popup,
                 tooltip=site_name,
                 icon=folium.Icon(icon=icon, prefix='fa', color=color)
             ).add_to(huc_map)
@@ -188,7 +191,7 @@ def define_buffer(geo_df, snow_meta, min_snotels=3, max_buffer=0.3):
             buffer
         )
         snotels = get_snotels(geo_df, snow_meta)
-        snow_sites = snotels#snotels[snotels['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
+        snow_sites = snotels[snotels['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
         snow_sites_cnt = len(snow_sites)
     print(f'      {snow_sites_cnt} snotels using a {round(buffer, 2)} deg buffer')
     return buffer_geojson, snow_sites
@@ -232,6 +235,8 @@ def create_huc_maps(hdb_meta, site_type_dir):
 
     for idx, row in hdb_meta.iterrows():
         site_name = row['site_metadata.site_name']
+        if not 'lake' in site_name.lower():
+            continue
         print(f'    Creating map for {site_name}...')
         site_id = row['site_id']
         lat = float(row['site_metadata.lat'])
@@ -239,7 +244,7 @@ def create_huc_maps(hdb_meta, site_type_dir):
         lat_long = [lat, lon]
         huc12 = row['site_metadata.hydrologic_unit']
         huc_map = folium.Map(
-            tiles='Stamen Terrain',
+            tiles=None,
             location=lat_long,
             zoom_start=9
         )
@@ -307,8 +312,10 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
-    site_type_dir = path.join(this_dir, 'test', 'data')
-    meta_path = path.join(site_type_dir, 'yakima_meta.csv')
+    # site_type_dir = path.join(this_dir, 'test', 'data')
+    # meta_path = path.join(site_type_dir, 'yakima_meta.csv')
+    site_type_dir = path.join(this_dir, 'flat_files', 'test_ff')
+    meta_path = path.join(site_type_dir, 'meta.csv')
 #    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
 #    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)
