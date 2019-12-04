@@ -146,4 +146,4 @@ flat_files/
 *.Result
 
 ## static assets
-/static
+/assets

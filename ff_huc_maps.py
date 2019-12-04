@@ -29,7 +29,7 @@ bor_css = get_bor_css()
 default_js = get_default_js()
 default_css = get_default_css()
 
-#folium.folium._default_js = default_js
+folium.folium._default_js = default_js
 folium.folium._default_css = default_css
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
@@ -108,6 +108,12 @@ def get_iframe(href):
         f'<iframe scrolling="no" style="overflow: hidden; border: 0px none; margin-right: -900px; height: 650px; width: 720px;" src="{href}" allowfullscreen></iframe>'
         f'</div>'
     )
+    return embed
+
+def get_embed(href):
+    embed = f'''<div class="container embed-responsive embed-responsive-16by9">
+          <embed class="embed-responsive-item" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
+        </div>'''
     return embed
 
 def add_awdb_markers(huc_map, meta):
