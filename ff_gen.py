@@ -65,8 +65,8 @@ def sync_files(config_path, logger):
         for key, config_dict in sftp_configs.items():
             scp_push_str = push_sftp(
                 config_dict=config_dict,
-                delete_local=True, 
-                delete_remote=True,
+                del_local=True, 
+                del_remote=True,
                 file_type='*.json'
             )
             print(scp_push_str)

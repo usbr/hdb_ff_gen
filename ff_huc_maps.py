@@ -242,6 +242,15 @@ def create_huc_maps(hdb_meta, site_type_dir):
 
     for idx, row in hdb_meta.iterrows():
         site_name = row['site_metadata.site_name']
+        
+        
+        
+        # if not 'lake' in site_name.lower():
+        #     continue
+        
+        
+        
+        
         print(f'    Creating map for {site_name}...')
         site_id = row['site_id']
         lat = float(row['site_metadata.lat'])
@@ -317,10 +326,10 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
-    site_type_dir = path.join(this_dir, 'test', 'data')
-    meta_path = path.join(site_type_dir, 'klamath_meta.csv')
-    # site_type_dir = path.join(this_dir, 'flat_files', 'test_ff')
-    # meta_path = path.join(site_type_dir, 'meta.csv')
+    # site_type_dir = path.join(this_dir, 'test', 'data')
+    # meta_path = path.join(site_type_dir, 'klamath_meta.csv')
+    site_type_dir = path.join(this_dir, 'flat_files', 'test_ff')
+    meta_path = path.join(site_type_dir, 'meta.csv')
 #    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
 #    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)
