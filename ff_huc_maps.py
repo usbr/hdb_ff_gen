@@ -102,18 +102,12 @@ def add_hdb_marker(huc_map, row):
         except (ValueError, TypeError):
             pass
 
-def get_iframe(href):
-    embed = (
-        f'<div style="border: 0px none; overflow: hidden;">'
-        f'<iframe scrolling="no" style="overflow: hidden; border: 0px none; margin-right: -900px; height: 650px; width: 720px;" src="{href}" allowfullscreen></iframe>'
-        f'</div>'
-    )
-    return embed
-
 def get_embed(href):
-    embed = f'''<div class="container embed-responsive embed-responsive-4by3">
-          <embed class="embed-responsive-item" scrolling="no" style="overflow: hidden; height: 650px; width: 720px;" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
-        </div>'''
+    embed = (
+        f'<div class="container embed-responsive embed-responsive-4by3" style="overflow: hidden; height: 650px; width: 720px;">'
+        f'<iframe class="embed-responsive-item" src="{href}" scrolling="no" frameborder="0" allowfullscreen></iframe>'
+        f'</div>'
+    )   
     return embed
 
 def add_awdb_markers(huc_map, meta):
@@ -133,21 +127,21 @@ def add_awdb_markers(huc_map, meta):
             site_href_base = 'https://wcc.sc.egov.usda.gov/nwcc/site?sitenum='
             site_href = f'{site_href_base}{site_id}'
             charts_href_base = 'https://www.nrcs.usda.gov/Internet/WCIS/siteCharts/POR'
-            seasonal_href = f'{charts_href_base}/WTEQ/{state}/{site_name}.html'
+            seasonal_href = f'{charts_href_base}/WTEQ/{state}/{site_name.replace("#", "%233")}.html'
             if get_season() == 'summer':
                 seasonal_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
 
             popup_html = (
                 f'<div class="container">'
-                f'<div class="row justify-content-center">{get_embed(seasonal_href)}</div>'
                 f'<div class="row justify-content-center">'
-                f'<div class="col"><button type="button" class="btn btn-primary btn-sm btn-block" href="{site_href}" role="button">Go to {site_name} Site Page...</button></div>'
+                f'<div class="col">'
+                f'<a href="{site_href}" target="_blank">'
+                f'<button class="btn btn-primary btn-sm btn-block">'
+                f'Courtesy NRCS - Go to {site_name} Site Page...</button></a></div>'
+                f'<div class="row justify-content-center">{get_embed(seasonal_href)}</div>'
                 f'</div></div>'
             )
-            popup = folium.map.Popup(
-                html=popup_html,
-                max_width=720
-            )
+            popup = folium.map.Popup(html=popup_html)
             icon = get_fa_icon(network, source='awdb')
             color = get_icon_color(network, source='awdb')
             folium.Marker(
@@ -159,22 +153,21 @@ def add_awdb_markers(huc_map, meta):
         except (ValueError, TypeError):
             pass
 
-def get_snotels(geo_df, snow_meta):
-    snotels = []
-    for i, snotel in snow_meta.iterrows():
+def get_awdb_sites(geo_df, awdb_meta):
+    awdb_sites = []
+    for i, awdb_site in awdb_meta.iterrows():
         for idx, row in geo_df.iterrows():
             polygon = row['geometry']
-            point = Point(snotel['longitude'], snotel['latitude'])
+            point = Point(awdb_site['longitude'], awdb_site['latitude'])
             if polygon.contains(point):
-                snotels.append(snotel['stationTriplet'])
-    return snow_meta[snow_meta['stationTriplet'].isin(snotels)]
+                awdb_sites.append(awdb_site['stationTriplet'])
+    return awdb_meta[awdb_meta['stationTriplet'].isin(awdb_sites)]
 
-def get_snow_meta(snow_meta_url=None):
-    if not snow_meta_url:
-        # snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/ALL/metadata.json'
-        snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/WTEQ/metadata.json'
-    snow_meta = pd.read_json(snow_meta_url)
-    return snow_meta
+def get_awdb_meta(site_type='WTEQ'):
+    url_prefix = 'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata'
+    awdb_meta_url = f'{url_prefix}/{site_type}/metadata.json'
+    awdb_meta = pd.read_json(awdb_meta_url)
+    return awdb_meta
 
 def combine_polygons(geo_df, huc_name):
     polygons = geo_df['geometry']
@@ -182,26 +175,26 @@ def combine_polygons(geo_df, huc_name):
     df = pd.DataFrame({'Name': [huc_name]})
     return gpd.GeoDataFrame(df, geometry=geometry)
 
-def get_buffer_geojson(geo_df, snow_meta, buffer):
+def get_buffer_geojson(geo_df, awdb_meta, buffer):
     geo_df.geometry = geo_df['geometry'].buffer(buffer)
     return json.loads(geo_df.to_json())
 
-def define_buffer(geo_df, snow_meta, min_snotels=3, max_buffer=0.3):
-    snow_sites_cnt = 0
+def define_buffer(geo_df, awdb_meta, min_awdb_sites=3, max_buffer=0.3):
+    awdb_sites_cnt = 0
     buffer = 0
-    snow_sites = []
-    while snow_sites_cnt < min_snotels and buffer < max_buffer:
+    awdb_sites = []
+    while awdb_sites_cnt < min_awdb_sites and buffer < max_buffer:
         buffer += 0.05
         buffer_geojson= get_buffer_geojson(
             deepcopy(geo_df),
-            snow_meta,
+            awdb_meta,
             buffer
         )
-        snotels = get_snotels(geo_df, snow_meta)
-        snow_sites = snotels[snotels['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
-        snow_sites_cnt = len(snow_sites)
-    print(f'      {snow_sites_cnt} snotels using a {round(buffer, 2)} deg buffer')
-    return buffer_geojson, snow_sites
+        awdb_sites = get_awdb_sites(geo_df, awdb_meta)
+        awdb_sites = awdb_sites[awdb_sites['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
+        awdb_sites_cnt = len(awdb_sites)
+    print(f'      {awdb_sites_cnt} awdb_sites using a {round(buffer, 2)} deg buffer')
+    return buffer_geojson, awdb_sites
 
 def add_upstream_layer(huc_map, huc_geojson, buffer_geojson):
     folium.Choropleth(
@@ -228,7 +221,10 @@ def create_huc_maps(hdb_meta, site_type_dir):
     hdb_meta.drop_duplicates(subset='site_id', inplace=True)
     hdb_meta['site_metadata.lat'] = clean_coords(hdb_meta['site_metadata.lat'])
     hdb_meta['site_metadata.longi'] = clean_coords(hdb_meta['site_metadata.longi'], True)
-    snow_meta = get_snow_meta()
+    awdb_site_type = 'WTEQ'
+    if get_season() == 'summer':
+        awdb_site_type = 'PREC'
+    awdb_meta = get_awdb_meta(awdb_site_type)
     huc2_list = [str(i) for i in [10, 11, 13, 14, 15, 16, 17, 18]]
     huc12_geo_dfs = {}
     huc12_geo_dicts = {}
@@ -242,15 +238,6 @@ def create_huc_maps(hdb_meta, site_type_dir):
 
     for idx, row in hdb_meta.iterrows():
         site_name = row['site_metadata.site_name']
-        
-        
-        
-        # if not 'lake' in site_name.lower():
-        #     continue
-        
-        
-        
-        
         print(f'    Creating map for {site_name}...')
         site_id = row['site_id']
         lat = float(row['site_metadata.lat'])
@@ -277,9 +264,9 @@ def create_huc_maps(hdb_meta, site_type_dir):
             geo_df = geo_df[geo_df['HUC12'].isin(upstream_huc_list)]
             geo_df = combine_polygons(geo_df, site_name)
             huc_geojson = json.loads(geo_df.to_json())
-            buffer_geojson, snow_sites = define_buffer(geo_df, snow_meta)
+            buffer_geojson, awdb_sites = define_buffer(geo_df, awdb_meta)
             add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
-            add_awdb_markers(huc_map, snow_sites)
+            add_awdb_markers(huc_map, awdb_sites)
             bounds_list = geo_df['geometry'][0].bounds
             bounds = [
                 (bounds_list[1], bounds_list[0]),

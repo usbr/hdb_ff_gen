@@ -4,13 +4,15 @@ Created on Fri Sep 13 15:26:04 2019
 
 @author: buriona
 """
+
+from os import path
 import folium
 import pandas as pd
 # import geopandas as gpd
 from shapely.geometry import Point
 from datetime import datetime
 
-################# working on new assets folder ##########################
+################# working on new assets folder below is old method ##########################
 ####################################################################
 # STATIC_URL = f'https://www.usbr.gov/uc/water/ff/assets'
 
@@ -66,20 +68,22 @@ from datetime import datetime
 ######################################################################################
     ##############################################################
 
-STATIC_URL = f'https://www.usbr.gov/uc/water/ff/static'
+STATIC_URL = f'https://www.usbr.gov/uc/water/ff/assets'
 
 def get_plotly_js():
-    return f'{STATIC_URL}/js/plotly/1.47.4/plotly.min.js'
-
-def get_bootstrap():
-    return {
-        'css': f'{STATIC_URL}/css/bootstrap/4.3.1/bootstrap.min.css',
-        'js': f'{STATIC_URL}/js/bootstrap/4.3.1/bootstrap.bundle.min.js',
-        'jquery': f'{STATIC_URL}/js/jquery/3.4.0/jquery.min.js'
-    }
+    return f'{STATIC_URL}/plotly.js'
 
 def get_favicon():
     return f'{STATIC_URL}/img/favicon.ico'
+
+def get_bootstrap():
+    return {
+        'css': f'{STATIC_URL}/bootstrap/css/bootstrap.min.css',
+        'js': f'{STATIC_URL}/bootstrap/js/bootstrap.bundle.js',
+        'jquery': f'{STATIC_URL}/jquery.js',
+        'popper': f'{STATIC_URL}/popper.js',
+        'fa': f'{STATIC_URL}/font-awesome/css/font-awesome.min.css',
+    }
 
 def get_bor_seal(orient='default', grey=False):
     color = 'cmyk'
@@ -92,9 +96,6 @@ def get_bor_seal(orient='default', grey=False):
         'horz': f'BofR-horiz-{color}.png'
         }
     return f'{STATIC_URL}/img/{seal_dict[orient]}'
-
-def get_favicon():
-    return f'{STATIC_URL}/img/favicon.ico'
 
 def get_bor_js():
     return [
@@ -125,32 +126,34 @@ def get_bor_css():
         ]
 
 def get_default_js():
+    bootstrap_dict = get_bootstrap()
     return [
-        ('leaflet',
-         f'{STATIC_URL}/js/leaflet/leaflet.js'),
-        ('jquery',
-         f'{STATIC_URL}/js/jquery/3.4.0/jquery.min.js'),
-        ('bootstrap',
-          f'{STATIC_URL}/js/bootstrap/4.3.1/bootstrap.bundle.min.js'),
-        ('awesome_markers',
-         'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js'),  # noqa
-        ]
+        ('leaflet', 
+         f'{STATIC_URL}/leaflet/js/leaflet.js'),
+        ('jquery', 
+         bootstrap_dict['jquery']),
+        ('bootstrap', 
+         bootstrap_dict['js']),
+        ('awesome_markers', 
+         f'{STATIC_URL}/leaflet-awesome-markers/leaflet.awesome-markers.min.js'),
+        ('popper', 
+         bootstrap_dict['popper']),
+    ]
 
 def get_default_css():
+    bootstrap_dict = get_bootstrap()
     return [
-        ('leaflet_css',
-         'https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css'),
-        ('bootstrap_css',
-         f'{STATIC_URL}/css/bootstrap/4.3.1/bootstrap.min.css)'),
-        ('awesome_markers_font_css',
-         f'{STATIC_URL}/css/font-awesome.min.css'),
-         ('awesome_markers_font_css',
-         'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'),  # noqa
-        ('awesome_markers_css',
-         'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),  # noqa
-        ('awesome_rotate_css',
-         'https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css'),  # noqa
-        ]
+        ('leaflet_css', 
+         f'{STATIC_URL}/leaflet/css/leaflet.css'),
+        ('bootstrap_css', 
+         bootstrap_dict['css']),
+        ('awesome_markers_font_css', 
+          bootstrap_dict['fa']),
+        ('awesome_markers_css', 
+        f'{STATIC_URL}/leaflet-awesome-markers/leaflet.awesome-markers.css'),
+        ('awesome_rotate_css', 
+         f'{STATIC_URL}/leaflet-awesome-markers/leaflet.awesome.rotate.css'),
+    ]
 
 def get_fa_icon(obj_type='default', source='hdb'):
     if source.lower() == 'hdb':

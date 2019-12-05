@@ -300,7 +300,7 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': prod_requests_weekly,
             'rise_sites': uc_rise_sites,
-            'sftp_push': True
+            'sftp_push': False
         },
         'prod_lc': {
             'alt_path': None,

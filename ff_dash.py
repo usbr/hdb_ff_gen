@@ -21,6 +21,8 @@ bootstrap = get_bootstrap()
 bootstrap_css = bootstrap['css']
 bootstrap_js = bootstrap['js']
 jquery_js = bootstrap['jquery']
+popper_js = bootstrap['popper']
+fa_css = bootstrap['fa']
 feather_js = r'https://www.usbr.gov/uc/water/ff/static/js/feather.min.js'
 dashboard_css = r'https://www.usbr.gov/uc/water/ff/static/css/custom/dashboard.css'
 
@@ -126,6 +128,7 @@ def get_dash_head():
   <link rel="icon" href="{bor_flavicon}">
   <link rel="stylesheet" href="{bootstrap_css}">
   <link rel="stylesheet" href="{dashboard_css}">
+  <link rel="stylesheet" href="{fa_css}">
 </head>
 '''
 
@@ -136,6 +139,7 @@ def get_js_refs():
 <!-- Placed at the end of the document so the pages load faster -->
   <script src="{jquery_js}"></script>
   <script src="{bootstrap_js}"></script>
+  <script src="{popper_js}"></script>
 ''' + f'''
 <!-- Icons -->
   <script src="{feather_js}"></script>
@@ -177,17 +181,18 @@ def get_dash_body(site_name, site_id, chart_names):
     return f'''
 <body>
 <nav class="navbar navbar-light fixed-top bg-light navbar-expand p-auto flex-md-nowrap">
-  <a class="btn btn-outline-primary" target="_blank" href="#huc">{site_name}</a>
+  <button class="btn btn-outline-primary"><a target="_blank" href="#huc">{site_name} 
+  <i class="fa fa-external-link" aria-hidden="true"></i></a></button>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
   <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav  mr-auto">
       <li class="nav-item">
-        <a class="nav-link-primary ml-3" href="{get_map_url()}">Overview Map</a>
+        <a class="nav-link-primary ml-3" href="{get_map_url()}" target="_blank">Overview Map</a>
         </li>
       <li class="nav-item">
-        <a class="nav-link-primary ml-3" href="{get_home_url()}">Navigator</a>
+        <a class="nav-link-primary ml-3" href="{get_home_url()}" target="_blank">Navigator</a>
       </li>
     </ul>
   </div>

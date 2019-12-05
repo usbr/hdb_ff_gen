@@ -23,8 +23,8 @@ bor_css = get_bor_css()
 default_js = get_default_js()
 default_css = get_default_css()
 
-#folium.folium._default_js = default_js
-#folium.folium._default_css = default_css
+folium.folium._default_js = default_js
+folium.folium._default_css = default_css
 #folium.folium._default_js = bor_js
 #folium.folium._default_css = bor_css
 
@@ -49,6 +49,14 @@ def get_bounds(meta):
     min_long = -1 * min([abs(i) for i in longs])
     return [(min_lat, max_long), (max_lat, min_long)]
 
+def get_embed(href):
+    embed = (
+        f'<div class="container embed-responsive embed-responsive-16by9" style="overflow: hidden; height: 700px; width: 1600px;">'
+        f'<iframe scrolling="no" class="embed-responsive-item" src="{href}" allowfullscreen></iframe>'
+        f'</div>'
+    )   
+    return embed
+
 def add_markers(sitetype_map, meta):
     meta.drop_duplicates(subset='site_id', inplace=True)
 
@@ -65,14 +73,18 @@ def add_markers(sitetype_map, meta):
             embed = f'''<div class="container embed-responsive embed-responsive-16by9">
                   <embed class="embed-responsive-item" src="{href}"></embed>
                 </div>'''
-
+            embed = get_embed(href)
             icon = get_fa_icon(obj_type)
             color = get_icon_color(row)
             popup_html = (
-                f'{embed}'
+                f'<div class="container">'
+                f'<div class="row justify-content-center">'
+                f'{embed}</div>'
+                f'<div class="row justify-content-center">'
+                f'<div class="col"><span>'
                 f'Latitude: {round(lat, 3)}, '
                 f'Longitude: {round(lon, 3)}, '
-                f'Elevation: {elev} <br>'
+                f'Elevation: {elev}</span></div></div></div>'
             )
             popup = folium.map.Popup(
                 html=popup_html,
