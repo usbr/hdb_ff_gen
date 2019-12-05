@@ -31,8 +31,8 @@ default_css = get_default_css()
 
 folium.folium._default_js = default_js
 folium.folium._default_css = default_css
-#folium.folium._default_js = bor_js
-#folium.folium._default_css = bor_css
+# folium.folium._default_js = bor_js
+# folium.folium._default_css = bor_css
 
 def get_upstream_basin(huc12, to_huc_table):
     if huc12:
@@ -111,8 +111,8 @@ def get_iframe(href):
     return embed
 
 def get_embed(href):
-    embed = f'''<div class="container embed-responsive embed-responsive-16by9">
-          <embed class="embed-responsive-item" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
+    embed = f'''<div class="container embed-responsive embed-responsive-4by3">
+          <embed class="embed-responsive-item" scrolling="no" style="overflow: hidden; height: 650px; width: 720px;" src="{href}" scrolling="no" frameborder="0" allowfullscreen></embed>
         </div>'''
     return embed
 
@@ -139,9 +139,9 @@ def add_awdb_markers(huc_map, meta):
 
             popup_html = (
                 f'<div class="container">'
-                f'<div class="row justify-content-center">{get_iframe(seasonal_href)}</div>'
+                f'<div class="row justify-content-center">{get_embed(seasonal_href)}</div>'
                 f'<div class="row justify-content-center">'
-                f'<div class="col"><button class="btn btn-sm btn-primary" href="{site_href}" target="_blank">Go to {site_name} Site Page...</a></div>'
+                f'<div class="col"><button type="button" class="btn btn-primary btn-sm btn-block" href="{site_href}" role="button">Go to {site_name} Site Page...</button></div>'
                 f'</div></div>'
             )
             popup = folium.map.Popup(
@@ -171,6 +171,7 @@ def get_snotels(geo_df, snow_meta):
 
 def get_snow_meta(snow_meta_url=None):
     if not snow_meta_url:
+        # snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/ALL/metadata.json'
         snow_meta_url = r'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata/WTEQ/metadata.json'
     snow_meta = pd.read_json(snow_meta_url)
     return snow_meta
@@ -241,8 +242,6 @@ def create_huc_maps(hdb_meta, site_type_dir):
 
     for idx, row in hdb_meta.iterrows():
         site_name = row['site_metadata.site_name']
-        if not 'lake' in site_name.lower():
-            continue
         print(f'    Creating map for {site_name}...')
         site_id = row['site_id']
         lat = float(row['site_metadata.lat'])
@@ -318,10 +317,10 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     maps_dir = path.join(this_dir, 'test', 'huc_maps')
     makedirs(maps_dir, exist_ok=True)
-    # site_type_dir = path.join(this_dir, 'test', 'data')
-    # meta_path = path.join(site_type_dir, 'yakima_meta.csv')
-    site_type_dir = path.join(this_dir, 'flat_files', 'test_ff')
-    meta_path = path.join(site_type_dir, 'meta.csv')
+    site_type_dir = path.join(this_dir, 'test', 'data')
+    meta_path = path.join(site_type_dir, 'klamath_meta.csv')
+    # site_type_dir = path.join(this_dir, 'flat_files', 'test_ff')
+    # meta_path = path.join(site_type_dir, 'meta.csv')
 #    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
 #    meta_path = path.join(site_type_dir, 'meta.csv')
     hdb_meta = pd.read_csv(meta_path)

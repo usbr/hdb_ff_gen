@@ -127,11 +127,11 @@ def get_bor_css():
 def get_default_js():
     return [
         ('leaflet',
-         'https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.js'),
+         f'{STATIC_URL}/js/leaflet/leaflet.js'),
         ('jquery',
-         'https://code.jquery.com/jquery-1.12.4.min.js'),
+         f'{STATIC_URL}/js/jquery/3.4.0/jquery.min.js'),
         ('bootstrap',
-         'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'),
+          f'{STATIC_URL}/js/bootstrap/4.3.1/bootstrap.bundle.min.js'),
         ('awesome_markers',
          'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js'),  # noqa
         ]
@@ -141,9 +141,7 @@ def get_default_css():
         ('leaflet_css',
          'https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css'),
         ('bootstrap_css',
-         'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'),
-        ('bootstrap_theme_css',
-         'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css'),  # noqa
+         f'{STATIC_URL}/css/bootstrap/4.3.1/bootstrap.min.css)'),
         ('awesome_markers_font_css',
          f'{STATIC_URL}/css/font-awesome.min.css'),
          ('awesome_markers_font_css',
