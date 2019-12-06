@@ -330,17 +330,17 @@ if __name__ == '__main__':
                 df = df.reindex(idx)
                 df['datetime'] = df.index
 
-                if site_ids[i] in rise_sites:
-                    rise_period = str(period)
-                    if rise_period.isnumeric():
-                        rise_period = '7'
+                if site_ids[i] in rise_sites and dt.now().hour < 7:
+                    num_records = str(period)
+                    if num_records.isnumeric():
+                        num_records = '7'
                     make_rise(
                         df.copy(),
                         db_name,
                         site_names[i],
                         datatype_names[i],
                         interval,
-                        rise_period,
+                        num_records,
                         rise_dir,
                         logger
                     )

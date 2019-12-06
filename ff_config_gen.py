@@ -156,7 +156,7 @@ if __name__ == '__main__':
             'sids': testing_sites,
             'dids': testing_datatypes,
             'interval': 'day',
-            'period': 'por'
+            'period': 40
         }
     }
 
@@ -334,7 +334,7 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': testing_requests,
-            'rise_sites': None,
+            'rise_sites': [917],
             'sftp_push': False
         },
         'one_off': {

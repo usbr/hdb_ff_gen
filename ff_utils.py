@@ -12,62 +12,6 @@ import pandas as pd
 from shapely.geometry import Point
 from datetime import datetime
 
-################# working on new assets folder below is old method ##########################
-####################################################################
-# STATIC_URL = f'https://www.usbr.gov/uc/water/ff/assets'
-
-# def get_plotly_js():
-#     return f'{STATIC_URL}/plotly.js'
-
-# def get_bootstrap():
-#     return {
-#         'css': f'{STATIC_URL}/bootstrap/bootstrap.min.css',
-#         'js': f'{STATIC_URL}/bootstrap/bootstrap.bundle.min.js',
-#         'jquery': f'{STATIC_URL}/jquery.js'
-#     }
-
-# def get_bor_seal(orient='default', grey=False):
-#     color = 'cmyk'
-#     if grey:
-#         color = 'grey'
-#     seal_dict = {
-#         'default': f'BofR-horiz-{color}.png',
-#         'shield': f'BofR-shield-cmyk.png',
-#         'vert': f'BofR-vert-{color}.png',
-#         'horz': f'BofR-horiz-{color}.png'
-#         }
-#     return f'{STATIC_URL}/img/{seal_dict[orient]}'
-
-# def get_bor_js():
-#     return [
-#         ('leaflet',
-#          f'{STATIC_URL}/leaflet/js/leaflet.js'),
-#         ('jquery',
-#          f'{STATIC_URL}/jquery.js'),
-#         ('bootstrap',
-#          f'{STATIC_URL}/bootstrap/bootstrap.min.js'),
-#         ('awesome_markers',
-#          f'{STATIC_URL}/leaflet-awesome-markers/leaflet.awesome-markers.min.js'),
-#         ]
-
-# def get_bor_css():
-#     return [
-#         ('leaflet_css',
-#          f'{STATIC_URL}/leaflet/css/leaflet.css'),
-#         ('bootstrap_css',
-#          f'{STATIC_URL}/bootstrap/css/bootstrap.min.css'),
-#         ('bootstrap_theme_css',
-#          f'{STATIC_URL}/bootstrap/css/bootstrap-theme.min.css'),  # noqa
-#         ('awesome_markers_font_css',
-#          f'{STATIC_URL}/css/font-awesome.min.css'),  # noqa
-#         ('awesome_markers_css',
-#          f'{STATIC_URL}/css/leaflet/leaflet.awesome-markers.css'),  # noqa
-#         ('awesome_rotate_css',
-#          f'{STATIC_URL}/css/leaflet/leaflet.awesome.rotate.css'),  # noqa
-#         ]
-######################################################################################
-    ##############################################################
-
 STATIC_URL = f'https://www.usbr.gov/uc/water/ff/assets'
 
 def get_plotly_js():
