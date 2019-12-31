@@ -330,7 +330,7 @@ if __name__ == '__main__':
                 df = df.reindex(idx)
                 df['datetime'] = df.index
 
-                if site_ids[i] in rise_sites and dt.now().hour < 7:
+                if site_ids[i] in rise_sites and dt.now().hour < 6:
                     num_records = str(period)
                     if num_records.isnumeric():
                         num_records = '7'
@@ -385,7 +385,7 @@ if __name__ == '__main__':
     )
     
     sftp_config = ff_config['sftp_push']
-    if sftp_config and dt.now().hour < 7:
+    if sftp_config and dt.now().hour < 6:
         if type(sftp_config) == bool:
             sync_files('sftp_config.json', logger)
         elif type(sftp_config) == str and path.exists(sftp_config):
