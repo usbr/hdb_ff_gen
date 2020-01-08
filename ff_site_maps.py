@@ -127,7 +127,7 @@ def create_map(site_type, meta, data_dir):
             bottom=1,
             left=1
         ).add_to(sitetype_map)
-        MousePosition(prefix="Location: ").add_to(sitetype_map)
+        # MousePosition(prefix="Location: ").add_to(sitetype_map)
         sitetype_map.save(map_path)
         flavicon = (
             f'<link rel="shortcut icon" '
