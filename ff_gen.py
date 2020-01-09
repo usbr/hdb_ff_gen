@@ -215,20 +215,56 @@ def get_data(hdb_ts, sdi, interval, json_filename, period='POR'):
 
 
 if __name__ == '__main__':
-
+    
+    import argparse
+    cli_desc = 'Creates HDB data portal flat files using schema defined in ff_config.json'
+    parser = argparse.ArgumentParser(description=cli_desc)
+    parser.add_argument("-V", "--version", help="show program version", action="store_true")
+    parser.add_argument("-r", "--rise", help="create RISE jsons, push only if sftp_push set to true or valid path in config", action="store_true")
+    parser.add_argument("-o", "--output", help="override alt_path from config file output folder")
+    parser.add_argument("-s", "--schema", help='schema to use, defaults to "default"')
+    parser.add_argument("-c", "--config", help="use alternate config json, use full path")
+    args = parser.parse_args()
+    
+    if args.version:
+        print('ff_gen.py v1.0')
+    
+    make_rise = False
+    if args.rise:
+        make_rise = True
+        
     this_dir = path.dirname(path.realpath(__file__))
-
-    schema = sys.argv[-1]
-    if schema == sys.argv[0]:
+    
+    if args.config:
+        config_path = args.config
+        if not path.exists(config_path):
+            print('{args.config} does not exist in, try again.')
+            sys.exit(0)
+    else:
+        config_path = path.join(this_dir, 'ff_config.json')
+        
+    with open(config_path, 'r') as fp:
+        ff_config_dict = json.load(fp)
+    
+    if args.schema:
+        schema = args.schema
+        if not schema in ff_config_dict:
+            print('{schema} is not within the config file ({config_path}), try again.')
+            sys.exit(0)
+    else:
         schema = 'default'
-
-    with open('ff_config.json', 'r') as fp:
-        ff_config = json.load(fp)[schema]
-
+        
+    ff_config = ff_config_dict[schema]
+    
     data_dir = ff_config['alt_path']
     if not data_dir:
         data_dir = path.join(this_dir, 'flat_files')
-
+    if args.output:
+        data_dir = args.output
+    if not path.exists(data_dir):
+        print('{data_dir} does not exist, can not save files there, try again.')
+        sys.exit(0)
+    
     rise_sites = ff_config['rise_sites']
     if not rise_sites:
         rise_sites = []
@@ -330,10 +366,8 @@ if __name__ == '__main__':
                 df = df.reindex(idx)
                 df['datetime'] = df.index
 
-                if site_ids[i] in rise_sites and dt.now().hour < 6:
+                if site_ids[i] in rise_sites and make_rise:
                     num_records = str(period)
-                    if num_records.isnumeric():
-                        num_records = '7'
                     make_rise(
                         df.copy(),
                         db_name,
@@ -344,6 +378,7 @@ if __name__ == '__main__':
                         rise_dir,
                         logger
                     )
+                    
                 make_chart(
                     df,
                     meta,
@@ -351,6 +386,7 @@ if __name__ == '__main__':
                     img_filename,
                     logger
                 )
+                
                 make_csv(df, csv_filename, logger)
                 make_json(df, json_filename, logger)
 
@@ -385,7 +421,7 @@ if __name__ == '__main__':
     )
     
     sftp_config = ff_config['sftp_push']
-    if sftp_config and dt.now().hour < 6:
+    if sftp_config and make_rise:
         if type(sftp_config) == bool:
             sync_files('sftp_config.json', logger)
         elif type(sftp_config) == str and path.exists(sftp_config):
