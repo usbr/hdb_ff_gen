@@ -204,6 +204,21 @@ if __name__ == '__main__':
             'sids': all_res_data,
             'dids': res_data_types,
             'interval': 'day',
+            'period': 400
+        },
+        'GAUGE_DATA': {
+            'sids': usgs_gages,
+            'dids':gage_data_types,
+            'interval': 'day',
+            'period': 400
+        }
+    }
+    
+    prod_requests_monthly = {
+        'RESERVOIR_DATA': {
+            'sids': all_res_data,
+            'dids': res_data_types,
+            'interval': 'day',
             'period': 'por'
         },
         'GAUGE_DATA': {
@@ -301,6 +316,13 @@ if __name__ == '__main__':
             'requests': prod_requests_weekly,
             'rise_sites': uc_rise_sites,
             'sftp_push': False
+        },
+        'prod_rhel_monthly': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'uc',
+            'requests': prod_requests_weekly,
+            'rise_sites': uc_rise_sites,
+            'sftp_push': True
         },
         'prod_lc': {
             'alt_path': None,
