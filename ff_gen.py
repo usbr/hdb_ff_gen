@@ -229,9 +229,9 @@ if __name__ == '__main__':
     if args.version:
         print('ff_gen.py v1.0')
     
-    make_rise = False
+    create_rise = False
     if args.rise:
-        make_rise = True
+        create_rise = True
         
     this_dir = path.dirname(path.realpath(__file__))
     
@@ -365,19 +365,20 @@ if __name__ == '__main__':
                 idx = pd.date_range(df.index.min(), df.index.max())
                 df = df.reindex(idx)
                 df['datetime'] = df.index
-
-                if site_ids[i] in rise_sites and make_rise:
-                    num_records = str(period)
-                    make_rise(
-                        df.copy(),
-                        db_name,
-                        site_names[i],
-                        datatype_names[i],
-                        interval,
-                        num_records,
-                        rise_dir,
-                        logger
-                    )
+                
+                if create_rise:
+                    if site_ids[i] in rise_sites:
+                        num_records = str(period)
+                        make_rise(
+                            df.copy(),
+                            db_name,
+                            site_names[i],
+                            datatype_names[i],
+                            interval,
+                            num_records,
+                            rise_dir,
+                            logger
+                        )
                     
                 make_chart(
                     df,
@@ -421,7 +422,7 @@ if __name__ == '__main__':
     )
     
     sftp_config = ff_config['sftp_push']
-    if sftp_config and make_rise:
+    if sftp_config and create_rise:
         if type(sftp_config) == bool:
             sync_files('sftp_config.json', logger)
         elif type(sftp_config) == str and path.exists(sftp_config):
