@@ -223,6 +223,7 @@ if __name__ == '__main__':
     parser.add_argument("-o", "--output", help="override alt_path from config file output folder")
     parser.add_argument("-s", "--schema", help='schema to use, defaults to "default"')
     parser.add_argument("-c", "--config", help="use alternate config json, use full path")
+    parser.add_argument("-m", "--maps", help="create huc-maps", action="store_true")
     args = parser.parse_args()
     
     if args.version:
@@ -409,7 +410,7 @@ if __name__ == '__main__':
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
-        if not period.isnumeric():
+        if args.maps:
             make_huc_maps(df_meta.copy(), site_type_dir, logger)
         
     make_nav(data_dir, logger)
