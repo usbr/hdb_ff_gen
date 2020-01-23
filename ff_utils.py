@@ -99,6 +99,37 @@ def get_default_css():
          f'{STATIC_URL}/leaflet-awesome-markers/leaflet.awesome.rotate.css'),
     ]
 
+def get_obj_type_name(obj_type='default'):
+    obj_type_dict = {
+            'default': 'map-pin',
+            1: 'basin',
+            2: 'climate site (rain)',
+            3: 'confluence',
+            4: 'diversion',
+            5: 'hydro power plant',
+            6: 'reach',
+            7: 'reservoir',
+            8: 'climate site (snow)',
+            9: 'stream gage',
+            10: 'hydro plant unit',
+            11: 'canal',
+            12: 'acoustic velocity meter',
+            13: 'water quality site',
+            14: 'riverware data object',
+            300: 'bio eval. site',
+            305: 'agg. diversion site',
+            'SCAN': 'climate site (rain)',
+            'PRCP': 'climate site (rain)',
+            'BOR': 'reservoir',
+            'SNTL': 'climate site (snow)',
+            'SNOW': 'climate site (snow)',
+            'SNTLT': 'climate site (snow)',
+            'USGS': 'stream gage',
+            'MSNT': 'climate site (snow)',
+            'MPRC': 'climate site (rain)'
+        }
+    return obj_type_dict.get(obj_type, 'N/A')
+
 def get_fa_icon(obj_type='default', source='hdb'):
     if source.lower() == 'hdb':
         fa_dict = {
@@ -117,8 +148,8 @@ def get_fa_icon(obj_type='default', source='hdb'):
             12: 'rss',
             13: 'flask',
             14: 'table',
-            15: 'info',
-            20: 'exchange'
+            300: 'info',
+            305: 'exchange'
         }
     if source.lower() == 'awdb':
         fa_dict = {

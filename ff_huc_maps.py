@@ -244,11 +244,7 @@ def create_huc_maps(hdb_meta, site_type_dir):
         lon = float(row['site_metadata.longi'])
         lat_long = [lat, lon]
         huc12 = row['site_metadata.hydrologic_unit']
-        huc_map = folium.Map(
-            tiles=None,
-            location=lat_long,
-            zoom_start=9
-        )
+        huc_map = folium.Map(tiles=None)
         add_hdb_marker(huc_map, row)
         if not huc12 or len(str(huc12)) < 12:
             huc2 = get_huc(huc2_geo_df, lat, lon, level='2')

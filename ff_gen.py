@@ -159,16 +159,16 @@ def make_nav(data_dir, logger):
         logger.info(nav_str)
 
 def make_sitemap(site_type, df_meta, data_dir, logger):
-    try:
+    if True:#try:
         map_str = create_map(site_type, df_meta, data_dir)
         print(map_str)
         logger.info(map_str)
-    except Exception as err:
-        map_str = (
-            f'Error creating leaflet site map file for {site_type} - {err}'
-        )
-        print(map_str)
-        logger.info(map_str)
+    # except Exception as err:
+    #     map_str = (
+    #         f'Error creating leaflet site map file for {site_type} - {err}'
+    #     )
+    #     print(map_str)
+    #     logger.info(map_str)
 
 def make_webmap(data_dir, logger):
     try:
@@ -213,7 +213,6 @@ def get_data(hdb_ts, sdi, interval, json_filename, period='POR'):
     df.dropna(inplace=True)
     return df
 
-
 if __name__ == '__main__':
     
     import argparse
@@ -238,7 +237,7 @@ if __name__ == '__main__':
     if args.config:
         config_path = args.config
         if not path.exists(config_path):
-            print('{args.config} does not exist in, try again.')
+            print(f'{args.config} does not exist in, try again.')
             sys.exit(0)
     else:
         config_path = path.join(this_dir, 'ff_config.json')
@@ -249,7 +248,7 @@ if __name__ == '__main__':
     if args.schema:
         schema = args.schema
         if not schema in ff_config_dict:
-            print('{schema} is not within the config file ({config_path}), try again.')
+            print(f'{schema} is not within the config file ({config_path}), try again.')
             sys.exit(0)
     else:
         schema = 'default'
@@ -261,9 +260,9 @@ if __name__ == '__main__':
         data_dir = path.join(this_dir, 'flat_files')
     if args.output:
         data_dir = args.output
-    if not path.exists(data_dir):
-        print('{data_dir} does not exist, can not save files there, try again.')
-        sys.exit(0)
+        if not path.exists(data_dir):
+            print(f'{data_dir} does not exist, can not save files there, try again.')
+            sys.exit(0)
     
     rise_sites = ff_config['rise_sites']
     if not rise_sites:

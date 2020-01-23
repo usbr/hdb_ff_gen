@@ -6,10 +6,11 @@ Created on Fri May 31 07:43:40 2019
 """
 
 from os import path
+from datetime import datetime as dt
 import folium
 from folium.plugins import FloatImage, MousePosition
 import pandas as pd
-from ff_utils import get_fa_icon
+from ff_utils import get_fa_icon, get_obj_type_name
 from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords
 from ff_utils import get_bor_seal, get_favicon, get_icon_color
 from ff_utils import get_bor_js, get_bor_css
@@ -102,6 +103,77 @@ def add_markers(sitetype_map, meta):
             else:
                 print(f'    Could not add {site_id} to site map, missing site_name')
             pass
+def get_legend(obj_types=[], data_sources=[]):
+    default_obj_types = [2,3,4,6,7,8,9,11]
+    obj_types = list(set(obj_types + default_obj_types))
+    update_date = dt.now().strftime('%B %d, %Y')
+    obj_types_html = []
+    for obj_type in obj_types:
+        obj_name = get_obj_type_name(obj_type).title()
+        obj_icon = get_fa_icon(obj_type).lower()
+        obj_types_html.append(
+            f'    <a class="dropdown-item" href="#">'
+            f'      <i class="fa fa-{obj_icon}"></i>&nbsp {obj_name}'
+            f'    </a>'
+        )
+    obj_types_html = '\n'.join(list(set(obj_types_html)))
+    # default_data_sources = [
+    #     'BOR', 'NRCS', 'USGS', 'COOP', 'CASS', 'CDEC', 'ACIS'
+    # ]
+    # data_sources = list(set(data_sources + default_data_sources))
+    # data_sources_html = []
+    # for data_source in data_sources:
+    #     data_source_html.append(
+    #         f'<i class="fa fa-map-marker" style="color:blue;"></i>&nbsp '
+    #         f'<a href="https://www.usbr.gov/">BOR</a><br>'
+    #     )
+    # obj_types_html = '\n'.join(list(set(data_source_html)))
+    legend_items = f'''
+      <a class="dropdown-item" href="#">
+        <b>Site Types</b>
+      </a>
+{obj_types_html}
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#">
+        <b>Data Sources</b>
+      </a>
+      <a class="dropdown-item" href="https://www.usbr.gov/" target="_blank">
+        <i class="fa fa-map-marker" style="color:blue;"></i>&nbsp BOR
+      </a>
+      <a class="dropdown-item" href="https://www.usgs.gov/" target="_blank">
+        <span><i class="fa fa-map-marker" style="color:green;"></i>&nbsp USGS
+      </a>
+      <a class="dropdown-item" href="https://www.wcc.nrcs.usda.gov/" target="_blank">
+        <i class="fa fa-map-marker" style="color:red"></i>&nbsp NRCS
+      </a>
+      <a class="dropdown-item" href="https://cdec.water.ca.gov/" target="_blank">
+        <i class="fa fa-map-marker" style="color:orange;"></i>&nbsp CDEC
+      <a class="dropdown-item" href="https://www2.gov.bc.ca" target="_blank">
+        <i class="fa fa-map-marker" style="color:orange;"></i>&nbsp CASS
+      </a>
+      <a class="dropdown-item" href="https://www.weather.gov/coop/" target="_blank">
+        <i class="fa fa-map-marker" style="color:grey"></i>&nbsp COOP
+      </a>
+      <a class="dropdown-item" href="https://www.rcc-acis.org/" target="_blank">
+        <i class="fa fa-map-marker" style="color:beige"></i>&nbsp ACIS
+      </a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#">
+        Updated: {update_date}<br>
+      </a>
+    '''
+    legend_dd = f'''
+    <div class="dropdown show" style="position: fixed; top: 10px; left: 50px; z-index:9999;">
+      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Legend
+      </a>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+{legend_items}   
+      </div>   
+    </div>
+  
+  '''
+    return legend_dd
 
 def create_map(site_type, meta, data_dir):
     meta = meta.drop_duplicates(subset='site_id')
@@ -111,9 +183,7 @@ def create_map(site_type, meta, data_dir):
     map_filename = f'site_map.html'
     map_path = path.join(sitetype_dir, map_filename)
 
-    sitetype_map = folium.Map(
-        tiles='Stamen Terrain'
-    )
+    sitetype_map = folium.Map(tiles=None)
     bounds = get_bounds(meta.copy())
     if bounds:
         sitetype_map.fit_bounds(bounds)
@@ -123,11 +193,13 @@ def create_map(site_type, meta, data_dir):
         add_optional_tilesets(sitetype_map)
         folium.LayerControl().add_to(sitetype_map)
         FloatImage(
-            get_bor_seal(orient='shield'),
+            get_bor_seal(orient='horz'),
             bottom=1,
             left=1
         ).add_to(sitetype_map)
         # MousePosition(prefix="Location: ").add_to(sitetype_map)
+        legend = folium.Element(get_legend())
+        sitetype_map.get_root().html.add_child(legend)
         sitetype_map.save(map_path)
         flavicon = (
             f'<link rel="shortcut icon" '
@@ -140,8 +212,8 @@ def create_map(site_type, meta, data_dir):
             chart_file_str = chart_file_str.replace(r'</head>', flavicon)
             replace_str = (
                 '''left:1%;
-                        max-width:10%;
-                        max-height:10%;'''
+                        max-width:15%;
+                        max-height:15%;'''
             )
             chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
             html_file.write(chart_file_str)
@@ -154,10 +226,11 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     data_dir = path.join(this_dir, 'flat_files')
 
-    site_types = ['GAUGE_DATA', 'RESERVOIR_DATA']
+    site_types = ['test_ff']
     for site_type in site_types:
         site_type_dir = path.join(data_dir, site_type)
         meta_path = path.join(data_dir, site_type, 'meta.csv')
         meta = pd.read_csv(meta_path)
 
-        create_map(site_type, meta, data_dir)
+        print(create_map(site_type, meta, data_dir))
+    
