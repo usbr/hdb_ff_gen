@@ -12,7 +12,7 @@ import pandas as pd
 from shapely.geometry import Point
 from datetime import datetime
 
-STATIC_URL = f'https://www.usbr.gov/uc/water/ff/assets'
+STATIC_URL = f'https://www.usbr.gov/uc/water/hydrodata/assets'
 
 def get_plotly_js():
     return f'{STATIC_URL}/plotly.js'
