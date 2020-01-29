@@ -143,7 +143,7 @@ if __name__ == '__main__':
     snotel_datatypes = [50]
 
     lbo_requests = {
-        'LBO_SITES': {
+        'lbo_sites': {
             'sids': lbo_sites,
             'dids': lbo_datatypes,
             'interval': 'day',
@@ -170,13 +170,13 @@ if __name__ == '__main__':
     }
 
     prod_requests_v2 = {
-        'RESERVOIR_DATA': {
+        'reservoir_data': {
             'sids': all_res_data,
             'dids': res_data_types,
             'interval': 'day',
             'period': 'por'
         },
-        'GAUGE_DATA': {
+        'gage_data': {
             'sids': usgs_gages,
             'dids':gage_data_types,
             'interval': 'day',
@@ -185,13 +185,13 @@ if __name__ == '__main__':
     }
 
     prod_requests_daily = {
-        'RESERVOIR_DATA': {
+        'reservoir_data': {
             'sids': all_res_data,
             'dids': res_data_types,
             'interval': 'day',
             'period': 40
         },
-        'GAUGE_DATA': {
+        'gage_data': {
             'sids': usgs_gages,
             'dids':gage_data_types,
             'interval': 'day',
@@ -200,13 +200,13 @@ if __name__ == '__main__':
     }
 
     prod_requests_weekly = {
-        'RESERVOIR_DATA': {
+        'reservoir_data': {
             'sids': all_res_data,
             'dids': res_data_types,
             'interval': 'day',
             'period': 400
         },
-        'GAUGE_DATA': {
+        'gage_data': {
             'sids': usgs_gages,
             'dids':gage_data_types,
             'interval': 'day',
@@ -215,13 +215,13 @@ if __name__ == '__main__':
     }
     
     prod_requests_monthly = {
-        'RESERVOIR_DATA': {
+        'reservoir_data': {
             'sids': all_res_data,
             'dids': res_data_types,
             'interval': 'day',
             'period': 'por'
         },
-        'GAUGE_DATA': {
+        'gage_data': {
             'sids': usgs_gages,
             'dids':gage_data_types,
             'interval': 'day',
@@ -230,13 +230,13 @@ if __name__ == '__main__':
     }
 
     prod_requests_lc = {
-        'RESERVOIR_DATA': {
+        'reservoir_data': {
             'sids': lc_reservoirs,
             'dids': lc_res_datatypes,
             'interval': 'day',
             'period': 'por'
         },
-        'GAUGE_DATA': {
+        'gage_data': {
             'sids': lc_gages,
             'dids':lc_gage_datatypes,
             'interval': 'day',
@@ -245,13 +245,13 @@ if __name__ == '__main__':
     }
 
     prod_requests_eco = {
-        'RESERVOIR_DATA': {
+        'reservoir_data': {
             'sids': eco_reservoirs,
             'dids': eco_res_data_types,
             'interval': 'day',
             'period': 'por'
         },
-        'GAUGE_DATA': {
+        'gage_data': {
             'sids': eco_gages,
             'dids': eco_gage_data_types,
             'interval': 'day',
@@ -266,7 +266,7 @@ if __name__ == '__main__':
     }
 
     snow_requests = {
-        'SNOTELS': {
+        'snotels': {
             'sids': snotel_ids,
             'dids': snotel_datatypes,
             'interval': 'day',

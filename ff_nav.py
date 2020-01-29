@@ -46,7 +46,7 @@ HEADER_STR = f'''
 <div class="container">
 ''' + f'''
 <img src="{BOR_SEAL}" style="width: 25%" class="img-responsive mx-auto d-block" alt="BOR Logo">
-    <h2>HDB Flat File Navigator</h2>
+    <h2>HydroData Navigator</h2>
 '''
 
 FOOTER_STR = '''
@@ -150,7 +150,7 @@ def get_button(button_label, dropdown_str):
         f'        <button class="btn btn-outline-primary btn-lg '
         f'dropdown-toggle mt-3" type="button" '
         f'data-toggle="dropdown" aria-pressed="false" '
-        f'autocomplete="on">{button_label}'
+        f'autocomplete="on">{button_label.upper()}'
         f'<span class="caret"></span></button>{nl}'
         f'        <ul class="dropdown-menu">{nl}'
         f'            {dropdown_str}{nl}'
@@ -234,7 +234,7 @@ def get_site_submenu_str(data_dir, site_data, site_id, button_label, meta):
 def create_nav(data_dir, nav_filename=None):
     nl = '\n'
     if not nav_filename:
-        nav_filename = 'ff_nav.html'
+        nav_filename = 'nav.html'
 
     basepath = os.path.basename(os.path.normpath(data_dir))
     walk_dict = get_folders(data_dir)[basepath]

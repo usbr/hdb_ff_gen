@@ -103,6 +103,7 @@ def add_markers(sitetype_map, meta):
             else:
                 print(f'    Could not add {site_id} to site map, missing site_name')
             pass
+        
 def get_legend(obj_types=[], data_sources=[]):
     default_obj_types = [2,3,4,6,7,8,9,11]
     obj_types = list(set(obj_types + default_obj_types))
@@ -164,7 +165,7 @@ def get_legend(obj_types=[], data_sources=[]):
     '''
     legend_dd = f'''
     <div class="dropdown show" style="position: fixed; top: 10px; left: 50px; z-index:9999;">
-      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="btn btn-warning btn-lg dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Legend
       </a>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -212,8 +213,11 @@ def create_map(site_type, meta, data_dir):
             chart_file_str = chart_file_str.replace(r'</head>', flavicon)
             replace_str = (
                 '''left:1%;
-                        max-width:15%;
-                        max-height:15%;'''
+                    max-width:15%;
+                    max-height:15%;
+                    background-color:rgba(255,255,255,0.5);
+                    border-radius: 10px;
+                    padding: 10px;'''
             )
             chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
             html_file.write(chart_file_str)
