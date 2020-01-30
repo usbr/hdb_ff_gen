@@ -42,7 +42,7 @@ def get_site_url():
     return 'https://www.usbr.gov/uc/water/index.html'
 
 def get_home_url():
-    return r'../../ff_nav.html'
+    return r'../../nav.html'
 
 def get_map_url():
     return r'../site_map.html'
