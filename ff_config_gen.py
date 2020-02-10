@@ -326,7 +326,7 @@ if __name__ == '__main__':
         'prod_rhel_monthly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
-            'requests': prod_requests_weekly,
+            'requests': prod_requests_monthly,
             'rise_sites': uc_rise_sites,
             'sftp_push': True
         },
