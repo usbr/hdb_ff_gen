@@ -231,14 +231,12 @@ def get_site_submenu_str(data_dir, site_data, site_id, button_label, meta):
 
     return site_submenu_str
 
-def create_nav(data_dir, nav_filename=None):
+def create_nav(data_dir, nav_filename='nav.html'):
     nl = '\n'
-    if not nav_filename:
-        nav_filename = 'nav.html'
 
     basepath = os.path.basename(os.path.normpath(data_dir))
     walk_dict = get_folders(data_dir)[basepath]
-    to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv']
+    to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv', 'assets']
     walk_dict = remove_items(to_remove, walk_dict)
     button_str_list = []
     for button_label, dd_items in walk_dict.items():
