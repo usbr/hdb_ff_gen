@@ -23,8 +23,8 @@ bootstrap_js = bootstrap['js']
 jquery_js = bootstrap['jquery']
 popper_js = bootstrap['popper']
 fa_css = bootstrap['fa']
-feather_js = r'{STATIC_URL}/feather/feather.min.js'
-dashboard_css = r'{STATIC_URL}/dashboard.css'
+feather_js = f'{STATIC_URL}/feather/feather.min.js'
+dashboard_css = f'{STATIC_URL}/dashboard.css'
 
 def get_feather(datatype_name):
     units = label_unit_dict.get(datatype_name, 'UNKNOWN UNITS').lower()
