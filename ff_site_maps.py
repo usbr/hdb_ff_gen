@@ -11,7 +11,8 @@ import folium
 from folium.plugins import FloatImage, MousePosition
 import pandas as pd
 from ff_utils import get_fa_icon, get_obj_type_name
-from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords
+from ff_utils import add_optional_tilesets, add_huc_layer
+from ff_utils import clean_coords, add_huc_chropleth, get_colormap
 from ff_utils import get_bor_seal, get_favicon, get_icon_color
 from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
@@ -189,15 +190,26 @@ def create_map(site_type, meta, data_dir):
     if bounds:
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
-        add_huc_layer(sitetype_map, 2)
-        add_huc_layer(sitetype_map, 6)
+        
+        for huc_level in ['2', '6', '8']:
+            add_huc_layer(sitetype_map, huc_level)
+            for data_type in ['swe', 'prec']:
+                add_huc_chropleth(
+                    sitetype_map, 
+                    data_type=data_type, 
+                    show=False, 
+                    huc_level=huc_level, 
+                    gis_path='gis', 
+                    filter_str=None
+                )
         add_optional_tilesets(sitetype_map)
-        folium.LayerControl().add_to(sitetype_map)
+        folium.LayerControl('topleft').add_to(sitetype_map)
         FloatImage(
             get_bor_seal(orient='horz'),
             bottom=1,
             left=1
         ).add_to(sitetype_map)
+        get_colormap().add_to(sitetype_map)
         # MousePosition(prefix="Location: ").add_to(sitetype_map)
         legend = folium.Element(get_legend())
         sitetype_map.get_root().html.add_child(legend)

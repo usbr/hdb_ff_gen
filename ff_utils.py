@@ -211,12 +211,13 @@ def add_optional_tilesets(folium_map):
     for name, tileset in tilesets.items():
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
-def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False):
+def add_huc_layer(huc_map, level='2', huc_geojson_path=None, embed=False):
     try:
         if not huc_geojson_path:
             huc_geojson_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
+        weight = -0.25 * float(level) + 2.5
         huc_style = lambda x: {
-            'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': 2
+            'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': weight
         }
         show = False
         if level == 2:
@@ -309,14 +310,15 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False):
     for attr in attrs:
         props = attr['properties']
         huc_name = props['Name']
-        if not try_all and f'>{huc_name}.html<' in index_page_strs[0]:
+        file_name = f'href="{huc_name.replace(" ", "%20")}.html"'
+        if not try_all and file_name in index_page_strs[0]:
             print(f'  Getting NRCS PREC stats for {huc_name}...')
             props['prec_percent'] = get_nrcs_basin_stat(
                 huc_name, huc_level=huc_level, data_type='prec'
             )
         else:
             props['prec_percent'] = "N/A"
-        if not try_all and f'>{huc_name}.html<' in index_page_strs[1]:
+        if not try_all and file_name in index_page_strs[1]:
             print(f'  Getting NRCS WTEQ stats for {huc_name}...')
             props['swe_percent'] = get_nrcs_basin_stat(
                 huc_name, huc_level=huc_level, data_type='wteq'

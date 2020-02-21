@@ -7,7 +7,7 @@ Created on Wed May 22 12:08:25 2019
 
 from pathlib import Path, PurePath
 from ff_utils import get_favicon, get_bor_seal, get_bootstrap
-from hdb_api.hdb_utils import datatype_units, datatype_common_names
+from hdb_api.hdb_utils import datatype_units, datatype_common_names, STATIC_URL
 
 label_unit_dict = {
     datatype_common_names[i]: datatype_units[i] for i in datatype_units.keys()
@@ -23,8 +23,8 @@ bootstrap_js = bootstrap['js']
 jquery_js = bootstrap['jquery']
 popper_js = bootstrap['popper']
 fa_css = bootstrap['fa']
-feather_js = r'https://www.usbr.gov/uc/water/ff/static/js/feather.min.js'
-dashboard_css = r'https://www.usbr.gov/uc/water/ff/static/css/custom/dashboard.css'
+feather_js = r'{STATIC_URL}/feather/feather.min.js'
+dashboard_css = r'{STATIC_URL}/dashboard.css'
 
 def get_feather(datatype_name):
     units = label_unit_dict.get(datatype_name, 'UNKNOWN UNITS').lower()
