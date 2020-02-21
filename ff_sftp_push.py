@@ -37,7 +37,7 @@ def push_sftp(config_dict, del_local=True, del_remote=True, file_type='*.json'):
             for i, file in enumerate(old_files):
                 sftp.remove(f'{remote_dir}/{file}')
                 print(f"    Deleted {file} from {sftp_config['host']} {remote_dir} ({i + 1}/{num_old_files})")
-        
+
         for i, file in enumerate(local_files):
             file = file.replace('\\', '/')
             sftp.chdir(remote_dir)

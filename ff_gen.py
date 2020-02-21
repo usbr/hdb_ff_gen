@@ -22,7 +22,7 @@ from ff_sftp_push import push_sftp
 from ff_webmap_gen import create_webmap
 from ff_huc_maps import create_huc_maps
 from ff_to_rise import ff_to_rise
-from ff_utils import get_favicon, get_plotly_js
+from ff_utils import get_favicon, get_plotly_js, get_huc_nrcs_stats
 from hdb_api.hdb_utils import get_eng_config
 from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries
 
@@ -159,16 +159,16 @@ def make_nav(data_dir, logger):
         logger.info(nav_str)
 
 def make_sitemap(site_type, df_meta, data_dir, logger):
-    if True:#try:
+    try:
         map_str = create_map(site_type, df_meta, data_dir)
         print(map_str)
         logger.info(map_str)
-    # except Exception as err:
-    #     map_str = (
-    #         f'Error creating leaflet site map file for {site_type} - {err}'
-    #     )
-    #     print(map_str)
-    #     logger.info(map_str)
+    except Exception as err:
+        map_str = (
+            f'Error creating leaflet site map file for {site_type} - {err}'
+        )
+        print(map_str)
+        logger.info(map_str)
 
 def make_webmap(data_dir, logger):
     try:
@@ -194,6 +194,29 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
+def update_gis_files(huc_level):
+    try:
+        gis_str = (
+            f'Updating HUC{huc_level} '
+            f'GIS files with current NRCS data...\n'
+        )
+        print(gis_str)
+        logger.info(gis_str)
+        get_huc_nrcs_stats(huc_level)
+        gis_str = (
+            f'Successfully updated HUC{huc_level} '
+            f'GIS files with current NRCS data.\n'
+        )
+        print(gis_str)
+        logger.info(gis_str)
+    except Exception as err:
+        gis_str = (
+            f'Failed to update HUC{huc_level} '
+            f'GIS files with current NRCS data - {err}\n'
+        )
+        print(gis_str)
+        logger.info(gis_str)
+        
 def get_data(hdb_ts, sdi, interval, json_filename, period='POR'):
     if period.isnumeric() and path.exists(json_filename):
         df_local = pd.read_json(json_filename, orient='split')
@@ -224,6 +247,8 @@ if __name__ == '__main__':
     parser.add_argument("-s", "--schema", help='schema to use, defaults to "default"')
     parser.add_argument("-c", "--config", help="use alternate config json, use full path")
     parser.add_argument("-m", "--maps", help="create huc-maps", action="store_true")
+    parser.add_argument("-g", "--gis", help="update gis files with current NRCS data", action='store_true')
+    
     args = parser.parse_args()
     
     if args.version:
@@ -268,7 +293,7 @@ if __name__ == '__main__':
     rise_sites = ff_config['rise_sites']
     if not rise_sites:
         rise_sites = []
-
+    
     makedirs(data_dir, exist_ok=True)
     rise_dir = path.join(this_dir, 'rise')
     makedirs(rise_dir, exist_ok=True)
@@ -279,7 +304,11 @@ if __name__ == '__main__':
     hdb = Hdb(hdb_config)
     tbls = HdbTables
     ts = HdbTimeSeries
-
+    
+    if args.gis:
+        for huc_level in ['2', '6', '8']:
+            update_gis_files(huc_level)
+                
     schema_str = (
         f'\nUsing "{schema}" schema...\n\n'
         f'  Pushing files to: {data_dir.replace(this_dir, "..")} '

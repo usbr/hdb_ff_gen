@@ -5,14 +5,19 @@ Created on Fri Sep 13 15:26:04 2019
 @author: buriona
 """
 
+import re
+import json
 from os import path
+from datetime import datetime
 import folium
+import branca
 import pandas as pd
+from requests import get as r_get
 # import geopandas as gpd
 from shapely.geometry import Point
-from datetime import datetime
 
 STATIC_URL = f'https://www.usbr.gov/uc/water/hydrodata/assets'
+NRCS_CHARTS_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/basinCharts/POR'
 
 def get_plotly_js():
     return f'{STATIC_URL}/plotly.js'
@@ -279,6 +284,143 @@ def get_season():
     if curr_month > 10:
         return 'fall'
     return 'winter'
+
+def get_huc_nrcs_stats(huc_level='6', try_all=False):
+    print(f'  Getting NRCS stats for HUC{huc_level}...')
+    data_types = ['prec', 'wteq']
+    index_pg_urls = [f'{NRCS_CHARTS_URL}/{i.upper()}/assocHUC{huc_level}' 
+                     for i in data_types]
+    index_pg_resps = [r_get(i) for i in index_pg_urls]
+    index_pg_codes = [i.status_code for i in index_pg_resps]
+    if not set(index_pg_codes) == set([200]):
+        print(
+            index_pg_urls, 
+            f'  Could not download index file, trying all basins...'
+        )
+        try_all = True
+        index_page_strs = ['' for i in index_pg_resps]
+    else:
+        index_page_strs = [i.text for i in index_pg_resps]
+    topo_json_path = f'./gis/HUC{huc_level}.topojson'
+    with open(topo_json_path, 'r') as tj:
+        topo_json = json.load(tj)
+    huc_str = f'HUC{huc_level}'
+    attrs = topo_json['objects'][huc_str]['geometries']
+    for attr in attrs:
+        props = attr['properties']
+        huc_name = props['Name']
+        if not try_all and f'>{huc_name}.html<' in index_page_strs[0]:
+            print(f'  Getting NRCS PREC stats for {huc_name}...')
+            props['prec_percent'] = get_nrcs_basin_stat(
+                huc_name, huc_level=huc_level, data_type='prec'
+            )
+        else:
+            props['prec_percent'] = "N/A"
+        if not try_all and f'>{huc_name}.html<' in index_page_strs[1]:
+            print(f'  Getting NRCS WTEQ stats for {huc_name}...')
+            props['swe_percent'] = get_nrcs_basin_stat(
+                huc_name, huc_level=huc_level, data_type='wteq'
+            )
+        else:
+            props['swe_percent'] = "N/A"
+    topo_json['objects'][huc_str]['geometries'] = attrs
+    with open(topo_json_path, 'w') as tj:
+        json.dump(topo_json, tj)
+    
+def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
+    stat_type_dict = {'wteq': 'Median', 'prec': 'Average'}
+    url = f'{NRCS_CHARTS_URL}/{data_type.upper()}/assocHUC{huc_level}/{basin_name}.html'
+    try:
+        response = r_get(url)
+        if not response.status_code == 200:
+            print(f'      Skipping {basin_name} {data_type.upper()}, NRCS does not publish stats.')
+            return 'N/A'
+        html_txt = response.text
+        stat_type = stat_type_dict.get(data_type, 'Median')
+        regex = f"(?<=% of {stat_type} - )(.*)(?=%<br>%)"
+        swe_re = re.search(regex, html_txt, re.MULTILINE)
+        stat = html_txt[swe_re.start():swe_re.end()]
+    except Exception as err:
+        print(f'      Error gathering data for {basin_name} - {err}')
+        stat = 'N/A'
+    return stat
+
+def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6', 
+                      gis_path='gis', filter_str=None):
+    huc_str = f'HUC{huc_level}'
+    topo_json_path = path.join(gis_path, f'{huc_str}.topojson')
+    stat_type_dict = {'swe': 'Median', 'prec': 'Avg.'}
+    stat_type = stat_type_dict.get(data_type, '')
+    layer_name = f'{huc_str} % {stat_type} {data_type.upper()}'
+    with open(topo_json_path, 'r') as tj:
+        topo_json = json.load(tj)
+    if filter_str:
+        topo_json = filter_topo_json(
+            topo_json, huc_level=huc_level, filter_str=filter_str
+        )
+    style_chropleth_dict = {
+        'swe': style_swe_chropleth, 'prec': style_prec_chropleth
+    }
+    folium.TopoJson(
+        topo_json,
+        f'objects.{huc_str}',
+        name=layer_name,
+        show=show,
+        style_function=style_chropleth_dict[data_type],
+        tooltip=folium.features.GeoJsonTooltip(
+            ['Name', f'{data_type}_percent'],
+            aliases=['Basin Name:', f'{layer_name}:'])
+    ).add_to(m)
+
+def style_swe_chropleth(feature):
+    colormap = get_colormap()
+    stat_value = feature['properties'].get('swe_percent', 'N/A')
+    if stat_value == 'N/A':
+        fill_opacity = 0
+    else:
+        stat_value = float(stat_value)
+        fill_opacity = (abs(stat_value - 100)) / 100
+    return {
+        'fillOpacity': 0 if stat_value == 'N/A' else 0.5,#0.75 if fill_opacity > 0.75 else fill_opacity,
+        'weight': 0,
+        'fillColor': '#00000000' if stat_value == 'N/A' else colormap(stat_value)
+    }
+
+def style_prec_chropleth(feature):
+    colormap = get_colormap()
+    stat_value = feature['properties'].get('swe_percent', 'N/A')
+    if stat_value == 'N/A':
+        fill_opacity = 0
+    else:
+        stat_value = float(stat_value)
+        fill_opacity = (abs(stat_value - 100)) / 100
+    return {
+        'fillOpacity': 0 if stat_value == 'N/A' else 0.5,#0.75 if fill_opacity > 0.75 else fill_opacity,
+        'weight': 0,
+        'fillColor': '#00FFFFFF' if stat_value == 'N/A' else colormap(stat_value)
+    }
+
+def filter_geo_json(geo_json_path, filter_attr='HUC2', filter_str='14'):
+    f_geo_json = {'type': 'FeatureCollection'}
+    with open(geo_json_path, 'r') as gj:
+        geo_json = json.load(gj)
+    features = [i for i in geo_json['features'] if 
+                i['properties'][filter_attr][:2] == filter_str]
+    f_geo_json['features'] = features
+    
+    return f_geo_json
+
+def filter_topo_json(topo_json, huc_level=2, filter_str='14'):
+    geometries = topo_json['objects'][f'HUC{huc_level}']['geometries']
+    geometries[:] = [i for i in geometries if 
+                i['properties'][f'HUC{huc_level}'][:len(filter_str)] == filter_str]
+    topo_json['geometries'] = geometries
+    return topo_json
+
+def get_colormap(low=50, high=150):
+    colormap = branca.colormap.linear.RdYlBu_09.scale(low, high)
+    colormap.caption = '% of Average/Median Precip./SWE'
+    return colormap
 
 if __name__ == '__main__':
     print('Just a utility module')
