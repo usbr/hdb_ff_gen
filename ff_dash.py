@@ -6,8 +6,8 @@ Created on Wed May 22 12:08:25 2019
 """
 
 from pathlib import Path, PurePath
-from ff_utils import get_favicon, get_bor_seal, get_bootstrap
-from hdb_api.hdb_utils import datatype_units, datatype_common_names, STATIC_URL
+from ff_utils import get_favicon, get_bor_seal, get_bootstrap, STATIC_URL
+from hdb_api.hdb_utils import datatype_units, datatype_common_names
 
 label_unit_dict = {
     datatype_common_names[i]: datatype_units[i] for i in datatype_units.keys()
