@@ -211,7 +211,8 @@ def add_optional_tilesets(folium_map):
     for name, tileset in tilesets.items():
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
-def add_huc_layer(huc_map, level='2', huc_geojson_path=None, embed=False):
+def add_huc_layer(huc_map, level='2', huc_geojson_path=None, embed=False, 
+                  show=False):
     try:
         if not huc_geojson_path:
             huc_geojson_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
@@ -219,9 +220,6 @@ def add_huc_layer(huc_map, level='2', huc_geojson_path=None, embed=False):
         huc_style = lambda x: {
             'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': weight
         }
-        show = False
-        if level == 2:
-            show = True
         folium.GeoJson(
             huc_geojson_path,
             name=f'HUC {level}',
