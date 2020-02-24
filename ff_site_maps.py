@@ -224,6 +224,7 @@ def create_map(site_type, meta, data_dir):
 
         with open(map_path, 'w') as html_file:
             chart_file_str = chart_file_str.replace(r'</head>', flavicon)
+            find_str = r'left:1%;'
             replace_str = (
                 '''left:1%;
                     max-width:15%;
@@ -232,7 +233,17 @@ def create_map(site_type, meta, data_dir):
                     border-radius: 10px;
                     padding: 10px;'''
             )
-            chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
+            chart_file_str = chart_file_str.replace(find_str, replace_str)
+            find_str = (
+                """.append("svg")
+        .attr("id", 'legend')"""
+            )
+            replace_str = (
+                '''.append("svg")
+                     .attr("id", "legend")
+                     .attr("style", "background-color:rgba(255,255,255,0.75);border-radius: 10px;")'''
+            )
+            chart_file_str = chart_file_str.replace(find_str, replace_str)
             html_file.write(chart_file_str)
 
         return f'Created site map for {site_type}'

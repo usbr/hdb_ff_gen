@@ -381,21 +381,21 @@ def style_swe_chropleth(feature):
         stat_value = float(stat_value)
         fill_opacity = (abs(stat_value - 100)) / 100
     return {
-        'fillOpacity': 0 if stat_value == 'N/A' else 0.5,#0.75 if fill_opacity > 0.75 else fill_opacity,
+        'fillOpacity': 0 if stat_value == 'N/A' else 0.75,#0.75 if fill_opacity > 0.75 else fill_opacity,
         'weight': 0,
         'fillColor': '#00000000' if stat_value == 'N/A' else colormap(stat_value)
     }
 
 def style_prec_chropleth(feature):
     colormap = get_colormap()
-    stat_value = feature['properties'].get('swe_percent', 'N/A')
+    stat_value = feature['properties'].get('prec_percent', 'N/A')
     if stat_value == 'N/A':
         fill_opacity = 0
     else:
         stat_value = float(stat_value)
         fill_opacity = (abs(stat_value - 100)) / 100
     return {
-        'fillOpacity': 0 if stat_value == 'N/A' else 0.5,#0.75 if fill_opacity > 0.75 else fill_opacity,
+        'fillOpacity': 0 if stat_value == 'N/A' else 0.75,#0.75 if fill_opacity > 0.75 else fill_opacity,
         'weight': 0,
         'fillColor': '#00FFFFFF' if stat_value == 'N/A' else colormap(stat_value)
     }
@@ -418,8 +418,21 @@ def filter_topo_json(topo_json, huc_level=2, filter_str='14'):
     return topo_json
 
 def get_colormap(low=50, high=150):
-    colormap = branca.colormap.linear.RdYlBu_09.scale(low, high)
-    colormap.caption = '% of Average/Median Precip./SWE'
+    # colormap = branca.colormap.linear.RdYlBu_09.scale(low, high)
+    colormap = branca.colormap.LinearColormap(
+        # colors=['red','yellow','green','blue', 'purple'],
+        colors=[
+            (255,51,51,150), 
+            (255,255,51,150), 
+            (51,255,51,150), 
+            (51,153,255,150), 
+            (153,51,255,150)
+        ], 
+        index=[50, 75, 100, 125, 150], 
+        vmin=50,
+        vmax=150
+    )
+    colormap.caption = '% of Average Precipitation or % Median Snow Water Equivalent'
     return colormap
 
 if __name__ == '__main__':
