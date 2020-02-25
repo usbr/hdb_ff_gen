@@ -198,20 +198,20 @@ def update_gis_files(huc_level):
     try:
         gis_str = (
             f'Updating HUC{huc_level} '
-            f'GIS files with current NRCS data...\n'
+            f'GIS files with current NRCS data...'
         )
         print(gis_str)
         logger.info(gis_str)
         get_huc_nrcs_stats(huc_level)
         gis_str = (
-            f'Successfully updated HUC{huc_level} '
+            f'  Successfully updated HUC{huc_level} '
             f'GIS files with current NRCS data.\n'
         )
         print(gis_str)
         logger.info(gis_str)
     except Exception as err:
         gis_str = (
-            f'Failed to update HUC{huc_level} '
+            f'  Failed to update HUC{huc_level} '
             f'GIS files with current NRCS data - {err}\n'
         )
         print(gis_str)
