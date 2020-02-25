@@ -444,7 +444,7 @@ if __name__ == '__main__':
         
     make_nav(data_dir, logger)
 
-    make_webmap(data_dir, logger)
+    # make_webmap(data_dir, logger)
 
     logger.info(
         f'\nFinished ff_gen @ {dt.now().strftime("%x %X")}'

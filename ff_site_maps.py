@@ -193,7 +193,7 @@ def create_map(site_type, meta, data_dir):
         
         for huc_level in ['2', '6', '8']:
             show_layer = True if huc_level == '2' else False
-            add_huc_layer(sitetype_map, huc_level, show=show_layer)
+            add_huc_layer(sitetype_map, level=huc_level, show=show_layer)
             for data_type in ['swe', 'prec']:
                 add_huc_chropleth(
                     sitetype_map, 
