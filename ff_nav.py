@@ -49,8 +49,8 @@ HEADER_STR = f'''
     <h2>HydroData Navigator</h2>
 '''
 
+log_btn = '<a href="./ff_gen.log" class="btn btn-success mt-3" role="button">LOG FILE</a>'
 FOOTER_STR = '''
-<a href="./ff_gen.log" class="btn btn-success mt-3" role="button">LOG FILE</a>
 </div>
 <script>
 $(document).ready(function(){
