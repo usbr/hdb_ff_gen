@@ -311,8 +311,29 @@ def create_nav(data_dir, nav_filename='nav.html'):
     return f'\nNavigation files created.'
 
 if __name__ == '__main__':
+
+    import sys
+    import argparse
+    from os import path
+    
+    cli_desc = 'Creates HDB data portal flat files using schema defined in ff_config.json'
+    parser = argparse.ArgumentParser(description=cli_desc)
+    parser.add_argument("-V", "--version", help="show program version", action="store_true")
+    parser.add_argument("-p", "--path", help="path to create nav.html for")
+    args = parser.parse_args()
+    
     this_dir = os.path.dirname(os.path.realpath(__file__))
-    data_dir = os.path.join(this_dir, 'flat_files')
-#    data_dir = r'C:\Users\buriona\Documents\flat_files'
+        
+    if args.version:
+        print('ff_nav.py v1.0')
+    
+    if args.path:
+        data_dir = Path(args.path).resolve().as_posix()
+        if not path.exists(data_dir):
+            print(f'{data_dir} does not exist, can not save files there, try again.')
+            sys.exit(0)
+    else:      
+        data_dir = os.path.join(this_dir, 'flat_files')
+
     sys_out = create_nav(data_dir)
     print(sys_out)
