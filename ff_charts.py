@@ -309,7 +309,6 @@ def create_chart(df, meta):
     units = datatype_units.get(datatype_id, 'UNKNOWN UNITS').upper()
 
     df_wy = serial_to_wy(df, datatype_name)
-    print(datatype_name, units)
     chart_type = get_chart_type(datatype_name, units)
     if chart_type == 'bar':
         df_wy = df_wy.resample('1M').sum(min_count=25)
