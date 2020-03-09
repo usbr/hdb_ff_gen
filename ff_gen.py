@@ -452,7 +452,6 @@ if __name__ == '__main__':
     
     sftp_config = ff_config['sftp_push']
     if sftp_config and create_rise:
-        
         if type(sftp_config) == bool:
             sync_files('sftp_config.json', logger)
         elif type(sftp_config) == str:
