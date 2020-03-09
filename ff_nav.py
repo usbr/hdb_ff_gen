@@ -109,6 +109,7 @@ def create_data_dd(button_label, site_id, data, data_dir, meta, data_format):
             meta
         )
         data_label = str(data_label).upper()
+        print(data_label)
         site_data_dd_href = Path(data_href, data_name)
         data_menu_dict[data_label] = site_data_dd_href
 
@@ -234,7 +235,11 @@ def get_site_submenu_str(data_dir, site_data, site_id, button_label, meta):
 
 def create_nav(data_dir, nav_filename='nav.html'):
     nl = '\n'
-
+    dtype_dict = {
+        'site_datatype_id': str,
+        'datatype_id': str,
+        'site_id': str,
+    }
     basepath = os.path.basename(os.path.normpath(data_dir))
     walk_dict = get_folders(data_dir)[basepath]
     to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv', 'assets']
@@ -246,7 +251,8 @@ def create_nav(data_dir, nav_filename='nav.html'):
             dd_items = remove_items(to_remove, dd_items)
             button_path_abs = Path(data_dir, button_label)
             meta_path = Path(button_path_abs, 'meta.csv')
-            meta = pd.read_csv(meta_path)
+            meta = pd.read_csv(meta_path, dtype=dtype_dict)
+            print(meta.dtypes)
             button_path = Path('.', button_label)
             meta_path = Path(button_path, 'meta.csv')
             map_path = Path(button_path, 'site_map.html')
@@ -254,7 +260,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
             map_menu_entry = get_menu_entry('SITE MAP', map_path)
             site_menu_list = [meta_menu_entry, map_menu_entry]
             site_name_dict = {
-                get_site_name(k, meta): k for k, v in dd_items.items() if v
+                get_site_name(str(k), meta): str(k) for k, v in dd_items.items() if v
             }
 
             for site_name, site_id in sorted(site_name_dict.items()):

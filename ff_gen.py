@@ -458,7 +458,7 @@ if __name__ == '__main__':
         elif type(sftp_config) == str:
             if path.exists(sftp_config):
                 sync_files(sftp_config, logger)
-            if sftp_config[:5].lower() == 'rsync':
+            if sftp_config[:4].lower() in ['rsyn', 'sftp', 'scp ', 'ftps']:
                 system(sftp_config)
 
     logger.info(('-- * ' * 25 + '\n')*2)
