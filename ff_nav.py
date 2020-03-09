@@ -102,14 +102,12 @@ def create_data_dd(button_label, site_id, data, data_dir, meta, data_format):
     data_href = Path(data_dir, button_label, site_id, data_format)
     data_menu_dict = {}
     for data_name, data_none in data.items():
-        # data_id = int(data_name.replace(f'.{data_format}', ''))
         data_id = data_name.replace(f'.{data_format}', '')
         data_label = get_datatype_name(
             data_id,
             meta
         )
         data_label = str(data_label).upper()
-        print(data_label)
         site_data_dd_href = Path(data_href, data_name)
         data_menu_dict[data_label] = site_data_dd_href
 
@@ -252,7 +250,6 @@ def create_nav(data_dir, nav_filename='nav.html'):
             button_path_abs = Path(data_dir, button_label)
             meta_path = Path(button_path_abs, 'meta.csv')
             meta = pd.read_csv(meta_path, dtype=dtype_dict)
-            print(meta.dtypes)
             button_path = Path('.', button_label)
             meta_path = Path(button_path, 'meta.csv')
             map_path = Path(button_path, 'site_map.html')
