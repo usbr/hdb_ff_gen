@@ -266,7 +266,7 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': prod_requests_daily,
             'rise_sites': uc_rise_sites,
-            'sftp_push': True
+            'sftp_push': '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --delete --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
         },
         'prod_rhel_weekly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
@@ -280,7 +280,7 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': prod_requests_monthly,
             'rise_sites': uc_rise_sites,
-            'sftp_push': True
+            'sftp_push': '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --delete --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
         },
         'prod_eco': {
             'alt_path': None,

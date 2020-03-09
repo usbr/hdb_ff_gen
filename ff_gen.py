@@ -8,7 +8,7 @@ Created on Fri Feb 15 13:54:32 2019
 import time
 import json
 import sys
-from os import path, makedirs
+from os import path, makedirs, system
 from datetime import datetime as dt
 from logging.handlers import TimedRotatingFileHandler
 import logging
@@ -452,10 +452,13 @@ if __name__ == '__main__':
     
     sftp_config = ff_config['sftp_push']
     if sftp_config and create_rise:
-        rsync_cmd = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --delete --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
-        # if type(sftp_config) == bool:
-        #     sync_files('sftp_config.json', logger)
-        # elif type(sftp_config) == str and path.exists(sftp_config):
-        #     sync_files(sftp_config, logger)
+        
+        if type(sftp_config) == bool:
+            sync_files('sftp_config.json', logger)
+        elif type(sftp_config) == str:
+            if path.exists(sftp_config):
+                sync_files(sftp_config, logger)
+            if sftp_config[:5].lower() == 'rsync':
+                system(sftp_config)
 
     logger.info(('-- * ' * 25 + '\n')*2)
