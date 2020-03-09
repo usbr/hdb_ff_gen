@@ -46,7 +46,7 @@ def get_log_scale_dd():
     return log_scale_dd
 
 def get_chart_type(datatype_name, units):
-    if units in ['ACRE-FT'] and 'storage' not in datatype_name:
+    if units.upper() in ['ACRE-FT'] and 'storage' not in datatype_name.lower():
         return 'bar'
     return 'scatter'
 
@@ -309,6 +309,7 @@ def create_chart(df, meta):
     units = datatype_units.get(datatype_id, 'UNKNOWN UNITS').upper()
 
     df_wy = serial_to_wy(df, datatype_name)
+    print(datatype_name, units)
     chart_type = get_chart_type(datatype_name, units)
     if chart_type == 'bar':
         df_wy = df_wy.resample('1M').sum(min_count=25)
