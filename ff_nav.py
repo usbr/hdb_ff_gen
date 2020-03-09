@@ -102,7 +102,8 @@ def create_data_dd(button_label, site_id, data, data_dir, meta, data_format):
     data_href = Path(data_dir, button_label, site_id, data_format)
     data_menu_dict = {}
     for data_name, data_none in data.items():
-        data_id = int(data_name.replace(f'.{data_format}', ''))
+        # data_id = int(data_name.replace(f'.{data_format}', ''))
+        data_id = data_name.replace(f'.{data_format}', '')
         data_label = get_datatype_name(
             data_id,
             meta
@@ -253,7 +254,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
             map_menu_entry = get_menu_entry('SITE MAP', map_path)
             site_menu_list = [meta_menu_entry, map_menu_entry]
             site_name_dict = {
-                get_site_name(int(k), meta): k for k, v in dd_items.items() if v
+                get_site_name(k, meta): k for k, v in dd_items.items() if v
             }
 
             for site_name, site_id in sorted(site_name_dict.items()):
