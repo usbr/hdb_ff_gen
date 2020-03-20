@@ -144,7 +144,19 @@ if __name__ == '__main__':
     ]
 
     snotel_datatypes = [50]
-
+    
+    pn_sites = ['and', 'jck', 'sco', 'mck']
+    pn_datatypes = ['af','fb','qu','qd']
+    
+    pn_requests = {
+        'pn_sites': {
+            'sids': pn_sites,
+            'dids': pn_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        }
+    }
+    
     lbo_requests = {
         'lbo_sites': {
             'sids': lbo_sites,
@@ -294,6 +306,13 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': testing_requests,
             'rise_sites': [917],
+            'sftp_push': False
+        },
+        'pn_rhel_daily': {
+            'alt_path': '/wrg/exec/pub/flat_files',
+            'hdb': 'pn',
+            'requests': pn_requests,
+            'rise_sites': None,
             'sftp_push': False
         }
     }
