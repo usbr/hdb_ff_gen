@@ -124,8 +124,8 @@ def get_folders(rootdir):
     dir_dict = {}
     rootdir = rootdir.rstrip(os.sep)
     start = rootdir.rfind(os.sep) + 1
-    for path, dirs, files in os.walk(rootdir):
-        folders = path[start:].split(os.sep)
+    for walk_path, dirs, files in os.walk(rootdir):
+        folders = walk_path[start:].split(os.sep)
         subdir = dict.fromkeys(files)
         parent = reduce(dict.get, folders[:-1], dir_dict)
         parent[folders[-1]] = subdir
@@ -240,7 +240,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
     }
     basepath = os.path.basename(os.path.normpath(data_dir))
     walk_dict = get_folders(data_dir)[basepath]
-    to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv', 'assets']
+    to_remove = ['.git', 'pau_www.usbr.gov_uc_water_ff.csv', 'assets', 'mtom_viz_beta']
     walk_dict = remove_items(to_remove, walk_dict)
     button_str_list = []
     for button_label, dd_items in walk_dict.items():
