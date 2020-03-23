@@ -355,7 +355,7 @@ if __name__ == '__main__':
         site_names = df_meta[site_label].tolist()
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-
+        
         for i, sdi in enumerate(sdis):
             bt = time.time()
 

@@ -148,10 +148,33 @@ if __name__ == '__main__':
     pn_sites = ['and', 'jck', 'sco', 'mck']
     pn_datatypes = ['af','fb','qu','qd']
     
+    gp_sites = [
+        'agr', 'alcr', 'ancr', 'arne', 'audl', 'bbne', 'bbr', 'bbrsfd', 'bfr',
+        'bhr', 'bhsx', 'blr', 'boyr', 'cane', 'carterco', 'ccdt', 'ccks',
+        'ccr', 'cfrsat', 'dane', 'dfr', 'eapr', 'flaresco', 'frr', 'gdwy',
+        'gibr', 'glaresco', 'gler', 'graresco', 'greresco', 'guwy', 'htoothr',
+        'jamr', 'keyr', 'ksks', 'kwks', 'lane', 'ler', 'lerm', 'lfrm', 'limr',
+        'lmne', 'ltr', 'lvks', 'marysr', 'mcdh', 'mrne', 'mtelfbco', 'nasty',
+        'nelr', 'olydamco', 'patr', 'pbr', 'pinresco', 'pshr', 'ptr', 'puer',
+        'rueresco', 'semr', 'sharesco', 'sher', 'shr', 'srdm', 'swtr', 'turq',
+        'twiresco', 'waks', 'wbks', 'wcne', 'wcr', 'wilresco'
+    ]
+    
+    gp_datatypes = ['qdx', 'af', 'fb', 'qd', 'qj', 'qrd', 'in', 'qehd', 'qsd']
+    
     pn_requests = {
         'pn_sites': {
             'sids': pn_sites,
             'dids': pn_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        }
+    }
+    
+    gp_requests = {
+        'gp_sites': {
+            'sids': gp_sites,
+            'dids': gp_datatypes,
             'interval': 'day',
             'period': 'por'
         }
@@ -312,6 +335,13 @@ if __name__ == '__main__':
             'alt_path': '/wrg/exec/pub/flat_files',
             'hdb': 'pn',
             'requests': pn_requests,
+            'rise_sites': None,
+            'sftp_push': False
+        },
+        'gp_rhel_daily': {
+            'alt_path': None,#'/wrg/exec/pub/flat_files',
+            'hdb': 'gp',
+            'requests': gp_requests,
             'rise_sites': None,
             'sftp_push': False
         }
