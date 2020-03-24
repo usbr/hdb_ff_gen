@@ -306,7 +306,9 @@ def create_chart(df, meta):
     datatype_name = meta['datatype_metadata.datatype_common_name']
     datatype_str = datatype_name.upper()
     datatype_id = meta['datatype_id']
-    units = datatype_units.get(datatype_id, 'UNKNOWN UNITS').upper()
+    units = meta['datatype_metadata.unit_name']
+    if not units:
+        units = datatype_units.get(datatype_id, 'UNKNOWN UNITS').upper()
 
     df_wy = serial_to_wy(df, datatype_name)
     chart_type = get_chart_type(datatype_name, units)

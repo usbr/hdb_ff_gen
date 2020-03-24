@@ -13,19 +13,21 @@ import folium
 import branca
 import pandas as pd
 from requests import get as r_get
-# import geopandas as gpd
 from shapely.geometry import Point
 
 STATIC_URL = f'https://www.usbr.gov/uc/water/hydrodata/assets'
 NRCS_CHARTS_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/basinCharts/POR'
 
 def get_plotly_js():
+    
     return f'{STATIC_URL}/plotly.js'
 
 def get_favicon():
+    
     return f'{STATIC_URL}/img/favicon.ico'
 
 def get_bootstrap():
+    
     return {
         'css': f'{STATIC_URL}/bootstrap/css/bootstrap.min.css',
         'js': f'{STATIC_URL}/bootstrap/js/bootstrap.bundle.js',
@@ -35,6 +37,7 @@ def get_bootstrap():
     }
 
 def get_bor_seal(orient='default', grey=False):
+    
     color = 'cmyk'
     if grey:
         color = 'grey'
@@ -47,6 +50,7 @@ def get_bor_seal(orient='default', grey=False):
     return f'{STATIC_URL}/img/{seal_dict[orient]}'
 
 def get_bor_js():
+    
     return [
         ('leaflet',
           f'{STATIC_URL}/js/leaflet/leaflet.js'),
@@ -59,6 +63,7 @@ def get_bor_js():
         ]
 
 def get_bor_css():
+    
     return [
         ('leaflet_css',
           f'{STATIC_URL}/css/leaflet/leaflet.css'),
@@ -75,6 +80,7 @@ def get_bor_css():
         ]
 
 def get_default_js():
+    
     bootstrap_dict = get_bootstrap()
     return [
         ('leaflet', 
@@ -90,6 +96,7 @@ def get_default_js():
     ]
 
 def get_default_css():
+    
     bootstrap_dict = get_bootstrap()
     return [
         ('leaflet_css', 
@@ -105,8 +112,10 @@ def get_default_css():
     ]
 
 def get_obj_type_name(obj_type='default'):
+    
     obj_type_dict = {
             'default': 'map-pin',
+            0: 'reservoir',
             1: 'basin',
             2: 'climate site (rain)',
             3: 'confluence',
@@ -136,9 +145,11 @@ def get_obj_type_name(obj_type='default'):
     return obj_type_dict.get(obj_type, 'N/A')
 
 def get_fa_icon(obj_type='default', source='hdb'):
+    
     if source.lower() == 'hdb':
         fa_dict = {
             'default': 'map-pin',
+            0: 'tint',
             1: 'sitemap',
             2: 'umbrella',
             3: 'arrow-down',
@@ -173,6 +184,7 @@ def get_fa_icon(obj_type='default', source='hdb'):
     return fa_icon
 
 def get_icon_color(row, source='hdb'):
+    
     if source.lower() == 'hdb':
         obj_owner = 'BOR'
         if not row.empty:
@@ -200,6 +212,7 @@ def get_icon_color(row, source='hdb'):
     return icon_color
 
 def add_optional_tilesets(folium_map):
+    
     tilesets = {
         "Terrain": 'Stamen Terrain',
         'Street Map': 'OpenStreetMap',
@@ -212,6 +225,7 @@ def add_optional_tilesets(folium_map):
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
 def add_huc_layer(huc_map, level='2', json_path=None, embed=False, show=False):
+   
     try:
         if not json_path:
             json_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
@@ -228,6 +242,7 @@ def add_huc_layer(huc_map, level='2', json_path=None, embed=False, show=False):
             style_function=huc_style,
             show=show
         ).add_to(huc_map)
+    
     except Exception as err:
         print(f'Could not add HUC {level} layer to map! - {err}')
 
@@ -276,6 +291,7 @@ def get_huc(geo_df, lat, lon, level='12'):
     return None
 
 def get_season():
+    
     curr_month = datetime.now().month
     if curr_month > 3:
         return 'spring'
@@ -286,6 +302,7 @@ def get_season():
     return 'winter'
 
 def get_huc_nrcs_stats(huc_level='6', try_all=False):
+    
     print(f'  Getting NRCS stats for HUC{huc_level}...')
     data_types = ['prec', 'wteq']
     index_pg_urls = [f'{NRCS_CHARTS_URL}/{i.upper()}/assocHUC{huc_level}' 
@@ -329,6 +346,7 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False):
         json.dump(topo_json, tj)
     
 def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
+    
     stat_type_dict = {'wteq': 'Median', 'prec': 'Average'}
     url = f'{NRCS_CHARTS_URL}/{data_type.upper()}/assocHUC{huc_level}/{basin_name}.html'
     try:
@@ -348,6 +366,7 @@ def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
 
 def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6', 
                       gis_path='gis', filter_str=None):
+    
     huc_str = f'HUC{huc_level}'
     topo_json_path = path.join(gis_path, f'{huc_str}.topojson')
     stat_type_dict = {'swe': 'Median', 'prec': 'Avg.'}
@@ -374,6 +393,7 @@ def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6',
     ).add_to(m)
 
 def style_swe_chropleth(feature):
+    
     colormap = get_colormap()
     stat_value = feature['properties'].get('swe_percent', 'N/A')
     if stat_value == 'N/A':
@@ -388,6 +408,7 @@ def style_swe_chropleth(feature):
     }
 
 def style_prec_chropleth(feature):
+    
     colormap = get_colormap()
     stat_value = feature['properties'].get('prec_percent', 'N/A')
     if stat_value == 'N/A':
@@ -402,6 +423,7 @@ def style_prec_chropleth(feature):
     }
 
 def filter_geo_json(geo_json_path, filter_attr='HUC2', filter_str='14'):
+   
     f_geo_json = {'type': 'FeatureCollection'}
     with open(geo_json_path, 'r') as gj:
         geo_json = json.load(gj)
@@ -412,6 +434,7 @@ def filter_geo_json(geo_json_path, filter_attr='HUC2', filter_str='14'):
     return f_geo_json
 
 def filter_topo_json(topo_json, huc_level=2, filter_str='14'):
+    
     geometries = topo_json['objects'][f'HUC{huc_level}']['geometries']
     geometries[:] = [i for i in geometries if 
                 i['properties'][f'HUC{huc_level}'][:len(filter_str)] == filter_str]
@@ -419,9 +442,8 @@ def filter_topo_json(topo_json, huc_level=2, filter_str='14'):
     return topo_json
 
 def get_colormap(low=50, high=150):
-    # colormap = branca.colormap.linear.RdYlBu_09.scale(low, high)
+
     colormap = branca.colormap.LinearColormap(
-        # colors=['red','yellow','green','blue', 'purple'],
         colors=[
             (255,51,51,150), 
             (255,255,51,150), 
