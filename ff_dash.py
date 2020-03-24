@@ -202,7 +202,7 @@ def get_dash_body(site_name, site_id, chart_names):
     <nav class="sidebar col-md-2 mt-2">
       <div class="sidebar-sticky">
         <a class="sidebar-heading d-flex px-3 mt-4 mb-1" href="https://www.usbr.gov/uc/water/index.html">
-          <img src="{bor_seal}" class="img-fluid" alt="Reclamation Seal">
+          <img src="{bor_seal}" class="d-none d-md-flex img-fluid" alt="Reclamation Seal">
         </a>
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
           <span>Maps</span>
