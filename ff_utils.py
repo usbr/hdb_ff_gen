@@ -458,5 +458,22 @@ def get_colormap(low=50, high=150):
     colormap.caption = '% of Average Precipitation or % Median Snow Water Equivalent'
     return colormap
 
+def get_plot_config(img_filename):
+    return {
+        'modeBarButtonsToRemove': [
+            'sendDataToCloud',
+            'lasso2d',
+            'select2d'
+        ],
+        'showAxisDragHandles': True,
+        'showAxisRangeEntryBoxes': True,
+        'displaylogo': False,
+        'toImageButtonOptions': {
+            'filename': img_filename,
+            'width': 1200,
+            'height': 700
+        }
+    }
+
 if __name__ == '__main__':
     print('Just a utility module')

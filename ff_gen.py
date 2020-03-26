@@ -8,13 +8,13 @@ Created on Fri Feb 15 13:54:32 2019
 import time
 import json
 import sys
+import logging
 from os import path, makedirs, system
 from datetime import datetime as dt
-from logging.handlers import TimedRotatingFileHandler
-import logging
 import pandas as pd
 import numpy as np
 import plotly as py
+from logging.handlers import TimedRotatingFileHandler
 from ff_nav import create_nav
 from ff_site_maps import create_map
 from ff_charts import create_chart
@@ -22,26 +22,10 @@ from ff_sftp_push import push_sftp
 from ff_webmap_gen import create_webmap
 from ff_huc_maps import create_huc_maps
 from ff_to_rise import ff_to_rise
-from ff_utils import get_favicon, get_plotly_js, get_huc_nrcs_stats
+from ff_utils import get_favicon, get_plotly_js
+from ff_utils import get_huc_nrcs_stats, get_plot_config
 from hdb_api.hdb_utils import get_eng_config
 from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries
-
-def get_plot_config(img_filename):
-    return {
-        'modeBarButtonsToRemove': [
-            'sendDataToCloud',
-            'lasso2d',
-            'select2d'
-        ],
-        'showAxisDragHandles': True,
-        'showAxisRangeEntryBoxes': True,
-        'displaylogo': False,
-        'toImageButtonOptions': {
-            'filename': img_filename,
-            'width': 1200,
-            'height': 700
-        }
-    }
 
 def create_log(path='ff_gen.log'):
     logger = logging.getLogger('ff_gen rotating log')
@@ -73,7 +57,7 @@ def sync_files(config_path, logger):
             logger.info(scp_push_str)
     except Exception as err:
         sftp_push_err = (
-            f'Error running file sync script - {err}'
+            f'  Error running file sync script - {err}'
         )
         print(sftp_push_err)
         logger.info(sftp_push_err)
@@ -113,7 +97,7 @@ def make_csv(df, csv_filename, logger):
     try:
         df.to_csv(csv_filename, index=False)
     except Exception as err:
-        csv_err = f'Error saving {csv_filename} - {err}'
+        csv_err = f'  Error saving {csv_filename} - {err}'
         print(csv_err)
         logger.info(csv_err)
 
@@ -122,7 +106,7 @@ def make_json(df, json_filename, logger):
         df['datetime'] = df['datetime'].dt.strftime('%Y-%m-%d')
         df.to_json(json_filename, orient='split', index=False)
     except Exception as err:
-        json_err = f'Error saving {json_filename} - {err}'
+        json_err = f'  Error saving {json_filename} - {err}'
         print(json_err)
         logger.info(json_err)
 
@@ -141,7 +125,7 @@ def make_rise(df, db_name, site_name, datatype_name, interval,
         )
     except Exception as err:
         rise_err = (
-            f'Error saving RISE.json for {site_name} {datatype_name} - {err}'
+            f'  Error saving RISE.json for {site_name} {datatype_name} - {err}'
         )
         print(rise_err)
         logger.info(rise_err)
@@ -153,7 +137,7 @@ def make_nav(data_dir, logger):
         logger.info(nav_str)
     except Exception as err:
         nav_str = (
-            f'Error creating ff_nav.html file for {data_dir} - {err}'
+            f'  Error creating ff_nav.html file for {data_dir} - {err}'
         )
         print(nav_str)
         logger.info(nav_str)
@@ -165,7 +149,7 @@ def make_sitemap(site_type, df_meta, data_dir, logger):
         logger.info(map_str)
     except Exception as err:
         map_str = (
-            f'Error creating leaflet site map file for {site_type} - {err}'
+            f'  Error creating leaflet site map file for {site_type} - {err}'
         )
         print(map_str)
         logger.info(map_str)
@@ -177,7 +161,7 @@ def make_webmap(data_dir, logger):
         logger.info(webmap_str)
     except Exception as err:
         webmap_err = (
-            f'Error creating webmap for {data_dir} - {err}'
+            f'  Error creating webmap for {data_dir} - {err}'
         )
         print(webmap_err)
         logger.info(webmap_err)
@@ -189,7 +173,7 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         logger.info(huc_map_str)
     except Exception as err:
         webmap_err = (
-            f'Error creating huc maps in {site_type_dir} - {err}'
+            f'  Error creating huc maps in {site_type_dir} - {err}'
         )
         print(webmap_err)
         logger.info(webmap_err)
@@ -243,6 +227,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=cli_desc)
     parser.add_argument("-V", "--version", help="show program version", action="store_true")
     parser.add_argument("-r", "--rise", help="create RISE jsons, push only if sftp_push set to true or valid path in config", action="store_true")
+    parser.add_argument("-l", "--log", help="set logs to verbose or default to standard", choices=['verbose', 'standard'], default='standard')
     parser.add_argument("-o", "--output", help="override alt_path from config file output folder")
     parser.add_argument("-s", "--schema", help='schema to use, defaults to "default"')
     parser.add_argument("-c", "--config", help="use alternate config json, use full path")
@@ -308,11 +293,12 @@ if __name__ == '__main__':
     if args.gis:
         for huc_level in ['2', '6', '8']:
             update_gis_files(huc_level)
-                
+    
+    s_time = dt.now()
     schema_str = (
         f'\nUsing "{schema}" schema...\n\n'
         f'  Pushing files to: {data_dir.replace(this_dir, "..")} '
-        f' @ {dt.now().strftime("%x %X")} '
+        f' @ {s_time.strftime("%x %X")} '
     )
     print(schema_str)
     logger.info(schema_str)
@@ -365,7 +351,8 @@ if __name__ == '__main__':
 
             )
             print(created_site_str)
-            logger.info(created_site_str)
+            if args.log == 'verbose':
+                logger.info(created_site_str)
 
             meta = df_meta[df_meta.index == sdi].iloc[0]
 
@@ -426,7 +413,8 @@ if __name__ == '__main__':
                     f'     finished in {round(et - bt,2)} seconds.'
                 )
                 print(finsihed_str)
-                logger.info(finsihed_str)
+                if args.log == 'verbose':
+                    logger.info(finsihed_str)
 
             else:
                 no_data_str = (
@@ -434,7 +422,8 @@ if __name__ == '__main__':
                     f'No files were created.'
                 )
                 print(no_data_str)
-                logger.info(no_data_str)
+                if args.log == 'verbose':
+                    logger.info(no_data_str)
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
@@ -445,10 +434,14 @@ if __name__ == '__main__':
     make_nav(data_dir, logger)
 
     # make_webmap(data_dir, logger)
-
-    logger.info(
-        f'\nFinished ff_gen @ {dt.now().strftime("%x %X")}'
+    e_time = dt.now()
+    d_time = e_time - s_time
+    finish_str = (
+        f'\nFinished ff_gen: {schema} @ {e_time.strftime("%x %X")} in '
+        f"{':'.join(str(d_time).split(':')[:2])} hours"
     )
+    print(finish_str)
+    logger.info(finish_str)
     
     sftp_config = ff_config['sftp_push']
     if sftp_config and create_rise:
@@ -460,4 +453,4 @@ if __name__ == '__main__':
             if sftp_config[:4].lower() in ['rsyn', 'sftp', 'scp ', 'ftps']:
                 system(sftp_config)
 
-    logger.info(('-- * ' * 25 + '\n')*2)
+    logger.info(('\n-- * ' * 25 + '\n')*2)

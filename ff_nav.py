@@ -308,7 +308,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
     }
     write_file(write_nav_dict)
 
-    return f'\nNavigation files created.'
+    return f'\n  Navigation files created.'
 
 if __name__ == '__main__':
 
