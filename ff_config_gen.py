@@ -339,7 +339,7 @@ if __name__ == '__main__':
             'sftp_push': False
         },
         'gp_rhel_daily': {
-            'alt_path': None,#'/wrg/exec/pub/flat_files',
+            'alt_path': '/wrg/exec/pub/flat_files',
             'hdb': 'gp',
             'requests': gp_requests,
             'rise_sites': None,
