@@ -453,4 +453,4 @@ if __name__ == '__main__':
             if sftp_config[:4].lower() in ['rsyn', 'sftp', 'scp ', 'ftps']:
                 system(sftp_config)
 
-    logger.info(('\n-- * ' * 25 + '\n')*2)
+    logger.info(('\n' + '-- * ' * 25)*2 + '\n')
