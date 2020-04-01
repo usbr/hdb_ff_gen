@@ -178,7 +178,7 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
-def update_gis_files(huc_level):
+def update_gis_files(huc_level, export_path=None):
     try:
         gis_str = (
             f'Updating HUC{huc_level} '
@@ -186,7 +186,7 @@ def update_gis_files(huc_level):
         )
         print(gis_str)
         logger.info(gis_str)
-        get_huc_nrcs_stats(huc_level)
+        get_huc_nrcs_stats(huc_level, export_path)
         gis_str = (
             f'  Successfully updated HUC{huc_level} '
             f'GIS files with current NRCS data.\n'
@@ -292,7 +292,7 @@ if __name__ == '__main__':
     
     if args.gis:
         for huc_level in ['2', '6', '8']:
-            update_gis_files(huc_level)
+            update_gis_files(huc_level, export_path=f'{data_dir}/assets/gis/')
     
     s_time = dt.now()
     schema_str = (

@@ -301,7 +301,7 @@ def get_season():
         return 'fall'
     return 'winter'
 
-def get_huc_nrcs_stats(huc_level='6', try_all=False):
+def get_huc_nrcs_stats(huc_level='6', try_all=False, export_path=None):
     
     print(f'  Getting NRCS stats for HUC{huc_level}...')
     data_types = ['prec', 'wteq']
@@ -318,7 +318,10 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False):
         index_page_strs = ['' for i in index_pg_resps]
     else:
         index_page_strs = [i.text for i in index_pg_resps]
-    topo_json_path = f'./gis/HUC{huc_level}.topojson'
+    if not export_path:
+        topo_json_path = f'./gis/HUC{huc_level}.topojson'
+    else:
+        topo_json_path = export_path
     with open(topo_json_path, 'r') as tj:
         topo_json = json.load(tj)
     huc_str = f'HUC{huc_level}'
