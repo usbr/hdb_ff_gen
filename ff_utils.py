@@ -470,7 +470,7 @@ def style_swe_chropleth(feature, huc_level='2', huc_filter='14'):
     huc_level = str(huc_level)
     colormap = get_colormap()
     stat_value = feature['properties'].get('swe_percent', 'N/A')
-    huc_id = str(feature['properties'].get('HUC{huc_level}', 'N/A'))
+    huc_id = str(feature['properties'].get(f'HUC{huc_level}', 'N/A'))
     if not stat_value == 'N/A':
         stat_value = float(stat_value)
     return {
@@ -484,7 +484,7 @@ def style_prec_chropleth(feature, huc_level='2', huc_filter='14'):
     huc_level = str(huc_level)
     colormap = get_colormap()
     stat_value = feature['properties'].get('swe_percent', 'N/A')
-    huc_id = str(feature['properties'].get('HUC{huc_level}', 'N/A'))
+    huc_id = str(feature['properties'].get(f'HUC{huc_level}', 'N/A'))
     if not stat_value == 'N/A':
         stat_value = float(stat_value)
     return {
