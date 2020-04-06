@@ -224,25 +224,41 @@ def add_optional_tilesets(folium_map):
     for name, tileset in tilesets.items():
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
-def add_huc_layer(huc_map, level='2', json_path=None, embed=False, show=False):
+def add_huc_layer(huc_map, level='2', json_path=None, embed=False, show=False,
+                  use_topo=False):
    
     try:
-        if not json_path:
-            json_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
         weight = -0.25 * float(level) + 2.5
         huc_style = lambda x: {
             'fillColor': '#ffffff00', 'color': '#A9A9A9AA', 'weight': weight
         }
-        folium.GeoJson(
-            json_path,
-            name=f'HUC {level}',
-            embed=embed,
-            overlay=True,
-            smooth_factor=2.0,
-            style_function=huc_style,
-            show=show
-        ).add_to(huc_map)
-    
+        if use_topo:
+            if not json_path:
+                json_path = f'{STATIC_URL}/gis/HUC{level}.topojson'
+            object_path = f'objects.HUC{level}'
+            huc_topo_json = r_get(json_path).json()
+            folium.TopoJson(
+                huc_topo_json,
+                object_path,
+                name=f'HUC {level}',
+                overlay=True,
+                smooth_factor=2.0,
+                style_function=huc_style,
+                show=show
+            ).add_to(huc_map)
+        else:
+            if not json_path:
+                json_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
+            folium.GeoJson(
+                json_path,
+                name=f'HUC {level}',
+                embed=embed,
+                overlay=True,
+                smooth_factor=2.0,
+                style_function=huc_style,
+                show=show
+            ).add_to(huc_map)
+            
     except Exception as err:
         print(f'Could not add HUC {level} layer to map! - {err}')
 
@@ -301,7 +317,7 @@ def get_season():
         return 'fall'
     return 'winter'
 
-def get_huc_nrcs_stats(huc_level='6', try_all=False, export_path=None):
+def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_path=None):
     
     print(f'  Getting NRCS stats for HUC{huc_level}...')
     data_types = ['prec', 'wteq']
@@ -318,10 +334,7 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False, export_path=None):
         index_page_strs = ['' for i in index_pg_resps]
     else:
         index_page_strs = [i.text for i in index_pg_resps]
-    if not export_path:
-        topo_json_path = f'./gis/HUC{huc_level}.topojson'
-    else:
-        topo_json_path = export_path
+    topo_json_path = f'./gis/HUC{huc_level}.topojson'
     with open(topo_json_path, 'r') as tj:
         topo_json = json.load(tj)
     huc_str = f'HUC{huc_level}'
@@ -345,8 +358,13 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False, export_path=None):
         else:
             props['swe_percent'] = "N/A"
     topo_json['objects'][huc_str]['geometries'] = attrs
-    with open(topo_json_path, 'w') as tj:
-        json.dump(topo_json, tj)
+    export_paths = [topo_json_path]
+    if add_export_path:
+        if path.exists(add_export_path):
+            export_paths.append(add_export_path)
+    for export_path in export_paths:
+        with open(export_path, 'w') as tj:
+            json.dump(topo_json, tj)
     
 def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
     
@@ -368,7 +386,7 @@ def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
     return stat
 
 def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6', 
-                      gis_path='gis', filter_str=None):
+                      gis_path='gis', filter_str=None, use_topo=False):
     
     huc_str = f'HUC{huc_level}'
     topo_json_path = path.join(gis_path, f'{huc_str}.topojson')
@@ -384,16 +402,31 @@ def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6',
     style_chropleth_dict = {
         'swe': style_swe_chropleth, 'prec': style_prec_chropleth
     }
-    folium.TopoJson(
-        topo_json,
-        f'objects.{huc_str}',
-        name=layer_name,
-        show=show,
-        style_function=style_chropleth_dict[data_type],
-        tooltip=folium.features.GeoJsonTooltip(
-            ['Name', f'{data_type}_percent'],
-            aliases=['Basin Name:', f'{layer_name}:'])
-    ).add_to(m)
+    if use_topo:
+        folium.TopoJson(
+            topo_json,
+            f'objects.{huc_str}',
+            name=layer_name,
+            show=show,
+            style_function=style_chropleth_dict[data_type],
+            tooltip=folium.features.GeoJsonTooltip(
+                ['Name', f'{data_type}_percent'],
+                aliases=['Basin Name:', f'{layer_name}:'])
+        ).add_to(m)
+    else:
+        json_path = f'{STATIC_URL}/gis/HUC{huc_level}.geojson'
+        folium.GeoJson(
+            json_path,
+            name=layer_name,
+            embed=False,
+            overlay=True,
+            smooth_factor=2.0,
+            style_function=style_chropleth_dict[data_type],
+            show=show,
+            tooltip=folium.features.GeoJsonTooltip(
+                ['Name', f'{data_type}_percent'],
+                aliases=['Basin Name:', f'{layer_name}:'])
+        ).add_to(m)
 
 def style_swe_chropleth(feature):
     

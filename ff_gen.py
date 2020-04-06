@@ -292,7 +292,9 @@ if __name__ == '__main__':
     
     if args.gis:
         for huc_level in ['2', '6', '8']:
-            update_gis_files(huc_level)
+            assets_dir = path.join(data_dir, 'assets', 'gis')
+            makedirs(assets_dir, exist_ok=True)
+            update_gis_files(huc_level, add_export_path=assets_dir)
     
     s_time = dt.now()
     schema_str = (

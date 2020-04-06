@@ -193,7 +193,12 @@ def create_map(site_type, meta, data_dir):
         
         for huc_level in ['2', '6', '8']:
             show_layer = True if huc_level == '2' else False
-            add_huc_layer(sitetype_map, level=huc_level, show=show_layer)
+            add_huc_layer(
+                sitetype_map, 
+                level=huc_level, 
+                show=show_layer, 
+                use_topo=False
+            )
             for data_type in ['swe', 'prec']:
                 add_huc_chropleth(
                     sitetype_map, 
@@ -201,7 +206,8 @@ def create_map(site_type, meta, data_dir):
                     show=False, 
                     huc_level=huc_level, 
                     gis_path='gis', 
-                    filter_str=None
+                    filter_str=None,
+                    use_topo=False
                 )
         add_optional_tilesets(sitetype_map)
         folium.LayerControl('topleft').add_to(sitetype_map)
