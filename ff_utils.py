@@ -451,7 +451,6 @@ def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6',
         ).add_to(m)
     else:
         json_path = f'{STATIC_URL}/gis/HUC{huc_level}.geojson'
-        print(json_path)
         folium.GeoJson(
             json_path,
             name=layer_name,
