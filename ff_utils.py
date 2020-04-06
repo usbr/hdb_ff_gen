@@ -317,7 +317,7 @@ def get_season():
         return 'fall'
     return 'winter'
 
-def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_path=None):
+def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_dir=None):
     
     print(f'  Getting NRCS stats for HUC{huc_level}...')
     data_types = ['prec', 'wteq']
@@ -338,31 +338,67 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_path=None):
     with open(topo_json_path, 'r') as tj:
         topo_json = json.load(tj)
     huc_str = f'HUC{huc_level}'
-    attrs = topo_json['objects'][huc_str]['geometries']
-    for attr in attrs:
+    swe_stat_dict = {}
+    prec_stat_dict = {}
+    topo_attrs = topo_json['objects'][huc_str]['geometries']
+    for attr in topo_attrs:
         props = attr['properties']
         huc_name = props['Name']
         file_name = f'href="{huc_name.replace(" ", "%20")}.html"'
-        if not try_all and file_name in index_page_strs[0]:
+        if try_all or file_name in index_page_strs[0]:
             print(f'  Getting NRCS PREC stats for {huc_name}...')
-            props['prec_percent'] = get_nrcs_basin_stat(
+            prec_stat = get_nrcs_basin_stat(
                 huc_name, huc_level=huc_level, data_type='prec'
             )
+            props['prec_percent'] = prec_stat
+            prec_stat_dict[huc_name] = prec_stat
         else:
             props['prec_percent'] = "N/A"
-        if not try_all and file_name in index_page_strs[1]:
+            prec_stat_dict[huc_name] = "N/A"
+        if try_all or file_name in index_page_strs[1]:
             print(f'  Getting NRCS WTEQ stats for {huc_name}...')
-            props['swe_percent'] = get_nrcs_basin_stat(
+            swe_stat = get_nrcs_basin_stat(
                 huc_name, huc_level=huc_level, data_type='wteq'
             )
+            props['swe_percent'] = swe_stat
+            swe_stat_dict[huc_name] = swe_stat
         else:
             props['swe_percent'] = "N/A"
-    topo_json['objects'][huc_str]['geometries'] = attrs
-    export_paths = [topo_json_path]
-    if add_export_path:
-        if path.exists(add_export_path):
-            export_paths.append(add_export_path)
-    for export_path in export_paths:
+            swe_stat_dict[huc_name] = "N/A"
+    topo_json['objects'][huc_str]['geometries'] = topo_attrs
+    
+    geo_json_path = f'./gis/HUC{huc_level}.geojson'
+    with open(geo_json_path, 'r') as gj:
+        geo_json = json.load(gj)
+    geo_features = geo_json['features']
+    for geo_feature in geo_features:
+        geo_props = geo_feature['properties']
+        huc_name = geo_props['Name']
+        geo_props['prec_percent'] = prec_stat_dict.get(huc_name, 'N/A')
+        geo_props['swe_percent'] = swe_stat_dict.get(huc_name, 'N/A')
+    
+    geo_json['features'] = geo_features
+    geo_export_paths = [geo_json_path]
+    topo_export_paths = [topo_json_path]
+    if add_export_dir:
+        if path.isdir(add_export_dir):
+            print(f'Exporting to alt dir: {add_export_dir}')
+            add_geo_path = path.join(
+                add_export_dir, 
+                f'HUC{huc_level}.geojson'
+            )
+            geo_export_paths.append(add_path)
+            add_topo_path = path.join(
+                add_export_dir, 
+                f'HUC{huc_level}.topojson'
+            )
+            topo_export_paths.append(add_path)
+        else:
+            print(f'Cannot export to alt dir: {add_export_dir}, does not exist')
+    for export_path in geo_export_paths:
+        with open(export_path, 'w') as tj:
+            json.dump(geo_json, tj)
+    for export_path in topo_export_paths:
         with open(export_path, 'w') as tj:
             json.dump(topo_json, tj)
     
@@ -415,6 +451,7 @@ def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6',
         ).add_to(m)
     else:
         json_path = f'{STATIC_URL}/gis/HUC{huc_level}.geojson'
+        print(json_path)
         folium.GeoJson(
             json_path,
             name=layer_name,
