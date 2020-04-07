@@ -422,7 +422,7 @@ def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
     return stat
 
 def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6', 
-                      gis_path='gis', filter_str=None, use_topo=False):
+                      gis_path='gis', filter_str='', use_topo=False):
     
     huc_str = f'HUC{huc_level}'
     stat_type_dict = {'swe': 'Median', 'prec': 'Avg.'}
@@ -477,6 +477,7 @@ def style_chropleth(feature, data_type='swe', huc_level='2', huc_filter=''):
     huc_id = str(feature['properties'].get(f'HUC{huc_level}', 'N/A'))
     if not stat_value == 'N/A':
         stat_value = float(stat_value)
+    
     return {
         'fillOpacity': 
             0 if stat_value == 'N/A' or 

@@ -196,16 +196,14 @@ def create_map(site_type, meta, data_dir):
             add_huc_layer(
                 sitetype_map, 
                 level=huc_level, 
-                show=show_layer, 
-                use_topo=False
+                show=show_layer
             )
             for data_type in ['swe', 'prec']:
                 add_huc_chropleth(
                     sitetype_map, 
                     data_type=data_type, 
                     show=False, 
-                    huc_level=huc_level, 
-                    filter_str=None,
+                    huc_level=huc_level
                 )
         add_optional_tilesets(sitetype_map)
         folium.LayerControl('topleft').add_to(sitetype_map)
@@ -258,7 +256,7 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     data_dir = path.join(this_dir, 'flat_files')
 
-    site_types = ['test_ff']
+    site_types = ['gp_sites']
     for site_type in site_types:
         site_type_dir = path.join(data_dir, site_type)
         meta_path = path.join(data_dir, site_type, 'meta.csv')
