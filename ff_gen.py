@@ -295,7 +295,7 @@ if __name__ == '__main__':
             assets_dir = path.join(data_dir, 'assets', 'gis')
             makedirs(assets_dir, exist_ok=True)
             update_gis_files(huc_level, add_export_dir=assets_dir)
-        
+
     s_time = dt.now()
     schema_str = (
         f'\nUsing "{schema}" schema...\n\n'
