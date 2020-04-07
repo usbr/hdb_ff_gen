@@ -421,31 +421,34 @@ def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
         stat = 'N/A'
     return stat
 
-def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6', 
+def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6', 
                       gis_path='gis', filter_str=None, use_topo=False):
     
     huc_str = f'HUC{huc_level}'
-    topo_json_path = path.join(gis_path, f'{huc_str}.topojson')
     stat_type_dict = {'swe': 'Median', 'prec': 'Avg.'}
     stat_type = stat_type_dict.get(data_type, '')
     layer_name = f'{huc_str} % {stat_type} {data_type.upper()}'
-    with open(topo_json_path, 'r') as tj:
-        topo_json = json.load(tj)
-    if filter_str:
-        topo_json = filter_topo_json(
-            topo_json, huc_level=huc_level, filter_str=filter_str
-        )
-    style_chropleth_dict = {
-        'swe': lambda x: style_swe_chropleth(x, huc_level=huc_level, huc_filter=filter_str), 
-        'prec': lambda x: style_prec_chropleth(x, huc_level=huc_level, huc_filter=filter_str)
-    }
+    if use_topo:
+        topo_json_path = path.join(gis_path, f'{huc_str}.topojson')
+        with open(topo_json_path, 'r') as tj:
+            topo_json = json.load(tj)
+        if filter_str:
+            topo_json = filter_topo_json(
+                topo_json, huc_level=huc_level, filter_str=filter_str
+            )
+    style_function = lambda x: style_chropleth(
+        x, data_type=data_type, huc_level=huc_level, huc_filter=filter_str
+    )
+       
     if use_topo:
         folium.TopoJson(
             topo_json,
             f'objects.{huc_str}',
             name=layer_name,
+            overlay=True,
             show=show,
-            style_function=style_chropleth_dict[data_type],
+            smooth_factor=2.0,
+            style_function=style_function,
             tooltip=folium.features.GeoJsonTooltip(
                 ['Name', f'{data_type}_percent'],
                 aliases=['Basin Name:', f'{layer_name}:'])
@@ -457,33 +460,20 @@ def add_huc_chropleth(m, data_type='swe', show=True, huc_level='6',
             name=layer_name,
             embed=False,
             overlay=True,
+            control=True,
             smooth_factor=2.0,
-            style_function=style_chropleth_dict[data_type],
+            style_function=style_function,
             show=show,
             tooltip=folium.features.GeoJsonTooltip(
                 ['Name', f'{data_type}_percent'],
                 aliases=['Basin Name:', f'{layer_name}:'])
         ).add_to(m)
 
-def style_swe_chropleth(feature, huc_level='2', huc_filter='14'):
+def style_chropleth(feature, data_type='swe', huc_level='2', huc_filter='14'):
     huc_filter = str(huc_filter)
     huc_level = str(huc_level)
     colormap = get_colormap()
-    stat_value = feature['properties'].get('swe_percent', 'N/A')
-    huc_id = str(feature['properties'].get(f'HUC{huc_level}', 'N/A'))
-    if not stat_value == 'N/A':
-        stat_value = float(stat_value)
-    return {
-        'fillOpacity': 0 if stat_value == 'N/A' or huc_id[:len(huc_filter)] != huc_filter else 0.75,
-        'weight': 0,
-        'fillColor': '#00000000' if stat_value == 'N/A' or huc_id[:len(huc_filter)] != huc_filter else colormap(stat_value)
-    }
-
-def style_prec_chropleth(feature, huc_level='2', huc_filter='14'):
-    huc_filter = str(huc_filter)
-    huc_level = str(huc_level)
-    colormap = get_colormap()
-    stat_value = feature['properties'].get('swe_percent', 'N/A')
+    stat_value = feature['properties'].get(f'{data_type}_percent', 'N/A')
     huc_id = str(feature['properties'].get(f'HUC{huc_level}', 'N/A'))
     if not stat_value == 'N/A':
         stat_value = float(stat_value)

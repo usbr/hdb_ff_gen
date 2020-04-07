@@ -205,9 +205,7 @@ def create_map(site_type, meta, data_dir):
                     data_type=data_type, 
                     show=False, 
                     huc_level=huc_level, 
-                    gis_path='gis', 
                     filter_str=None,
-                    use_topo=False
                 )
         add_optional_tilesets(sitetype_map)
         folium.LayerControl('topleft').add_to(sitetype_map)
