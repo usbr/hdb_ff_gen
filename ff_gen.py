@@ -242,7 +242,7 @@ if __name__ == '__main__':
     create_rise = False
     if args.rise:
         create_rise = True
-        
+
     this_dir = path.dirname(path.realpath(__file__))
     
     if args.config:
@@ -450,9 +450,14 @@ if __name__ == '__main__':
         if type(sftp_config) == bool:
             sync_files('sftp_config.json', logger)
         elif type(sftp_config) == str:
-            if path.exists(sftp_config):
-                sync_files(sftp_config, logger)
-            if sftp_config[:4].lower() in ['rsyn', 'sftp', 'scp ', 'ftps']:
+            if sftp_config.startswith(('rsync', 'sftp', 'scp', 'ftps')):
+                sync_str = (
+                    f'\nPushing data using the following command: {sftp_config}'
+                )
+                print(sync_str)
+                logger.info(sync_str)
                 system(sftp_config)
+            elif path.exists(sftp_config):
+                sync_files(sftp_config, logger)
 
     logger.info(('\n' + '-- * ' * 25)*2 + '\n')

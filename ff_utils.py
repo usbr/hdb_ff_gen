@@ -224,41 +224,31 @@ def add_optional_tilesets(folium_map):
     for name, tileset in tilesets.items():
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
-def add_huc_layer(huc_map, level='2', json_path=None, embed=False, show=False,
-                  use_topo=False):
-   
+def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False, 
+                  show=True, huc_filter=None):
     try:
+        huc_filter = str(huc_filter)
         weight = -0.25 * float(level) + 2.5
-        huc_style = lambda x: {
-            'fillColor': '#ffffff00', 'color': '#A9A9A9AA', 'weight': weight
-        }
-        if use_topo:
-            if not json_path:
-                json_path = f'{STATIC_URL}/gis/HUC{level}.topojson'
-            object_path = f'objects.HUC{level}'
-            huc_topo_json = r_get(json_path).json()
-            folium.TopoJson(
-                huc_topo_json,
-                object_path,
-                name=f'HUC {level}',
-                overlay=True,
-                smooth_factor=2.0,
-                style_function=huc_style,
-                show=show
-            ).add_to(huc_map)
+        if not huc_geojson_path:
+            huc_geojson_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
         else:
-            if not json_path:
-                json_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
-            folium.GeoJson(
-                json_path,
-                name=f'HUC {level}',
-                embed=embed,
-                overlay=True,
-                smooth_factor=2.0,
-                style_function=huc_style,
-                show=show
-            ).add_to(huc_map)
-            
+            embed = True
+        if huc_filter:
+           huc_style = lambda x: {
+            'fillColor': '#ffffff00', 'color': '#1f1f1faa', 
+            'weight': weight if x['properties'][f'HUC{level}'][:len(huc_filter)] == huc_filter else 0
+        } 
+        else:
+            huc_style = lambda x: {
+                'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': weight
+            }
+        folium.GeoJson(
+            huc_geojson_path,
+            name=f'HUC {level}',
+            embed=embed,
+            style_function=huc_style,
+            show=show
+        ).add_to(huc_map)
     except Exception as err:
         print(f'Could not add HUC {level} layer to map! - {err}')
 
