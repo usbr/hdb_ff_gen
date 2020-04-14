@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
     
-    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --delete --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
+    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --delete --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
     
     testing_sites = [917, 729, 919, 721]
     testing_datatypes = [29, 30, 49, 42, 43, 17, 19, 20]
