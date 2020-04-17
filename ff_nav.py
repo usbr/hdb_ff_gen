@@ -304,7 +304,8 @@ def create_nav(data_dir, nav_filename='nav.html'):
         f'{HEADER_STR}{nl}{get_updt_str()}{nl}{buttons_str}{nl}{FOOTER_STR}'
     )
     write_nav_dict = {
-        Path(data_dir, nav_filename): nav_html_str
+        Path(data_dir, nav_filename): nav_html_str,
+        Path(data_dir, 'index.html'): nav_html_str
     }
     write_file(write_nav_dict)
 
