@@ -224,34 +224,6 @@ def add_optional_tilesets(folium_map):
     for name, tileset in tilesets.items():
         folium.TileLayer(tileset, name=name).add_to(folium_map)
 
-def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False, 
-                  show=True, huc_filter=None):
-    try:
-        huc_filter = str(huc_filter)
-        weight = -0.25 * float(level) + 2.5
-        if not huc_geojson_path:
-            huc_geojson_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
-        else:
-            embed = True
-        if huc_filter:
-           huc_style = lambda x: {
-            'fillColor': '#ffffff00', 'color': '#1f1f1faa', 
-            'weight': weight if x['properties'][f'HUC{level}'][:len(huc_filter)] == huc_filter else 0
-        } 
-        else:
-            huc_style = lambda x: {
-                'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': weight
-            }
-        folium.GeoJson(
-            huc_geojson_path,
-            name=f'HUC {level}',
-            embed=embed,
-            style_function=huc_style,
-            show=show
-        ).add_to(huc_map)
-    except Exception as err:
-        print(f'Could not add HUC {level} layer to map! - {err}')
-
 def clean_coords(coord_series, force_neg=False):
     
     coord_series = coord_series.apply(
@@ -261,11 +233,11 @@ def clean_coords(coord_series, force_neg=False):
     )
     if not coord_series.apply(type).eq(str).any():
         if force_neg:
-            return -coord_series.abs()
+            return -1 * coord_series.abs()
         return coord_series
     results = []
     for idx, coord in coord_series.iteritems():
-        if not str(coord).isnumeric():
+        if not str(coord).replace('.', '').replace('-', '').isnumeric():
             coord_strs = str(coord).split(' ')
             coord_digits = []
             for coord_str in coord_strs:
@@ -411,8 +383,37 @@ def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
         stat = 'N/A'
     return stat
 
+def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False, 
+                  show=True, huc_filter=''):
+    try:
+        if type(huc_filter) == int:
+            huc_filter = str(huc_filter)
+        weight = -0.25 * float(level) + 2.5
+        if not huc_geojson_path:
+            huc_geojson_path = f'{STATIC_URL}/gis/HUC{level}.geojson'
+        else:
+            embed = True
+        if huc_filter:
+           huc_style = lambda x: {
+            'fillColor': '#ffffff00', 'color': '#1f1f1faa', 
+            'weight': weight if x['properties'][f'HUC{level}'].startswith(huc_filter) else 0
+        } 
+        else:
+            huc_style = lambda x: {
+                'fillColor': '#ffffff00', 'color': '#1f1f1faa', 'weight': weight
+            }
+        folium.GeoJson(
+            huc_geojson_path,
+            name=f'HUC {level}',
+            embed=embed,
+            style_function=huc_style,
+            show=show
+        ).add_to(huc_map)
+    except Exception as err:
+        print(f'Could not add HUC {level} layer to map! - {err}')
+        
 def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6', 
-                      gis_path='gis', filter_str='', use_topo=False):
+                      gis_path='gis', huc_filter='', use_topo=False):
     
     huc_str = f'HUC{huc_level}'
     stat_type_dict = {'swe': 'Median', 'prec': 'Avg.'}
@@ -422,14 +423,21 @@ def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6',
         topo_json_path = path.join(gis_path, f'{huc_str}.topojson')
         with open(topo_json_path, 'r') as tj:
             topo_json = json.load(tj)
-        if filter_str:
+        if huc_filter:
             topo_json = filter_topo_json(
-                topo_json, huc_level=huc_level, filter_str=filter_str
+                topo_json, huc_level=huc_level, filter_str=huc_filter
             )
     style_function = lambda x: style_chropleth(
-        x, data_type=data_type, huc_level=huc_level, huc_filter=filter_str
+        x, data_type=data_type, huc_level=huc_level, huc_filter=huc_filter
     )
-       
+    tooltip = folium.features.GeoJsonTooltip(
+        ['Name', f'{data_type}_percent'],
+        aliases=['Basin Name:', f'{layer_name}:']
+    )
+    # tooltip = folium.features.GeoJsonTooltip(
+    #     ['Name', f'{data_type}_percent', f'HUC{huc_level}'],
+    #     aliases=['Basin Name:', f'{layer_name}:', 'ID:']
+    # )
     if use_topo:
         folium.TopoJson(
             topo_json,
@@ -439,9 +447,7 @@ def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6',
             show=show,
             smooth_factor=2.0,
             style_function=style_function,
-            tooltip=folium.features.GeoJsonTooltip(
-                ['Name', f'{data_type}_percent'],
-                aliases=['Basin Name:', f'{layer_name}:'])
+            tooltip=tooltip
         ).add_to(m)
     else:
         json_path = f'{STATIC_URL}/gis/HUC{huc_level}.geojson'
@@ -454,15 +460,14 @@ def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6',
             smooth_factor=2.0,
             style_function=style_function,
             show=show,
-            tooltip=folium.features.GeoJsonTooltip(
-                ['Name', f'{data_type}_percent'],
-                aliases=['Basin Name:', f'{layer_name}:'])
+            tooltip=tooltip
         ).add_to(m)
 
 def style_chropleth(feature, data_type='swe', huc_level='2', huc_filter=''):
-    huc_filter = str(huc_filter)
-    huc_level = str(huc_level)
     colormap = get_colormap()
+    if type(huc_filter) == int:
+        huc_filter = str(huc_filter)
+    huc_level = str(huc_level)
     stat_value = feature['properties'].get(f'{data_type}_percent', 'N/A')
     huc_id = str(feature['properties'].get(f'HUC{huc_level}', 'N/A'))
     if not stat_value == 'N/A':
@@ -471,36 +476,17 @@ def style_chropleth(feature, data_type='swe', huc_level='2', huc_filter=''):
     return {
         'fillOpacity': 
             0 if stat_value == 'N/A' or 
-            not huc_id[:len(huc_filter)] == huc_filter else 
+            not huc_id.startswith(huc_filter) else 
             0.75,
         'weight': 0,
         'fillColor': 
             '#00000000' if stat_value == 'N/A' or 
-            not huc_id[:len(huc_filter)] == huc_filter else 
+            not huc_id.startswith(huc_filter) else 
             colormap(stat_value)
     }
 
-def filter_geo_json(geo_json_path, filter_attr='HUC2', filter_str='14'):
-   
-    f_geo_json = {'type': 'FeatureCollection'}
-    with open(geo_json_path, 'r') as gj:
-        geo_json = json.load(gj)
-    features = [i for i in geo_json['features'] if 
-                i['properties'][filter_attr][:2] == filter_str]
-    f_geo_json['features'] = features
-    
-    return f_geo_json
-
-def filter_topo_json(topo_json, huc_level=2, filter_str='14'):
-    
-    geometries = topo_json['objects'][f'HUC{huc_level}']['geometries']
-    geometries[:] = [i for i in geometries if 
-                i['properties'][f'HUC{huc_level}'][:len(filter_str)] == filter_str]
-    topo_json['geometries'] = geometries
-    return topo_json
-
 def get_colormap(low=50, high=150):
-
+    
     colormap = branca.colormap.LinearColormap(
         colors=[
             (255,51,51,150), 
@@ -515,6 +501,26 @@ def get_colormap(low=50, high=150):
     )
     colormap.caption = '% of Average Precipitation or % Median Snow Water Equivalent'
     return colormap
+
+def filter_geo_json(geo_json_path, huc_level=2, filter_str=''):
+   
+    filter_attr = f'HUC{huc_level}'
+    f_geo_json = {'type': 'FeatureCollection'}
+    with open(geo_json_path, 'r') as gj:
+        geo_json = json.load(gj)
+    features = [i for i in geo_json['features'] if 
+                i['properties'][filter_attr][:len(filter_str)] == filter_str]
+    f_geo_json['features'] = features
+    
+    return f_geo_json
+
+def filter_topo_json(topo_json, huc_level=2, filter_str=''):
+    
+    geometries = topo_json['objects'][f'HUC{huc_level}']['geometries']
+    geometries[:] = [i for i in geometries if 
+                i['properties'][f'HUC{huc_level}'][:len(filter_str)] == filter_str]
+    topo_json['geometries'] = geometries
+    return topo_json
 
 def get_plot_config(img_filename):
     return {

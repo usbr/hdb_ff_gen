@@ -180,7 +180,10 @@ def get_legend(obj_types=[], data_sources=[]):
 def create_map(site_type, meta, data_dir):
     meta = meta.drop_duplicates(subset='site_id')
     meta['site_metadata.lat'] = clean_coords(meta['site_metadata.lat'])
-    meta['site_metadata.longi'] = clean_coords(meta['site_metadata.longi'], True)
+    meta['site_metadata.longi'] = clean_coords(
+        meta['site_metadata.longi'], force_neg=True
+    )
+
     sitetype_dir = path.join(data_dir, site_type)
     map_filename = f'site_map.html'
     map_path = path.join(sitetype_dir, map_filename)
@@ -256,7 +259,7 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     data_dir = path.join(this_dir, 'flat_files')
 
-    site_types = ['gage_data']
+    site_types = ['Lower_Colorado_Basin']
     for site_type in site_types:
         site_type_dir = path.join(data_dir, site_type)
         meta_path = path.join(data_dir, site_type, 'meta.csv')
