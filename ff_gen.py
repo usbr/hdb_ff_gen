@@ -248,7 +248,7 @@ if __name__ == '__main__':
     if args.config:
         config_path = args.config
         if not path.exists(config_path):
-            print(f'{args.config} does not exist in, try again.')
+            print(f'{args.config} does not exist in config file, try again.')
             sys.exit(0)
     else:
         config_path = path.join(this_dir, 'ff_config.json')
@@ -348,7 +348,7 @@ if __name__ == '__main__':
             bt = time.time()
 
             created_site_str = (
-                f'    Creating flat files for '
+                f'    Creating hydroData files for '
                 f'{site_names[i]} - {datatype_names[i]}'
 
             )

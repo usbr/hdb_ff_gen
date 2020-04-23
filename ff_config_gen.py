@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
     
-    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --delete --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
+    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
     
     testing_sites = [917, 729, 919, 721]
     testing_datatypes = [29, 30, 49, 42, 43, 17, 19, 20]
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     ]
 
     lc_gages = [
-        1097, 1018, 1061, 1254, 1060, 751, 1016, 1014, 3432, 3434, 1015, 
+        1097, 1018, 1061, 1254, 1060, 751, 1016, 3873, 3432, 3434, 1015, 
         3433, 1008, 1104
     ]
     
@@ -46,6 +46,10 @@ if __name__ == '__main__':
     lc_reservoirs = [921, 922, 923]
     
     lc_res_datatypes = [43, 17, 49]
+    
+    lc_sites = lc_gages + lc_reservoirs
+    
+    lc_datatypes = lc_gage_datatypes + lc_res_datatypes
     
     eco_reservoirs = [
         100001, 100065, 100002, 100081, 100010, 100089, 100156, 100120, 100091,
@@ -245,19 +249,13 @@ if __name__ == '__main__':
         }
     }
 
-    prod_requests_lc = {
-        'reservoir_data': {
-            'sids': lc_reservoirs,
-            'dids': lc_res_datatypes,
+    lc_requests = {
+        'Lower_Colorado_Basin': {
+            'sids': lc_sites,
+            'dids': lc_datatypes,
             'interval': 'day',
             'period': 'por'
         },
-        'gage_data': {
-            'sids': lc_gages,
-            'dids':lc_gage_datatypes,
-            'interval': 'day',
-            'period': 'por'
-        }
     }
 
     prod_requests_eco = {
@@ -281,15 +279,6 @@ if __name__ == '__main__':
         },
     }
 
-    snow_requests = {
-        'snotels': {
-            'sids': snotel_ids,
-            'dids': snotel_datatypes,
-            'interval': 'day',
-            'period': 'por'
-        }
-    }
-
     config_json = {
         'default': {
             'alt_path': r'/wrg/exec/pub/flat_files',
@@ -310,14 +299,14 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': prod_requests_weekly,
             'rise_sites': uc_rise_sites,
-            'sftp_push': False
+            'sftp_push': uc_rise_rsync
         },
         'prod_rhel_monthly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': prod_requests_monthly,
             'rise_sites': uc_rise_sites,
-            'sftp_push': uc_rise_sites
+            'sftp_push': uc_rise_rsync
         },
         'prod_eco': {
             'alt_path': None,
@@ -331,7 +320,7 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': testing_requests,
             'rise_sites': [917],
-            'sftp_push': False
+            'sftp_push': uc_rise_rsync
         },
         'pn_rhel_daily': {
             'alt_path': '/wrg/exec/pub/flat_files',
@@ -341,9 +330,23 @@ if __name__ == '__main__':
             'sftp_push': False
         },
         'gp_rhel_daily': {
-            'alt_path': '/wrg/exec/pub/flat_files',
+            'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'gp',
             'requests': gp_requests,
+            'rise_sites': None,
+            'sftp_push': False
+        },
+        'lc_test': {
+            'alt_path': None,
+            'hdb': 'lc',
+            'requests': lc_requests,
+            'rise_sites': None,
+            'sftp_push': False
+        },
+        'lc_rhel_daily': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'lc',
+            'requests': lc_requests,
             'rise_sites': None,
             'sftp_push': False
         }

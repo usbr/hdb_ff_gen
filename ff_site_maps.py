@@ -256,7 +256,7 @@ if __name__ == '__main__':
     this_dir = path.dirname(path.realpath(__file__))
     data_dir = path.join(this_dir, 'flat_files')
 
-    site_types = ['gp_sites']
+    site_types = ['gage_data']
     for site_type in site_types:
         site_type_dir = path.join(data_dir, site_type)
         meta_path = path.join(data_dir, site_type, 'meta.csv')
