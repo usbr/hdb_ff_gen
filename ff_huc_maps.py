@@ -220,7 +220,9 @@ def create_huc_maps(hdb_meta, site_type_dir):
     gis_path = path.join(this_dir, 'gis')
     hdb_meta.drop_duplicates(subset='site_id', inplace=True)
     hdb_meta['site_metadata.lat'] = clean_coords(hdb_meta['site_metadata.lat'])
-    hdb_meta['site_metadata.longi'] = clean_coords(hdb_meta['site_metadata.longi'], True)
+    hdb_meta['site_metadata.longi'] = clean_coords(
+        hdb_meta['site_metadata.longi'], force_neg=True
+    )
     awdb_site_type = 'WTEQ'
     if get_season() == 'summer':
         awdb_site_type = 'PREC'
