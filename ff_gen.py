@@ -178,7 +178,7 @@ def make_huc_maps(df_meta, site_type_dir, logger):
         print(webmap_err)
         logger.info(webmap_err)
 
-def update_gis_files(huc_level, add_export_dir=None):
+def update_gis_files(huc_level, logger, add_export_dir=None):
     try:
         gis_str = (
             f'Updating HUC{huc_level} '
@@ -294,7 +294,7 @@ if __name__ == '__main__':
         for huc_level in ['2', '6', '8']:
             assets_dir = path.join(data_dir, 'assets', 'gis')
             makedirs(assets_dir, exist_ok=True)
-            update_gis_files(huc_level, add_export_dir=assets_dir)
+            update_gis_files(huc_level, logger, add_export_dir=assets_dir)
 
     s_time = dt.now()
     schema_str = (

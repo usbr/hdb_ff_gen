@@ -431,8 +431,8 @@ def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6',
         x, data_type=data_type, huc_level=huc_level, huc_filter=huc_filter
     )
     tooltip = folium.features.GeoJsonTooltip(
-        ['Name', f'{data_type}_percent'],
-        aliases=['Basin Name:', f'{layer_name}:']
+        ['Name', f'{data_type}_percent', f'{data_type}_updt'],
+        aliases=['Basin Name:', f'{layer_name}:', 'Updated:']
     )
     # tooltip = folium.features.GeoJsonTooltip(
     #     ['Name', f'{data_type}_percent', f'HUC{huc_level}'],
