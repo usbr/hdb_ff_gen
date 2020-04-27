@@ -194,7 +194,7 @@ def create_map(site_type, meta, data_dir):
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
         
-        for huc_level in ['2', '6', '8']:
+        for huc_level in ['2', '4', '6', '8']:
             show_layer = True if huc_level == '2' else False
             add_huc_layer(
                 sitetype_map, 
