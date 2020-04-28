@@ -256,14 +256,33 @@ def create_map(site_type, meta, data_dir):
         return '  Failed to create map for {site_type}, no sites with coordinates'
 
 if __name__ == '__main__':
+    
+    import sys
+    import argparse
+    cli_desc = 'Creates site/folder leaflet map for accessing hydroData'
+    parser = argparse.ArgumentParser(description=cli_desc)
+    parser.add_argument("-V", "--version", help="show program version", action="store_true")
+    parser.add_argument("-p", "--path", help="Path to hydroData folder", required=True,)
+    
+    args = parser.parse_args()
+    
+    if args.version:
+        print('ff_gen.py v1.0')
+    
     this_dir = path.dirname(path.realpath(__file__))
-    data_dir = path.join(this_dir, 'flat_files')
+    if path.isdir(args.path):
+        site_type_dir = args.path
+    elif path.isdir(path.join(this_dir, 'flat_files', args.path)):
+        site_type_dir = path.join(this_dir, 'flat_files', args.path)
+    else:
+        print(f'Not a valid path - {args.path}')
+        sys.exit(0)
+        
+    path_components = path.split(site_type_dir)
+    site_type = path_components[-1]
+    data_dir = path.join(*path_components[:-1])
+    meta_path = path.join(site_type_dir, 'meta.csv')
+    meta = pd.read_csv(meta_path)
 
-    site_types = ['Lower_Colorado_Basin']
-    for site_type in site_types:
-        site_type_dir = path.join(data_dir, site_type)
-        meta_path = path.join(data_dir, site_type, 'meta.csv')
-        meta = pd.read_csv(meta_path)
-
-        print(create_map(site_type, meta, data_dir))
+    print(create_map(site_type, meta, data_dir))
     
