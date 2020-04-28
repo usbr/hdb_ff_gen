@@ -14,8 +14,8 @@ if __name__ == '__main__':
     
     uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
     
-    testing_sites = [917, 729, 919, 721]
-    testing_datatypes = [29, 30, 49, 42, 43, 17, 19, 20]
+    testing_sites = [917]#, 729, 919, 721]
+    testing_datatypes = [29]#, 30, 49, 42, 43, 17, 19, 20]
 
     crsp_reservoirs = [
         912, 913, 914, 915, 1119, 917, 916, 958, 914, 920, 933, 919,                #UCR
@@ -320,7 +320,7 @@ if __name__ == '__main__':
             'hdb': 'uc',
             'requests': testing_requests,
             'rise_sites': [917],
-            'sftp_push': uc_rise_rsync
+            'sftp_push': None#uc_rise_rsync
         },
         'pn_rhel_daily': {
             'alt_path': '/wrg/exec/pub/flat_files',

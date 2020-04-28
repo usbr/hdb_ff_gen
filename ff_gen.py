@@ -278,6 +278,7 @@ if __name__ == '__main__':
     rise_sites = ff_config['rise_sites']
     if not rise_sites:
         rise_sites = []
+    rise_sites[:] = [str(i) for i in rise_sites]
     
     makedirs(data_dir, exist_ok=True)
     rise_dir = path.join(this_dir, 'rise')
@@ -385,7 +386,7 @@ if __name__ == '__main__':
                 df['datetime'] = df.index
                 
                 if create_rise:
-                    if site_ids[i] in rise_sites:
+                    if str(site_ids[i]) in rise_sites:
                         num_records = str(period)
                         make_rise(
                             df.copy(),
@@ -429,11 +430,11 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-        make_sitemap(site_type, df_meta.copy(), data_dir, logger)
+        # make_sitemap(site_type, df_meta.copy(), data_dir, logger)
         if args.maps:
             make_huc_maps(df_meta.copy(), site_type_dir, logger)
         
-    make_nav(data_dir, logger)
+    # make_nav(data_dir, logger)
 
     # make_webmap(data_dir, logger)
     e_time = dt.now()
