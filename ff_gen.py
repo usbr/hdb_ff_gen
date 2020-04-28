@@ -430,11 +430,11 @@ if __name__ == '__main__':
 
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         df_meta.to_csv(metadata_filename, index=False)
-        # make_sitemap(site_type, df_meta.copy(), data_dir, logger)
+        make_sitemap(site_type, df_meta.copy(), data_dir, logger)
         if args.maps:
             make_huc_maps(df_meta.copy(), site_type_dir, logger)
         
-    # make_nav(data_dir, logger)
+    make_nav(data_dir, logger)
 
     # make_webmap(data_dir, logger)
     e_time = dt.now()
