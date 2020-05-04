@@ -72,7 +72,8 @@ def make_chart(df, meta, chart_filename, img_filename, logger, plotly_js=None):
             include_plotlyjs=plotly_js,
             config=get_plot_config(img_filename),
             filename=chart_filename,
-            auto_open=False
+            auto_open=False,
+            validate=False,
         )
 
         flavicon = (

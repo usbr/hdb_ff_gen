@@ -281,11 +281,11 @@ if __name__ == '__main__':
 
     config_json = {
         'default': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
+            'alt_path': None,
             'hdb': 'uc',
             'requests': prod_requests_daily,
-            'rise_sites': uc_rise_sites,
-            'sftp_push': True
+            'rise_sites': None,
+            'sftp_push': None
         },
         'prod_rhel_daily': {
             'alt_path': r'/wrg/exec/pub/flat_files',
