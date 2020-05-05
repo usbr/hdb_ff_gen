@@ -53,7 +53,7 @@ def get_bounds(meta):
 
 def get_embed(href):
     embed = (
-        f'<div class="container embed-responsive embed-responsive-16by9" style="overflow: hidden; height: 700px; width: 1600px;">'
+        f'<div class="container embed-responsive embed-responsive-16by9" style="overflow: hidden; height: 622px; width: 1200px;">'
         f'<iframe scrolling="no" class="embed-responsive-item" src="{href}" allowfullscreen></iframe>'
         f'</div>'
     )   
@@ -262,7 +262,7 @@ if __name__ == '__main__':
     cli_desc = 'Creates site/folder leaflet map for accessing hydroData'
     parser = argparse.ArgumentParser(description=cli_desc)
     parser.add_argument("-V", "--version", help="show program version", action="store_true")
-    parser.add_argument("-p", "--path", help="Path to hydroData folder", required=True,)
+    parser.add_argument("-p", "--path", help="Path to hydroData folder", required=True)
     
     args = parser.parse_args()
     
