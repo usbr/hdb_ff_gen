@@ -197,10 +197,10 @@ if __name__ == '__main__':
 
     testing_requests = {
         'test_ff': {
-            'sids': testing_sites,
-            'dids': testing_datatypes,
+            'sids': all_res_data,#testing_sites,
+            'dids': [89],#testing_datatypes,
             'interval': 'day',
-            'period': 40
+            'period': 'por'
         }
     }
 
@@ -319,7 +319,7 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': testing_requests,
-            'rise_sites': [917],
+            'rise_sites': uc_rise_sites,
             'sftp_push': None#uc_rise_rsync
         },
         'pn_rhel_daily': {

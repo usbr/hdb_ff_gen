@@ -240,7 +240,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
     }
     basepath = os.path.basename(os.path.normpath(data_dir))
     walk_dict = get_folders(data_dir)[basepath]
-    to_remove = ['.git', 'assets', 'mtom_viz_beta', 'status_maps']
+    to_remove = ['.git', 'assets', 'mtom_viz_beta', 'status_maps', 'stf']
     walk_dict = remove_items(to_remove, walk_dict)
     button_str_list = []
     for button_label, dd_items in walk_dict.items():
