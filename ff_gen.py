@@ -25,7 +25,7 @@ from ff_to_rise import ff_to_rise
 from ff_utils import get_favicon, get_plotly_js
 from ff_utils import get_huc_nrcs_stats, get_plot_config
 from hdb_api.hdb_utils import get_eng_config
-from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries
+from hdb_api.hdb_api import Hdb, HdbTables, HdbTimeSeries, HdbApiError
 
 def create_log(path='ff_gen.log'):
     logger = logging.getLogger('ff_gen rotating log')
@@ -202,7 +202,34 @@ def update_gis_files(huc_level, logger, add_export_dir=None):
         print(gis_str)
         logger.info(gis_str)
         
-def get_data(hdb_ts, sdi, interval, json_filename, period='POR'):
+def get_data(hdb, sdi, interval, json_filename, period='POR', 
+             logger=None):
+    def try_api(hdb, sdi, interval, t1, t2, logger=None):
+        for i in range(5):
+            try:
+                df_hdb = HdbTimeSeries.series(
+                hdb, sdi=sdi, interval=interval, t1=t1, t2=t2
+            )
+            except HdbApiError as err:
+                last_err = err
+                err_str = (
+                    f'    Error gathering ts data will retry {5- i} more times.\n'
+                )
+                print(err_str)
+                if logger:
+                    logger.info(err_str)
+                for i in range(60):
+                    time.sleep(0.5)
+            else:
+                return df_hdb
+        
+        err_str = (
+            f'\nMax ts call retries exceeded, quitting ff_gen.\n{last_err}'
+        )
+        if logger:
+            logger.info(err_str)
+        sys.exit(err_str)
+    
     if period.isnumeric() and path.exists(json_filename):
         df_local = pd.read_json(json_filename, orient='split')
         df_local.index = df_local['datetime']
@@ -210,17 +237,45 @@ def get_data(hdb_ts, sdi, interval, json_filename, period='POR'):
         e_date = dt.today()
         last_data_date = df_local.iloc[-1]['datetime']
         s_date = last_data_date - np.timedelta64(period, 'D')
-        df_hdb = hdb_ts.series(
-            hdb, sdi=sdi, interval=interval, t1=s_date, t2=e_date
+        df_hdb = try_api(
+            hdb=hdb, sdi=sdi, interval=interval, t1=s_date, t2=e_date
         )
         df = df_hdb.combine_first(df_local)
     else:
-        df = hdb_ts.series(
-            hdb, sdi=sdi, interval=interval, t1='POR', t2='POR'
+        df = try_api(
+            hdb=hdb, sdi=sdi, interval=interval, t1='POR', t2='POR'
         )
     df.dropna(inplace=True)
     return df
 
+def get_metadata(hdb, sid_list, did_list, logger=None):
+    for i in range(5):
+        try:
+            df_meta = HdbTables.sitedatatypes(
+                hdb,
+                sid_list=sid_list,
+                did_list=did_list
+            )
+        except HdbApiError as err:
+            last_err = err
+            err_str = (
+                f'  Error gathering metadata will retry {5- i} more times.\n'
+            )
+            print(err_str)
+            if logger:
+                logger.info(err_str)
+            for i in range(60):
+                time.sleep(0.5)
+        else:
+            return df_meta
+    
+    err_str = (
+        f'\nMax metadata call retries exceeded, quitting ff_gen.\n{last_err}'
+    )
+    if logger:
+        logger.info(err_str)
+    sys.exit(err_str)
+                
 if __name__ == '__main__':
     
     import argparse
@@ -289,9 +344,7 @@ if __name__ == '__main__':
     hdb_config = get_eng_config(db=ff_config['hdb'])
     db_name = hdb_config['database']
     hdb = Hdb(hdb_config)
-    tbls = HdbTables
-    ts = HdbTimeSeries
-    
+
     if args.gis:
         for huc_level in ['2', '6', '8']:
             assets_dir = path.join(data_dir, 'assets', 'gis')
@@ -325,13 +378,11 @@ if __name__ == '__main__':
 
         sids = type_config['sids']
         dids = type_config['dids']
-
-        df_meta = tbls.sitedatatypes(
-            hdb,
-            sid_list=sids,
-            did_list=dids
+        
+        df_meta = get_metadata(
+            hdb=hdb, sid_list=sids, did_list=dids, logger=logger
         )
-
+        
         df_meta['last_meas_date'] = pd.NaT
         df_meta['last_meas_val'] = np.NaN
 
@@ -379,7 +430,9 @@ if __name__ == '__main__':
             chart_filename = chart_filename.replace(' ', '_')
             json_filename = json_filename.replace(' ', '_')
 
-            df = get_data(ts, sdi, interval, json_filename, period=period)
+            df = get_data(
+                hdb, sdi, interval, json_filename, period=period, logger=logger
+            )
 
             if not df.empty:
                 idx = pd.date_range(df.index.min(), df.index.max())
