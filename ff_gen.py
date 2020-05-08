@@ -213,7 +213,7 @@ def get_data(hdb, sdi, interval, json_filename, period='POR',
             except HdbApiError as err:
                 last_err = err
                 err_str = (
-                    f'    Error gathering ts data will retry {5- i} more times.\n'
+                    f'     Error gathering ts data will retry {5- i} more times.\n'
                 )
                 print(err_str)
                 if logger:
