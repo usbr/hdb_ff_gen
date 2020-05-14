@@ -348,8 +348,20 @@ def create_chart(df, meta):
 
     annotation = [
         {
+            'x': 0,
+            'y': -0.25,
+            'xref': 'paper',
+            'yref': 'paper',
+            'text': f"All data considered provisional and subject to revision.",
+            'showarrow': False,
+            'align': 'left',
+            'yanchor': 'top',
+            'xanchor': 'left',
+            'font': {'size': 8, 'color':'rgba(0,0,0,0.3)'}
+        },
+        {
             'x': 1,
-            'y': -0.2,
+            'y': -0.25,
             'xref': 'paper',
             'yref': 'paper',
             'text': f"Created: {dt.utcnow().strftime('%x %I:%M %p UTC')}",

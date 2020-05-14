@@ -107,8 +107,9 @@ def get_data_div(chart_names, file_type):
     jumpto = file_type.lower()
     prefix = f'''
           <div id="{jumpto}" class="tab-pane fade in col-sm-4 col-md-3 m-5" role="tabpanel">
-            <embed class="embed-responsive-item">
-              <ul class="list-group">
+          <embed class="embed-responsive-item">
+            <h4>All data considered provisional and subject to revision.</h4>
+            <ul class="list-group">
 '''
     data_div = []
     for chart_name in chart_names:
