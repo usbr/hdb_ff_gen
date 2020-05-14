@@ -86,7 +86,7 @@ def add_markers(sitetype_map, meta):
                 f'<div class="col"><span>'
                 f'Latitude: {round(lat, 3)}, '
                 f'Longitude: {round(lon, 3)}, '
-                f'Elevation: {elev}</span></div></div></div>'
+                f"Elevation: {elev}'</span></div></div></div>"
             )
             popup = folium.map.Popup(
                 html=popup_html,

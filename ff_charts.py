@@ -19,7 +19,7 @@ def get_log_scale_dd():
         {
             'active': 0,
             'showactive': True,
-            'x': 1.005,
+            'x': 1.025,
             'y': -0.025,
             'xanchor': 'left',
             'yanchor': 'top',
@@ -299,7 +299,7 @@ def get_anno_text(df, df_stats, units, avg_period="(81'-10')"):
     return anno_text
 
 def create_chart(df, meta):
-    tickformat = {'scatter': '%m/%d', 'bar': '%B'}
+    tickformat = {'scatter': '%m/%d', 'bar': '%b'}
     tick0 = {'scatter': '2003-10-01', 'bar': '2003-10-31'}
 
     site_name = meta['site_metadata.site_name'].upper()
@@ -332,43 +332,45 @@ def create_chart(df, meta):
 
     traces = traces + stat_traces
 
-    seal_image = [{
-        'source': get_bor_seal(orient='shield'),
-        'xref': 'paper',
-        'yref': 'paper',
-        'x': 0.01,
-        'y': 1.00,
-        'sizex': 0.135,
-        'sizey': 0.3,
-        'yanchor': 'top',
-        'xanchor': 'left',
-        'opacity': 0.25,
-        'layer': 'below'
-    }]
-
+    seal_image = [
+        {
+            'source': get_bor_seal(orient='shield'),
+            'xref': 'paper',
+            'yref': 'paper',
+            'x': 0.01,
+            'y': 1.00,
+            'sizex': 0.135,
+            'sizey': 0.3,
+            'yanchor': 'top',
+            'xanchor': 'left',
+            'opacity': 0.25,
+            'layer': 'below'
+        }
+    ]
+    
     annotation = [
         {
-            'x': 0,
-            'y': -0.4,
+            'x': 1.0,
+            'y': -0.3,
             'xref': 'paper',
             'yref': 'paper',
             'text': f"All data considered provisional and subject to revision.",
             'showarrow': False,
-            'align': 'left',
-            'yanchor': 'top',
-            'xanchor': 'left',
+            'align': 'right',
+            'yanchor': 'bottom',
+            'xanchor': 'right',
             'font': {'size': 8, 'color':'rgba(0,0,0,0.3)'}
         },
         {
-            'x': 1,
-            'y': -0.4,
+            'x': 0.0,
+            'y': -0.3,
             'xref': 'paper',
             'yref': 'paper',
             'text': f"Created: {dt.utcnow().strftime('%x %I:%M %p UTC')}",
             'showarrow': False,
             'align': 'left',
-            'yanchor': 'top',
-            'xanchor': 'right',
+            'yanchor': 'bottom',
+            'xanchor': 'left',
             'font': {'size': 8, 'color':'rgba(0,0,0,0.3)'}
         }
     ]
