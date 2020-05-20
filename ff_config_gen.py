@@ -28,9 +28,15 @@ if __name__ == '__main__':
         960, 927, 931, 956, 932
     ]
 
-    aao_reservoirs = [
-        1094, 2686, 2685, 2730, 943, 937, 2684, 2729, 2696, 2744
+    aao_reservoirs_corps = [
+        2730, 2729, 2696, 2744
     ]
+    
+    aao_reservoirs_bor = [
+        1094, 2686, 2685, 943, 937, 2684
+    ]
+    
+    aao_reservoirs = aao_reservoirs_bor + aao_reservoirs_corps
     
     wcao_reservoirs = [948, 945, 939, 955]
     
@@ -47,7 +53,9 @@ if __name__ == '__main__':
         123, 124, 1197, 1198, 1501, 89
     ]
         
-    uc_rise_sites = list(set(all_res_data) - set(misc_reservoirs))
+    uc_rise_sites = list(
+        set(all_res_data) - set(misc_reservoirs) - set(aao_reservoirs_corps)
+    )
     
     usgs_gages = [
         451, 716, 726, 729, 731, 733, 734, 735, 736, 737, 738, 739, 740, 741,
