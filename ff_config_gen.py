@@ -14,7 +14,7 @@ if __name__ == '__main__':
     
     uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
     
-    testing_sites = [917]#, 729, 919, 721]
+    testing_sites = [2687, 2688]#, 729, 919, 721]
     testing_datatypes = [29, 30]#, 30, 49, 42, 43, 17, 19, 20]
 
     crsp_reservoirs = [
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     pao_reservoirs = [                                                              #gary henrie
         957, 959, 947, 941, 942, 940, 938, 946, 925, 3608, 3607, 3609,
-        964, 953, 3606, 936, 954, 944, 949, 963, 952, 962, 928, 930,
+        964, 953, 936, 954, 944, 949, 963, 952, 962, 928, 930,
         960, 927, 931, 956, 932
     ]
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     ]
     
     aao_reservoirs_bor = [
-        1094, 2686, 2685, 943, 937, 2684
+        1094, 2686, 2685, 943, 937, 2684, 2688, 2687
     ]
     
     aao_reservoirs = aao_reservoirs_bor + aao_reservoirs_corps
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     wcao_reservoirs = [948, 945, 939, 955]
     
     misc_reservoirs = [
-        1998, 1999, 2000, 2002, 2003, 2005
+        1998, 1999, 2000, 2002, 2003, 2005, 3606
     ]
     
     all_res_data = list(
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     testing_requests = {
         'test_ff': {
             'sids': testing_sites,
-            'dids': testing_datatypes,
+            'dids': res_data_types, #testing_datatypes,
             'interval': 'day',
             'period': 'por'
         }
@@ -331,7 +331,7 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': testing_requests,
-            'rise_sites': None,#uc_rise_sites,
+            'rise_sites': [2687, 2688],#uc_rise_sites,
             'sftp_push': None#uc_rise_rsync
         },
         'pn_rhel_daily': {
