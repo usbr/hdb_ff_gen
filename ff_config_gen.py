@@ -11,11 +11,21 @@ from os import path
 if __name__ == '__main__':
 
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
-    
-    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
-    
+
+# testing config (changes often)
     testing_sites = [2687, 2688]#, 729, 919, 721]
     testing_datatypes = [29, 30]#, 30, 49, 42, 43, 17, 19, 20]
+
+    testing_requests = {
+        'test_ff': {
+            'sids': testing_sites,
+            'dids': testing_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        }
+    }
+    
+# UC configuration 
 
     crsp_reservoirs = [
         912, 913, 914, 915, 1119, 917, 916, 958, 914, 920, 933, 919,                #UCR
@@ -44,20 +54,20 @@ if __name__ == '__main__':
         1998, 1999, 2000, 2002, 2003, 2005, 3606
     ]
     
-    all_res_data = list(
+    uc_res_data = list(
         set(crsp_reservoirs + pao_reservoirs + aao_reservoirs + misc_reservoirs + wcao_reservoirs)
     )
     
-    res_data_types = [
+    uc_res_datatypes = [
         15, 17, 25, 29, 30, 31, 32, 33, 34, 39, 40, 42, 43, 46, 47, 49, 49,
         123, 124, 1197, 1198, 1501, 89
     ]
         
     uc_rise_sites = list(
-        set(all_res_data) - set(misc_reservoirs) - set(aao_reservoirs_corps)
+        set(uc_res_data) - set(misc_reservoirs) - set(aao_reservoirs_corps)
     )
     
-    usgs_gages = [
+    uc_gages = [
         451, 716, 726, 729, 731, 733, 734, 735, 736, 737, 738, 739, 740, 741,
         742, 743, 756, 757, 758, 764, 765, 766, 767, 768, 770, 771, 772, 773,
         774, 776, 777, 779, 781, 783, 784, 786, 1300, 788, 789, 790, 791, 799,
@@ -75,97 +85,132 @@ if __name__ == '__main__':
         3878
     ]
 
-    usgs_gages = list(set(usgs_gages))
+    uc_gages = list(set(uc_gages))
+    uc_gage_datatypes = [19, 20, 31, 1191]
+    
+    uc_requests_daily = {
+        'reservoir_data': {
+            'sids': uc_res_data,
+            'dids': uc_res_datatypes,
+            'interval': 'day',
+            'period': 40
+        },
+        'gage_data': {
+            'sids': uc_gages,
+            'dids': uc_gage_datatypes,
+            'interval': 'day',
+            'period': 40
+        }
+    }
 
-
+    uc_requests_weekly = {
+        'reservoir_data': {
+            'sids': uc_res_data,
+            'dids': uc_res_datatypes,
+            'interval': 'day',
+            'period': 400
+        },
+        'gage_data': {
+            'sids': uc_gages,
+            'dids': uc_gage_datatypes,
+            'interval': 'day',
+            'period': 400
+        }
+    }
+    
+    uc_requests_monthly = {
+        'reservoir_data': {
+            'sids': uc_res_data,
+            'dids': uc_res_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        },
+        'gage_data': {
+            'sids': uc_gages,
+            'dids': uc_gage_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        }
+    }
+    
+    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/uchdb2 svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
+    
+# LC configuration
     
     lc_gages = [
-        1097, 1018, 1061, 1254, 1060, 751, 1016, 3873, 3432, 3434, 1015, 
+        1097, 1018, 1061, 1060, 751, 1016, 3873, 3432, 3434, 1015, 
         3433, 1008, 1104
     ]
     
-    lc_gage_datatypes = [19, 66]
+    lc_gage_datatypes = [19, 66, 2367]
     
     lc_reservoirs = [921, 922, 923]
     
-    lc_res_datatypes = [43, 17, 49]
+    lc_res_datatypes = [43, 17, 49, 121, 42]
     
     lc_sites = lc_gages + lc_reservoirs
     
     lc_datatypes = lc_gage_datatypes + lc_res_datatypes
     
-    eco_reservoirs = [
-        100001, 100065, 100002, 100081, 100010, 100089, 100156, 100120, 100091,
-        100017, 100100, 100257, 100003, 100038, 100031, 100113, 100032, 100049,
-        100163, 100275, 100053, 100118
+    lc_rise_sites = [
+        751, 921, 922, 1018, 923, 1008, 1015, 1016, 1018, 1060, 1061, 3432, 
+        3433, 3434
     ]
 
-    eco_gages = [
-        100011, 100093, 100377, 100114, 100055, 100090, 100064, 100097, 100051,
-        100078, 100280, 100056, 100015, 101778, 101779, 101782, 100385, 100409,
-        100037, 100073, 100124, 100083, 100094, 101780, 100108, 100054, 100111,
-        101769, 100116, 100155, 100013, 100020, 101774, 100033, 100099, 100026,
-        100095, 100062, 100378, 100101, 100379, 101804, 100869, 100870, 100871,
-        100872, 101781, 100279, 100024, 100227, 100050, 100061, 100121, 100129,
-        100040, 101772, 100027, 100021, 101783, 100662, 100956, 100664, 101784,
-        101785, 101761, 100102, 100082, 100009, 100057, 100067, 100123, 101786,
-        100086, 100276, 100226, 100022, 100087, 100039, 100079, 100098, 100042,
-        100075, 100868, 100669, 100653, 100654, 100671, 100110, 100047, 100052,
-        100070, 100077, 100069, 100041, 101770, 100085, 101787, 100673, 100672,
-        100128, 100109, 100874, 100139, 100646
-    ]
-
-    eco_snotel = [
-        100330, 100331, 100332, 100333, 100334, 100335, 100336, 100337, 100338,
-        100339, 100340, 100320, 100341, 100321, 100342, 100343, 100344, 100322,
-        100345, 100323, 100346, 100885, 100324, 100347, 100348, 100349, 100350,
-        100351, 100352, 100353, 100354, 100325, 100355, 100326, 100356, 100357,
-        100358, 100359, 100360, 100361, 100362, 100363, 100364, 100327, 100365,
-        100366, 100367, 100368, 100369, 100370, 100886, 100371, 100372, 100373,
-        100328, 100374, 100375, 100329, 100376
-    ]
-
-    eco_res_data_types = [17, 49]
-
-    eco_gage_data_types = [19]
-
-    gage_data_types = [19, 20, 31, 1191]
-
-    lbo_sites = [
-        60000, 60001, 60002, 60003, 60004, 60005, 60006, 60007, 60008, 60009,
-        60010, 60011, 60012, 60013, 60014, 60015, 60016, 60017, 60018, 60019,
-        60020, 60021, 60022, 60023, 60024, 60025, 60026, 60027, 60028, 60029,
-        60030, 60031, 60032, 60033, 60034, 60035, 60036, 60037
-    ]
-
-    lbo_datatypes = [66, 65, 120, 19, 20, 18, 65]
-
-    snotel_ids = [
-        226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-        240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253,
-        254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267,
-        268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281,
-        283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296,
-        297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310,
-        311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324,
-        325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338,
-        339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352,
-        353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366,
-        367, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381,
-        383, 384, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082,
-        1140, 2683, 2662, 2663, 2664, 2666, 2667, 2668, 2669, 2670, 2671, 2672,
-        2673, 2674, 2675, 2676, 2677, 2678, 2679, 2680, 2681, 2682, 3692, 3693,
-        3698, 3700, 3702, 3704, 3706, 3708, 3709, 3711, 3713, 3715, 3717, 3719,
-        3721, 3723, 3726, 3728, 3730, 3732, 3734, 3736, 3738, 3740, 3742, 3744,
-        3746, 3748, 3750, 3694, 3753, 3755, 3757, 3761, 3759, 3763, 4088, 4089,
-        4090, 4091, 4092
-    ]
-
-    snotel_datatypes = [50]
+    lc_requests_daily = {
+        'reservoir_data': {
+            'sids': lc_reservoirs,
+            'dids': lc_res_datatypes,
+            'interval': 'day',
+            'period': 40
+        },
+        'gage_data': {
+            'sids': lc_gages,
+            'dids': lc_gage_datatypes,
+            'interval': 'day',
+            'period': 40
+        },
+    }
     
+    lc_requests_weekly = {
+        'reservoir_data': {
+            'sids': lc_reservoirs,
+            'dids': lc_res_datatypes,
+            'interval': 'day',
+            'period': 400
+        },
+        'gage_data': {
+            'sids': lc_gages,
+            'dids': lc_gage_datatypes,
+            'interval': 'day',
+            'period': 400
+        }
+    }
+    
+    lc_requests_monthly = {
+        'reservoir_data': {
+            'sids': lc_reservoirs,
+            'dids': lc_res_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        },
+        'gage_data': {
+            'sids': lc_gages,
+            'dids': lc_gage_datatypes,
+            'interval': 'day',
+            'period': 'por'
+        }
+    }
+    
+    lc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/lchdb2 svc-dro-lchdb2@140.215.112.124:/home/svc-dro-lchdb2/DATA'''
+    
+# PN configuration
+
     pn_sites = ['and', 'jck', 'sco', 'mck']
     pn_datatypes = ['af','fb','qu','qd']
     
+# GP configuration
+
     gp_sites = [
         'agr', 'alcr', 'ancr', 'arne', 'audl', 'bbne', 'bbr', 'bbrsfd', 'bfr',
         'bhr', 'bhsx', 'blr', 'boyr', 'cane', 'carterco', 'ccdt', 'ccks',
@@ -197,135 +242,15 @@ if __name__ == '__main__':
             'period': 'por'
         }
     }
-    
-    lbo_requests = {
-        'lbo_sites': {
-            'sids': lbo_sites,
-            'dids': lbo_datatypes,
-            'interval': 'day',
-            'period': 'por'
-        }
-    }
 
-    testing_requests = {
-        'test_ff': {
-            'sids': testing_sites,
-            'dids': res_data_types, #testing_datatypes,
-            'interval': 'day',
-            'period': 'por'
-        }
-    }
-
-    prod_requests_daily = {
-        'reservoir_data': {
-            'sids': all_res_data,
-            'dids': res_data_types,
-            'interval': 'day',
-            'period': 40
-        },
-        'gage_data': {
-            'sids': usgs_gages,
-            'dids':gage_data_types,
-            'interval': 'day',
-            'period': 40
-        }
-    }
-
-    prod_requests_weekly = {
-        'reservoir_data': {
-            'sids': all_res_data,
-            'dids': res_data_types,
-            'interval': 'day',
-            'period': 400
-        },
-        'gage_data': {
-            'sids': usgs_gages,
-            'dids':gage_data_types,
-            'interval': 'day',
-            'period': 400
-        }
-    }
-    
-    prod_requests_monthly = {
-        'reservoir_data': {
-            'sids': all_res_data,
-            'dids': res_data_types,
-            'interval': 'day',
-            'period': 'por'
-        },
-        'gage_data': {
-            'sids': usgs_gages,
-            'dids':gage_data_types,
-            'interval': 'day',
-            'period': 'por'
-        }
-    }
-
-    lc_requests = {
-        'Lower_Colorado_Basin': {
-            'sids': lc_sites,
-            'dids': lc_datatypes,
-            'interval': 'day',
-            'period': 'por'
-        },
-    }
-
-    prod_requests_eco = {
-        'reservoir_data': {
-            'sids': eco_reservoirs,
-            'dids': eco_res_data_types,
-            'interval': 'day',
-            'period': 'por'
-        },
-        'gage_data': {
-            'sids': eco_gages,
-            'dids': eco_gage_data_types,
-            'interval': 'day',
-            'period': 'por'
-        },
-        'SNOW_DATA': {
-            'sids': eco_snotel,
-            'dids': snotel_datatypes,
-            'interval': 'day',
-            'period': 'por'
-        },
-    }
 
     config_json = {
         'default': {
             'alt_path': None,
             'hdb': 'uc',
-            'requests': prod_requests_daily,
+            'requests': uc_requests_daily,
             'rise_sites': None,
             'sftp_push': None
-        },
-        'prod_rhel_daily': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
-            'hdb': 'uc',
-            'requests': prod_requests_daily,
-            'rise_sites': uc_rise_sites,
-            'sftp_push': uc_rise_rsync
-        },
-        'prod_rhel_weekly': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
-            'hdb': 'uc',
-            'requests': prod_requests_weekly,
-            'rise_sites': uc_rise_sites,
-            'sftp_push': uc_rise_rsync
-        },
-        'prod_rhel_monthly': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
-            'hdb': 'uc',
-            'requests': prod_requests_monthly,
-            'rise_sites': uc_rise_sites,
-            'sftp_push': uc_rise_rsync
-        },
-        'prod_eco': {
-            'alt_path': None,
-            'hdb': 'eco',
-            'requests': prod_requests_eco,
-            'rise_sites': None,
-            'sftp_push': False
         },
         'testing': {
             'alt_path': None,
@@ -333,6 +258,48 @@ if __name__ == '__main__':
             'requests': testing_requests,
             'rise_sites': [2687, 2688],#uc_rise_sites,
             'sftp_push': None#uc_rise_rsync
+        },
+        'prod_rhel_daily': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'uc',
+            'requests': uc_requests_daily,
+            'rise_sites': uc_rise_sites,
+            'sftp_push': uc_rise_rsync
+        },
+        'prod_rhel_weekly': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'uc',
+            'requests': uc_requests_weekly,
+            'rise_sites': uc_rise_sites,
+            'sftp_push': uc_rise_rsync
+        },
+        'prod_rhel_monthly': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'uc',
+            'requests': uc_requests_monthly,
+            'rise_sites': uc_rise_sites,
+            'sftp_push': uc_rise_rsync
+        },
+        'lc_rhel_daily': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'lc',
+            'requests': lc_requests_daily,
+            'rise_sites': lc_rise_sites,
+            'sftp_push': lc_rise_rsync
+        },
+        'lc_rhel_weekly': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'lc',
+            'requests': lc_requests_daily,
+            'rise_sites': lc_rise_sites,
+            'sftp_push': lc_rise_rsync
+        },
+        'lc_rhel_monthly': {
+            'alt_path': r'/wrg/exec/pub/flat_files',
+            'hdb': 'lc',
+            'requests': lc_requests_daily,
+            'rise_sites': lc_rise_sites,
+            'sftp_push': lc_rise_rsync
         },
         'pn_rhel_daily': {
             'alt_path': '/wrg/exec/pub/flat_files',
@@ -348,20 +315,6 @@ if __name__ == '__main__':
             'rise_sites': None,
             'sftp_push': False
         },
-        'lc_test': {
-            'alt_path': None,
-            'hdb': 'lc',
-            'requests': lc_requests,
-            'rise_sites': None,
-            'sftp_push': False
-        },
-        'lc_rhel_daily': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
-            'hdb': 'lc',
-            'requests': lc_requests,
-            'rise_sites': None,
-            'sftp_push': False
-        }
     }
 
     with open('ff_config.json', 'w') as fp:

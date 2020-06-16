@@ -18,7 +18,6 @@ from logging.handlers import TimedRotatingFileHandler
 from ff_nav import create_nav
 from ff_site_maps import create_map
 from ff_charts import create_chart
-from ff_sftp_push import push_sftp
 from ff_webmap_gen import create_webmap
 from ff_huc_maps import create_huc_maps
 from ff_to_rise import ff_to_rise
@@ -42,6 +41,7 @@ def create_log(path='ff_gen.log'):
     return logger
 
 def sync_files(config_path, logger):
+    from ff_sftp_push import push_sftp
     try:
         print(f'Attempting sftp push using {config_path}...')
         with open(config_path, 'r') as fp:
@@ -337,14 +337,15 @@ if __name__ == '__main__':
     rise_sites[:] = [str(i) for i in rise_sites]
     
     makedirs(data_dir, exist_ok=True)
-    rise_dir = path.join(this_dir, 'rise')
-    makedirs(rise_dir, exist_ok=True)
-
+    
     logger = create_log(path.join(data_dir, 'ff_gen.log'))
     hdb_config = get_eng_config(db=ff_config['hdb'])
     db_name = hdb_config['database']
     hdb = Hdb(hdb_config)
-
+    
+    rise_dir = path.join(this_dir, 'rise', db_name)
+    makedirs(rise_dir, exist_ok=True)
+    
     if args.gis:
         for huc_level in ['2', '6', '8']:
             assets_dir = path.join(data_dir, 'assets', 'gis')
@@ -466,12 +467,12 @@ if __name__ == '__main__':
 
                 et = time.time()
 
-                finsihed_str = (
+                finished_str = (
                     f'     finished in {round(et - bt,2)} seconds.'
                 )
-                print(finsihed_str)
+                print(finished_str)
                 if args.log == 'verbose':
-                    logger.info(finsihed_str)
+                    logger.info(finished_str)
 
             else:
                 no_data_str = (
