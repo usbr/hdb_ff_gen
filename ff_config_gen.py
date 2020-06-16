@@ -281,7 +281,7 @@ if __name__ == '__main__':
             'sftp_push': uc_rise_rsync
         },
         'lc_rhel_daily': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
+            'alt_path': '',#r'/wrg/exec/pub/flat_files',
             'hdb': 'lc',
             'requests': lc_requests_daily,
             'rise_sites': lc_rise_sites,
