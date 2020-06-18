@@ -13,11 +13,11 @@ if __name__ == '__main__':
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
 
 # testing config (changes often)
-    testing_sites = [2687, 2688]#, 729, 919, 721]
-    testing_datatypes = [29, 30]#, 30, 49, 42, 43, 17, 19, 20]
+    testing_sites = [4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 3362, 4635, 3356]
+    testing_datatypes = [17, 1158, 2742]#, 30, 49, 42, 43, 17, 19, 20]
 
     testing_requests = {
-        'test_ff': {
+        'rg_accounting_test': {
             'sids': testing_sites,
             'dids': testing_datatypes,
             'interval': 'day',
@@ -252,12 +252,12 @@ if __name__ == '__main__':
             'rise_sites': None,
             'sftp_push': None
         },
-        'testing': {
+        'test': {
             'alt_path': None,
             'hdb': 'uc',
             'requests': testing_requests,
-            'rise_sites': [2687, 2688],#uc_rise_sites,
-            'sftp_push': None#uc_rise_rsync
+            'rise_sites': None,
+            'sftp_push': None
         },
         'prod_rhel_daily': {
             'alt_path': '',#r'/wrg/exec/pub/flat_files',

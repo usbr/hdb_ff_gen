@@ -397,7 +397,7 @@ if __name__ == '__main__':
         site_names = df_meta[site_label].tolist()
         
         for i, sdi in enumerate(sdis):
-            continue
+
             bt = time.time()
 
             created_site_str = (
