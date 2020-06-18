@@ -260,7 +260,7 @@ if __name__ == '__main__':
             'sftp_push': None#uc_rise_rsync
         },
         'prod_rhel_daily': {
-            'alt_path': r'/wrg/exec/pub/flat_files',
+            'alt_path': '',#r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': uc_requests_daily,
             'rise_sites': uc_rise_sites,

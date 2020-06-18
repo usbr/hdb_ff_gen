@@ -395,10 +395,9 @@ if __name__ == '__main__':
 
         site_label = 'site_metadata.site_name'
         site_names = df_meta[site_label].tolist()
-        metadata_filename = path.join(site_type_dir, 'meta.csv')
-        df_meta.to_csv(metadata_filename, index=False)
         
         for i, sdi in enumerate(sdis):
+            continue
             bt = time.time()
 
             created_site_str = (
@@ -482,12 +481,12 @@ if __name__ == '__main__':
                 print(no_data_str)
                 if args.log == 'verbose':
                     logger.info(no_data_str)
-
+        
         metadata_filename = path.join(site_type_dir, 'meta.csv')
-        if path.isfile(metadata_filename) :
+        if path.isfile(metadata_filename):
             df_meta_old = pd.read_csv(metadata_filename)
             df_meta = pd.concat([df_meta_old, df_meta], ignore_index=True)
-            df_meta.drop_duplicates(inplace=True, ignore_index=True)
+            df_meta.drop_duplicates(inplace=True)
         df_meta.to_csv(metadata_filename, index=False)
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
         if args.maps:
