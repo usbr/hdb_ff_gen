@@ -13,7 +13,7 @@ if __name__ == '__main__':
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
 
 # testing config (changes often)
-    testing_sites = [4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 3362, 4635, 3356]
+    testing_sites = [4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356]
     testing_datatypes = [17, 1158, 2742]#, 30, 49, 42, 43, 17, 19, 20]
 
     testing_requests = {
@@ -260,7 +260,7 @@ if __name__ == '__main__':
             'sftp_push': None
         },
         'prod_rhel_daily': {
-            'alt_path': '',#r'/wrg/exec/pub/flat_files',
+            'alt_path': '/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': uc_requests_daily,
             'rise_sites': uc_rise_sites,
@@ -281,7 +281,7 @@ if __name__ == '__main__':
             'sftp_push': uc_rise_rsync
         },
         'lc_rhel_daily': {
-            'alt_path': '',#r'/wrg/exec/pub/flat_files',
+            'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'lc',
             'requests': lc_requests_daily,
             'rise_sites': lc_rise_sites,

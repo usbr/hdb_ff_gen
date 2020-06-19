@@ -410,7 +410,8 @@ if __name__ == '__main__':
                 logger.info(created_site_str)
 
             meta = df_meta[df_meta.index == sdi].iloc[0]
-
+            
+            #swithc case here for accounting mode
             site_dir = path.join(site_type_dir, f'{site_ids[i]}')
             csv_dir = path.join(site_dir, 'csv')
             json_dir = path.join(site_dir, 'json')
@@ -421,7 +422,8 @@ if __name__ == '__main__':
             makedirs(csv_dir, exist_ok=True)
             makedirs(json_dir, exist_ok=True)
             makedirs(chart_dir, exist_ok=True)
-
+            
+            #switch case here for accounting mode
             csv_filename = path.join(csv_dir, f'{datatype_ids[i]}.csv')
             chart_filename = path.join(chart_dir, f'{datatype_names[i]}.html')
             img_filename = f'{site_ids[i]}_{datatype_names[i]}'
@@ -488,8 +490,10 @@ if __name__ == '__main__':
             df_meta = pd.concat([df_meta_old, df_meta], ignore_index=True)
             df_meta.drop_duplicates(inplace=True)
         df_meta.to_csv(metadata_filename, index=False)
+        #add arg for accounting mode to sitemaps
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
         if args.maps:
+            #add arg for accounting to huc maps
             make_huc_maps(df_meta.copy(), site_type_dir, logger)
         
     make_nav(data_dir, logger)
