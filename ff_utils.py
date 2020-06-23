@@ -269,13 +269,12 @@ def get_huc(geo_df, lat, lon, level='12'):
     return None
 
 def get_season():
-    
     curr_month = datetime.now().month
-    if curr_month > 3:
+    if curr_month > 3 and curr_month < 6:
         return 'spring'
-    if curr_month > 5:
+    if curr_month > 5 and curr_month < 12:
         return 'summer'
-    if curr_month > 10:
+    if curr_month > 11:
         return 'fall'
     return 'winter'
 
