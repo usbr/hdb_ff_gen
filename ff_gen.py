@@ -491,7 +491,9 @@ if __name__ == '__main__':
         if path.isfile(metadata_filename):
             df_meta_old = pd.read_csv(metadata_filename)
             df_meta = pd.concat([df_meta_old, df_meta], ignore_index=True)
-            df_meta.drop_duplicates(inplace=True)
+            df_meta.drop_duplicates(
+                inplace=True, subset='site_datatype_id', keep='last'
+            )
         df_meta.to_csv(metadata_filename, index=False)
         #add arg for accounting mode to sitemaps
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
