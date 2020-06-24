@@ -484,6 +484,9 @@ if __name__ == '__main__':
                 if args.log == 'verbose':
                     logger.info(no_data_str)
         
+        if args.maps:
+            #add arg for accounting to huc maps
+            make_huc_maps(df_meta_.copy(), site_type_dir, logger)
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         if path.isfile(metadata_filename):
             df_meta_old = pd.read_csv(metadata_filename)
@@ -492,9 +495,6 @@ if __name__ == '__main__':
         df_meta.to_csv(metadata_filename, index=False)
         #add arg for accounting mode to sitemaps
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
-        if args.maps:
-            #add arg for accounting to huc maps
-            make_huc_maps(df_meta.copy(), site_type_dir, logger)
         
     make_nav(data_dir, logger)
 
