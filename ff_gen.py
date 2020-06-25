@@ -289,7 +289,7 @@ if __name__ == '__main__':
     parser.add_argument("-c", "--config", help="use alternate config json, use full path")
     parser.add_argument("-m", "--maps", help="create huc-maps", action="store_true")
     parser.add_argument("-g", "--gis", help="update gis files with current NRCS data", action='store_true')
-    
+
     args = parser.parse_args()
     
     if args.version:
@@ -486,7 +486,7 @@ if __name__ == '__main__':
         
         if args.maps:
             #add arg for accounting to huc maps
-            make_huc_maps(df_meta_.copy(), site_type_dir, logger)
+            make_huc_maps(df_meta.copy(), site_type_dir, logger)
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         if path.isfile(metadata_filename):
             df_meta_old = pd.read_csv(metadata_filename)

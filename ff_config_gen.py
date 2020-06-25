@@ -88,6 +88,21 @@ if __name__ == '__main__':
     uc_gages = list(set(uc_gages))
     uc_gage_datatypes = [19, 20, 31, 1191]
     
+    uc_requests_test = {
+        'reservoir_data': {
+            'sids': uc_res_data[0:4],
+            'dids': uc_res_datatypes,
+            'interval': 'day',
+            'period': 40
+        },
+        'gage_data': {
+            'sids': uc_gages[0:4],
+            'dids': uc_gage_datatypes,
+            'interval': 'day',
+            'period': 40
+        }
+    }
+    
     uc_requests_daily = {
         'reservoir_data': {
             'sids': uc_res_data,
@@ -156,6 +171,21 @@ if __name__ == '__main__':
         751, 921, 922, 1018, 923, 1008, 1015, 1016, 1018, 1060, 1061, 3432, 
         3433, 3434
     ]
+
+    lc_requests_test = {
+        'reservoir_data': {
+            'sids': lc_reservoirs[0:2],
+            'dids': lc_res_datatypes,
+            'interval': 'day',
+            'period': 40
+        },
+        'gage_data': {
+            'sids': lc_gages[0:4],
+            'dids': lc_gage_datatypes,
+            'interval': 'day',
+            'period': 40
+        },
+    }
 
     lc_requests_daily = {
         'reservoir_data': {
@@ -256,6 +286,20 @@ if __name__ == '__main__':
             'alt_path': None,
             'hdb': 'uc',
             'requests': testing_requests,
+            'rise_sites': None,
+            'sftp_push': None
+        },
+        'uc_test': {
+            'alt_path': None,
+            'hdb': 'uc',
+            'requests': uc_requests_test,
+            'rise_sites': None,
+            'sftp_push': None
+        },
+        'lc_test': {
+            'alt_path': None,
+            'hdb': 'lc',
+            'requests': lc_requests_test,
             'rise_sites': None,
             'sftp_push': None
         },
