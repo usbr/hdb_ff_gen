@@ -13,11 +13,11 @@ if __name__ == '__main__':
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
 
 # testing config (changes often)
-    testing_sites = [4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356]
-    testing_datatypes = [17, 1158, 2742]#, 30, 49, 42, 43, 17, 19, 20]
+    testing_sites = [1517, 1516, 912, 913, 1672]#[4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356]
+    testing_datatypes = [19, 40, 42, 43, 46, 47, 49]#[17, 1158, 2742]#, 30, 49, 42, 43, 17, 19, 20]
 
     testing_requests = {
-        'rg_accounting_test': {
+        'test': {
             'sids': testing_sites,
             'dids': testing_datatypes,
             'interval': 'day',
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     )
     
     uc_res_datatypes = [
-        15, 17, 25, 29, 30, 31, 32, 33, 34, 39, 40, 42, 43, 46, 47, 49, 49,
+        15, 17, 25, 29, 30, 31, 32, 33, 34, 39, 40, 42, 43, 46, 47, 49,
         123, 124, 1197, 1198, 1501, 89
     ]
         
@@ -303,21 +303,21 @@ if __name__ == '__main__':
             'rise_sites': None,
             'sftp_push': None
         },
-        'prod_rhel_daily': {
+        'uc_rhel_daily': {
             'alt_path': '/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': uc_requests_daily,
             'rise_sites': uc_rise_sites,
             'sftp_push': uc_rise_rsync
         },
-        'prod_rhel_weekly': {
+        'uc_rhel_weekly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': uc_requests_weekly,
             'rise_sites': uc_rise_sites,
             'sftp_push': uc_rise_rsync
         },
-        'prod_rhel_monthly': {
+        'uc_rhel_monthly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'uc',
             'requests': uc_requests_monthly,
