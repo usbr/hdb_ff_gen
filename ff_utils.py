@@ -15,6 +15,7 @@ import pandas as pd
 from requests import get as r_get
 from shapely.geometry import Point
 
+# STATIC_URL = f'http://127.0.0.1:8887'
 STATIC_URL = f'https://www.usbr.gov/uc/water/hydrodata/assets'
 NRCS_CHARTS_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/basinCharts/POR'
 
@@ -383,7 +384,7 @@ def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
     return stat
 
 def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False, 
-                  show=True, huc_filter=''):
+                  show=True, huc_filter='', zoom_on_click=False):
     try:
         if type(huc_filter) == int:
             huc_filter = str(huc_filter)
@@ -406,6 +407,7 @@ def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False,
             name=f'HUC {level}',
             embed=embed,
             style_function=huc_style,
+            # zoom_on_click=zoom_on_click,
             show=show
         ).add_to(huc_map)
     except Exception as err:

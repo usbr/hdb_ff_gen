@@ -289,7 +289,8 @@ if __name__ == '__main__':
     parser.add_argument("-c", "--config", help="use alternate config json, use full path")
     parser.add_argument("-m", "--maps", help="create huc-maps", action="store_true")
     parser.add_argument("-g", "--gis", help="update gis files with current NRCS data", action='store_true')
-
+    parser.add_argument("-n", "--no_charts", help="create huc-maps", action="store_true")
+    
     args = parser.parse_args()
     
     if args.version:
@@ -360,7 +361,14 @@ if __name__ == '__main__':
     )
     print(schema_str)
     logger.info(schema_str)
-
+    
+    no_charts = False
+    if args.no_charts:
+        no_charts = args.no_charts
+        no_chart_str = 'No charts flag provided, no charts/csv/json will be created.'
+        print(no_chart_str)
+        logger.info(no_chart_str)
+        
     for site_type, type_config in ff_config['requests'].items():
         period = str(type_config['period']).upper()
         folder_str = (
@@ -400,18 +408,9 @@ if __name__ == '__main__':
 
             bt = time.time()
 
-            created_site_str = (
-                f'    Creating hydroData files for '
-                f'{site_names[i]} - {datatype_names[i]}'
-
-            )
-            print(created_site_str)
-            if args.log == 'verbose':
-                logger.info(created_site_str)
-
             meta = df_meta[df_meta.index == sdi].iloc[0]
             
-            #swithc case here for accounting mode
+            #switch case here for accounting mode
             site_dir = path.join(site_type_dir, f'{site_ids[i]}')
             csv_dir = path.join(site_dir, 'csv')
             json_dir = path.join(site_dir, 'json')
@@ -431,6 +430,17 @@ if __name__ == '__main__':
             csv_filename = csv_filename.replace(' ', '_')
             chart_filename = chart_filename.replace(' ', '_')
             json_filename = json_filename.replace(' ', '_')
+            if no_charts:
+                continue
+            
+            created_site_str = (
+                f'    Creating hydroData files for '
+                f'{site_names[i]} - {datatype_names[i]}'
+
+            )
+            print(created_site_str)
+            if args.log == 'verbose':
+                logger.info(created_site_str)
 
             df = get_data(
                 hdb, sdi, interval, json_filename, period=period, logger=logger

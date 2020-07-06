@@ -89,14 +89,14 @@ if __name__ == '__main__':
     uc_gage_datatypes = [19, 20, 31, 1191]
     
     uc_requests_test = {
-        'reservoir_data': {
-            'sids': uc_res_data[0:4],
-            'dids': uc_res_datatypes,
-            'interval': 'day',
-            'period': 40
-        },
+        # 'reservoir_data': {
+        #     'sids': uc_res_data,
+        #     'dids': uc_res_datatypes,
+        #     'interval': 'day',
+        #     'period': 40
+        # },
         'gage_data': {
-            'sids': uc_gages[0:4],
+            'sids': uc_gages,
             'dids': uc_gage_datatypes,
             'interval': 'day',
             'period': 40
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
     lc_requests_test = {
         'reservoir_data': {
-            'sids': lc_reservoirs[0:2],
+            'sids': lc_reservoirs,
             'dids': lc_res_datatypes,
             'interval': 'day',
             'period': 40

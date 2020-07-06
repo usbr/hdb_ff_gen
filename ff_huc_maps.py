@@ -175,24 +175,21 @@ def combine_polygons(geo_df, huc_name):
     df = pd.DataFrame({'Name': [huc_name]})
     return gpd.GeoDataFrame(df, geometry=geometry)
 
-def get_buffer_geojson(geo_df, awdb_meta, buffer):
-    geo_df.geometry = geo_df['geometry'].buffer(buffer)
-    return json.loads(geo_df.to_json())
-
 def define_buffer(geo_df, awdb_meta, min_awdb_sites=3, max_buffer=0.3):
     awdb_sites_cnt = 0
     buffer = 0
     awdb_sites = []
     while awdb_sites_cnt < min_awdb_sites and buffer < max_buffer:
         buffer += 0.05
-        buffer_geojson= get_buffer_geojson(
-            deepcopy(geo_df),
-            awdb_meta,
-            buffer
+        buffer_df = deepcopy(geo_df)
+        buffer_df.geometry = buffer_df['geometry'].buffer(buffer)
+        awdb_sites = get_awdb_sites(
+            buffer_df, 
+            awdb_meta
         )
-        awdb_sites = get_awdb_sites(geo_df, awdb_meta)
         awdb_sites = awdb_sites[awdb_sites['stationTriplet'].str.contains('|'.join(['SNTL', 'SCAN'])).any(level=0)]
         awdb_sites_cnt = len(awdb_sites)
+    buffer_geojson = json.loads(buffer_df.to_json())
     print(f'      {awdb_sites_cnt} awdb_sites using a {round(buffer, 2)} deg buffer')
     return buffer_geojson, awdb_sites
 
@@ -313,7 +310,7 @@ if __name__ == '__main__':
     makedirs(maps_dir, exist_ok=True)
     # site_type_dir = path.join(this_dir, 'test', 'data')
     # meta_path = path.join(site_type_dir, 'klamath_meta.csv')
-    site_type_dir = path.join(this_dir, 'flat_files', 'test_ff')
+    site_type_dir = path.join(this_dir, 'flat_files', 'gage_data')
     meta_path = path.join(site_type_dir, 'meta.csv')
 #    site_type_dir = path.join(this_dir, 'flat_files', 'ECO_RESERVOIR_DATA')
 #    meta_path = path.join(site_type_dir, 'meta.csv')
