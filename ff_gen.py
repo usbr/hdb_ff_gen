@@ -248,7 +248,7 @@ def get_data(hdb, sdi, interval, json_filename, period='POR',
     df.dropna(inplace=True)
     return df
 
-def get_metadata(hdb, sid_list, did_list, logger=None):
+def get_metadata(hdb, sid_list=[], did_list=[], logger=None):
     for i in range(5):
         try:
             df_meta = HdbTables.sitedatatypes(
@@ -259,7 +259,7 @@ def get_metadata(hdb, sid_list, did_list, logger=None):
         except HdbApiError as err:
             last_err = err
             err_str = (
-                f'  Error gathering metadata will retry {5- i} more times.\n'
+                f'  Error gathering metadata will retry {5 - i} more times.\n'
             )
             print(err_str)
             if logger:
@@ -275,7 +275,63 @@ def get_metadata(hdb, sid_list, did_list, logger=None):
     if logger:
         logger.info(err_str)
     sys.exit(err_str)
-                
+
+def get_parent_metadata(hdb, ids=[], logger=None):
+    for i in range(5):
+        try:
+            df_meta = HdbTables.sites(
+                hdb,
+                ids=ids
+            )
+        except HdbApiError as err:
+            last_err = err
+            err_str = (
+                f'  Error gathering parent metadata will retry {5 - i} more times.\n'
+            )
+            print(err_str)
+            if logger:
+                logger.info(err_str)
+            for i in range(60):
+                time.sleep(0.5)
+        else:
+            return df_meta
+    
+    err_str = (
+        f'\nMax metadata call retries exceeded, quitting ff_gen.\n{last_err}'
+    )
+    if logger:
+        logger.info(err_str)
+    sys.exit(err_str)
+
+def swap_parent_meta(df_meta, parent_meta):
+    datatype_lbl = 'datatype_metadata.datatype_common_name'
+    huc_lbl = 'site_metadata.hydrologic_unit'
+    elev_lbl = 'site_metadata.elevation'
+    long_lbl = 'site_metadata.longi'
+    lat_lbl = 'site_metadata.lat'
+    name_lbl = 'site_metadata.site_name'
+    parent_ids = [str(i) for i in parent_meta['site_id'].to_list()]
+    for idx, row in df_meta.iterrows():
+        parent_id = str(row['site_metadata.parent_site_id'])
+        if parent_id in parent_ids:
+            df_meta.loc[idx, 'site_id'] = parent_id
+            df_meta.loc[idx, name_lbl] = parent_meta['site_name'].loc[parent_id]
+            df_meta.loc[idx, lat_lbl] = parent_meta['lat'].loc[parent_id]
+            df_meta.loc[idx, long_lbl] = parent_meta['longi'].loc[parent_id]
+            df_meta.loc[idx, elev_lbl] = parent_meta['elevation'].loc[parent_id]
+            df_meta.loc[idx, huc_lbl] = parent_meta['hydrologic_unit'].loc[parent_id]
+    return df_meta
+
+def accounting_meta(hdb, df_meta, logger=None):
+    parent_site_ids = df_meta['site_metadata.parent_site_id']
+    parent_site_ids = parent_site_ids.drop_duplicates().to_list()
+    parent_site_ids[:] = [i for i in parent_site_ids if i]
+    parent_meta = get_parent_metadata(
+            hdb=hdb, ids=parent_site_ids, logger=logger
+        )
+    df_meta = swap_parent_meta(df_meta, parent_meta)
+    return df_meta
+    
 if __name__ == '__main__':
     
     import argparse
@@ -391,7 +447,10 @@ if __name__ == '__main__':
         df_meta = get_metadata(
             hdb=hdb, sid_list=sids, did_list=dids, logger=logger
         )
-        
+
+        if type_config.get('mode', 'default') == 'accounting':
+            df_meta = accounting_meta(hdb=hdb, df_meta=df_meta, logger=logger)
+
         df_meta['last_meas_date'] = pd.NaT
         df_meta['last_meas_val'] = np.NaN
 
@@ -403,6 +462,8 @@ if __name__ == '__main__':
 
         site_label = 'site_metadata.site_name'
         site_names = df_meta[site_label].tolist()
+        site_common_label = 'site_metadata.site_common_name'
+        site_common_names = df_meta[site_common_label].tolist()
         
         for i, sdi in enumerate(sdis):
 
@@ -410,7 +471,6 @@ if __name__ == '__main__':
 
             meta = df_meta[df_meta.index == sdi].iloc[0]
             
-            #switch case here for accounting mode
             site_dir = path.join(site_type_dir, f'{site_ids[i]}')
             csv_dir = path.join(site_dir, 'csv')
             json_dir = path.join(site_dir, 'json')
@@ -422,11 +482,13 @@ if __name__ == '__main__':
             makedirs(json_dir, exist_ok=True)
             makedirs(chart_dir, exist_ok=True)
             
-            #switch case here for accounting mode
-            csv_filename = path.join(csv_dir, f'{datatype_ids[i]}.csv')
-            chart_filename = path.join(chart_dir, f'{datatype_names[i]}.html')
-            img_filename = f'{site_ids[i]}_{datatype_names[i]}'
-            json_filename = path.join(json_dir, f'{datatype_ids[i]}.json')
+            file_name_prefix = ''
+            if type_config.get('mode', 'default') == 'accounting':
+                file_name_prefix = f'{site_common_names[i].split("^")[-1]}_'
+            csv_filename = path.join(csv_dir, f'{file_name_prefix}{datatype_ids[i]}.csv')
+            chart_filename = path.join(chart_dir, f'{file_name_prefix}{datatype_names[i]}.html')
+            img_filename = f'{file_name_prefix}{site_ids[i]}_{datatype_names[i]}'
+            json_filename = path.join(json_dir, f'{file_name_prefix}{datatype_ids[i]}.json')
             csv_filename = csv_filename.replace(' ', '_')
             chart_filename = chart_filename.replace(' ', '_')
             json_filename = json_filename.replace(' ', '_')
@@ -495,8 +557,8 @@ if __name__ == '__main__':
                     logger.info(no_data_str)
         
         if args.maps:
-            #add arg for accounting to huc maps
             make_huc_maps(df_meta.copy(), site_type_dir, logger)
+                
         metadata_filename = path.join(site_type_dir, 'meta.csv')
         if path.isfile(metadata_filename):
             df_meta_old = pd.read_csv(metadata_filename)
@@ -505,7 +567,6 @@ if __name__ == '__main__':
                 inplace=True, subset='site_datatype_id', keep='last'
             )
         df_meta.to_csv(metadata_filename, index=False)
-        #add arg for accounting mode to sitemaps
         make_sitemap(site_type, df_meta.copy(), data_dir, logger)
         
     make_nav(data_dir, logger)

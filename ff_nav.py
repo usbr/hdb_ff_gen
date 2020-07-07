@@ -13,6 +13,10 @@ import pandas as pd
 from ff_dash import create_dash
 from ff_utils import get_favicon, get_bor_seal, get_bootstrap
 
+IGNORE_FOLDERS = [
+    '.git', 'assets', 'mtom_viz_beta', 'status_maps', 'stf'
+]
+
 BOR_FLAVICON = get_favicon()
 BOR_SEAL = get_bor_seal()
 bootstrap = get_bootstrap()
@@ -240,7 +244,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
     }
     basepath = os.path.basename(os.path.normpath(data_dir))
     walk_dict = get_folders(data_dir)[basepath]
-    to_remove = ['.git', 'assets', 'mtom_viz_beta', 'status_maps', 'stf']
+    to_remove = IGNORE_FOLDERS
     walk_dict = remove_items(to_remove, walk_dict)
     button_str_list = []
     for button_label, dd_items in walk_dict.items():

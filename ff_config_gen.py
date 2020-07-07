@@ -13,13 +13,17 @@ if __name__ == '__main__':
     alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
 
 # testing config (changes often)
-    testing_sites = [1517, 1516, 912, 913, 1672]#[4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356]
-    testing_datatypes = [19, 40, 42, 43, 46, 47, 49]#[17, 1158, 2742]#, 30, 49, 42, 43, 17, 19, 20]
+    testing_sites = [
+        4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356, 3389, 
+        3373, 3455, 3383, 3349, 3352, 4637, 4638, 3399
+    ]
+    testing_datatypes = [17, 1158, 2742]#, 30, 49, 42, 43, 17, 19, 20]
 
     testing_requests = {
-        'test': {
+        'alb_accounting': {
             'sids': testing_sites,
             'dids': testing_datatypes,
+            'mode': 'accounting',
             'interval': 'day',
             'period': 'por'
         }
@@ -148,7 +152,7 @@ if __name__ == '__main__':
         }
     }
     
-    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/uchdb2 svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
+    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/ff_gen/rise/uchdb2 svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
     
 # LC configuration
     
@@ -232,7 +236,7 @@ if __name__ == '__main__':
         }
     }
     
-    lc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/hdb_ff_gen/rise/lchdb2 svc-dro-lchdb2@140.215.112.124:/home/svc-dro-lchdb2/DATA'''
+    lc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/ff_gen/rise/lchdb2 svc-dro-lchdb2@140.215.112.124:/home/svc-dro-lchdb2/DATA'''
     
 # PN configuration
 
