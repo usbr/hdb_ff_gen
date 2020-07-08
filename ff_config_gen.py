@@ -152,7 +152,7 @@ if __name__ == '__main__':
         }
     }
     
-    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/ff_gen/rise/uchdb2 svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
+    uc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/ff_gen/rise/uchdb2/ svc-dro-uchdb2@140.215.112.124:/home/svc-dro-uchdb2/DATA'''
     
 # LC configuration
     
@@ -236,7 +236,7 @@ if __name__ == '__main__':
         }
     }
     
-    lc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/ff_gen/rise/lchdb2 svc-dro-lchdb2@140.215.112.124:/home/svc-dro-lchdb2/DATA'''
+    lc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --remove-source-files --include '*.json' --exclude '*' /wrg/hdb/apps/python/ff_gen/rise/lchdb2/ svc-dro-lchdb2@140.215.112.124:/home/svc-dro-lchdb2/DATA'''
     
 # PN configuration
 
