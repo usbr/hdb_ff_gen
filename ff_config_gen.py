@@ -10,8 +10,6 @@ from os import path
 
 if __name__ == '__main__':
 
-    alt_path = path.join('T:\\', 'Power', 'Reservoir Operations', 'flat_files')
-
 # testing config (changes often)
     testing_sites = [
         4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356, 3389, 
@@ -181,13 +179,13 @@ if __name__ == '__main__':
             'sids': lc_reservoirs,
             'dids': lc_res_datatypes,
             'interval': 'day',
-            'period': 40
+            'period': 'por'
         },
         'gage_data': {
-            'sids': lc_gages[0:4],
+            'sids': lc_gages,
             'dids': lc_gage_datatypes,
             'interval': 'day',
-            'period': 40
+            'period': 'por'
         },
     }
 
@@ -338,14 +336,14 @@ if __name__ == '__main__':
         'lc_rhel_weekly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'lc',
-            'requests': lc_requests_daily,
+            'requests': lc_requests_weekly,
             'rise_sites': lc_rise_sites,
             'sftp_push': lc_rise_rsync
         },
         'lc_rhel_monthly': {
             'alt_path': r'/wrg/exec/pub/flat_files',
             'hdb': 'lc',
-            'requests': lc_requests_daily,
+            'requests': lc_requests_monthly,
             'rise_sites': lc_rise_sites,
             'sftp_push': lc_rise_rsync
         },
