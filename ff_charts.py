@@ -14,6 +14,7 @@ import plotly.graph_objs as go
 from ff_utils import get_favicon, get_bor_seal
 from hdb_api.hdb_utils import datatype_units, get_wy, is_leap_year, get_cal_yr
 
+
 def get_log_scale_dd():
     log_scale_dd = [
         {
@@ -46,7 +47,7 @@ def get_log_scale_dd():
     return log_scale_dd
 
 def get_chart_type(datatype_name, units):
-    if units.upper() in ['ACRE-FT'] and 'storage' not in datatype_name.lower():
+    if 'volume' in datatype_name.lower():
         return 'bar'
     return 'scatter'
 

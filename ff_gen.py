@@ -248,18 +248,20 @@ def get_data(hdb, sdi, interval, json_filename, period='POR',
     df.dropna(inplace=True)
     return df
 
-def get_metadata(hdb, sid_list=[], did_list=[], logger=None):
+def get_metadata(hdb, sid_list=None, did_list=None, sdi_list=None, logger=None):
     for i in range(5):
         try:
             df_meta = HdbTables.sitedatatypes(
                 hdb,
                 sid_list=sid_list,
-                did_list=did_list
+                did_list=did_list,
+                sdi_list=sdi_list
             )
         except HdbApiError as err:
             last_err = err
             err_str = (
-                f'  Error gathering metadata will retry {5 - i} more times.\n'
+                f'  Error gathering metadata will retry {5 - i} more times -'
+                f' {err}\n'
             )
             print(err_str)
             if logger:
@@ -441,13 +443,22 @@ if __name__ == '__main__':
         if interval not in ['instant', 'hour', 'day', 'month', 'year']:
             interval = 'day'
 
-        sids = type_config['sids']
-        dids = type_config['dids']
+        sids = type_config.get('sids', None)
+        dids = type_config.get('dids', None)
+        sdis = type_config.get('sdis', None)
         
         df_meta = get_metadata(
             hdb=hdb, sid_list=sids, did_list=dids, logger=logger
         )
-
+        if sdis:
+            df_meta_sdi = get_metadata(
+                hdb=hdb, sdi_list=sdis, logger=logger
+            )
+            df_meta = pd.concat([df_meta, df_meta_sdi])
+            df_meta.drop_duplicates(
+                inplace=True, subset='site_datatype_id', keep='last'
+            )
+        
         if type_config.get('mode', 'default') == 'accounting':
             df_meta = accounting_meta(hdb=hdb, df_meta=df_meta, logger=logger)
 
