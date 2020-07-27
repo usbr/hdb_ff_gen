@@ -211,7 +211,6 @@ def get_icon_color(row, source='hdb'):
         
     }
     icon_color = color_dict.get(obj_owner, 'black')
-    print(f"{row['site_metadata.site_name']} is {obj_owner} so its {icon_color} - {row['site_metadata.usgs_id']}")
     return icon_color
 
 def add_optional_tilesets(folium_map):
