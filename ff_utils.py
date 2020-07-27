@@ -12,7 +12,6 @@ from datetime import datetime
 import folium
 import branca
 import pandas as pd
-import numpy as np
 from requests import get as r_get
 from shapely.geometry import Point
 
@@ -190,9 +189,9 @@ def get_icon_color(row, source='hdb'):
     if source.lower() == 'hdb':
         obj_owner = 'BOR'
         if not row.empty:
-            if not np.isnan(row['site_metadata.scs_id']):
+            if not pd.isna(row['site_metadata.scs_id']):
                 obj_owner = 'NRCS'
-            if not np.isnan(row['site_metadata.usgs_id']):
+            if not pd.isna(row['site_metadata.usgs_id']):
                 obj_owner = 'USGS'
     if source.lower() == 'awdb':
         obj_owner = row
