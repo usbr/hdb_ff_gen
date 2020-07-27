@@ -80,7 +80,7 @@ def add_markers(sitetype_map, meta):
             color = get_icon_color(row)
             popup_html = (
                 f'<div class="container">'
-                f'<div class="row justify-content-center">'
+                f'<div class="row justify-content-center" style="z-index:402;">'
                 f'{embed}</div>'
                 f'<div class="row justify-content-center">'
                 f'<div class="col"><span>'
@@ -90,7 +90,7 @@ def add_markers(sitetype_map, meta):
             )
             popup = folium.map.Popup(
                 html=popup_html,
-                max_width='75%'
+                max_width='70%'
             )
             folium.Marker(
                 location=lat_long,
@@ -165,7 +165,7 @@ def get_legend(obj_types=[], data_sources=[]):
       </a>
     '''
     legend_dd = f'''
-    <div class="dropdown show" style="position: fixed; top: 10px; left: 50px; z-index:9999;">
+    <div class="dropdown show" style="position: fixed; top: 10px; left: 50px; z-index:401;">
       <a class="btn btn-warning btn-lg dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Legend
       </a>
@@ -185,7 +185,7 @@ def create_map(site_type, meta, data_dir):
     )
 
     sitetype_dir = path.join(data_dir, site_type)
-    map_filename = f'site_map.html'
+    map_filename = 'site_map.html'
     map_path = path.join(sitetype_dir, map_filename)
 
     sitetype_map = folium.Map(tiles=None)
@@ -246,7 +246,7 @@ def create_map(site_type, meta, data_dir):
             replace_str = (
                 '''.append("svg")
                      .attr("id", "legend")
-                     .attr("style", "background-color:rgba(255,255,255,0.75);border-radius: 10px;")'''
+                     .attr("style", "background-color:rgba(255,255,255,0.75); border-radius: 10px;")'''
             )
             chart_file_str = chart_file_str.replace(find_str, replace_str)
             html_file.write(chart_file_str)

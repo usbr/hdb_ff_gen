@@ -12,6 +12,7 @@ from datetime import datetime
 import folium
 import branca
 import pandas as pd
+import numpy as np
 from requests import get as r_get
 from shapely.geometry import Point
 
@@ -189,9 +190,9 @@ def get_icon_color(row, source='hdb'):
     if source.lower() == 'hdb':
         obj_owner = 'BOR'
         if not row.empty:
-            if row['site_metadata.scs_id']:
+            if not np.isnan(row['site_metadata.scs_id']):
                 obj_owner = 'NRCS'
-            if row['site_metadata.usgs_id']:
+            if not np.isnan(row['site_metadata.usgs_id']):
                 obj_owner = 'USGS'
     if source.lower() == 'awdb':
         obj_owner = row
@@ -210,6 +211,7 @@ def get_icon_color(row, source='hdb'):
         
     }
     icon_color = color_dict.get(obj_owner, 'black')
+    print(f"{row['site_metadata.site_name']} is {obj_owner} so its {icon_color} - {row['site_metadata.usgs_id']}")
     return icon_color
 
 def add_optional_tilesets(folium_map):
