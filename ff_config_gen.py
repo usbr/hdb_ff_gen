@@ -95,18 +95,18 @@ uc_gages = list(set(uc_gages))
 uc_gage_datatypes = [19, 20, 31, 1191]
 
 uc_requests_test = {
-    # 'reservoir_data': {
-    #     'sids': uc_res_data,
-    #     'dids': uc_res_datatypes,
-    #     'interval': 'day',
-    #     'period': 40
-    # },
-    'gage_data': {
-        'sids': uc_gages,
-        'dids': uc_gage_datatypes,
+    'reservoir_data': {
+        'sids': uc_res_data[0:5],
+        'dids': uc_res_datatypes,
         'interval': 'day',
         'period': 40
-    }
+    },
+    # 'gage_data': {
+    #     'sids': uc_gages,
+    #     'dids': uc_gage_datatypes,
+    #     'interval': 'day',
+    #     'period': 40
+    # }
 }
 
 uc_requests_daily = {
@@ -299,8 +299,8 @@ config_json = {
         'alt_path': None,
         'hdb': 'uc',
         'requests': uc_requests_test,
-        'rise_sites': None,
-        'sftp_push': None
+        'rise_sites': uc_rise_sites,
+        'sftp_push': uc_rise_rsync
     },
     'lc_test': {
         'alt_path': None,
