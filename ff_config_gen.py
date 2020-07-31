@@ -31,6 +31,32 @@ testing_requests = {
     }
 }
 
+# alb accounting config
+
+alb_accounting_sites = [
+    4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356, 3389, 
+    3373, 3455, 3383, 3349, 3352, 4637, 4638, 3399, 3373
+]
+
+alb_accounting_datatypes = [
+    17, 1158, 2742
+]
+
+alb_accounting_sdis = [
+    20148
+]
+
+alb_accounting_requests = {
+    'alb_accounting': {
+        'sdis': alb_accounting_sdis,
+        'sids': alb_accounting_sites,
+        'dids': alb_accounting_datatypes,
+        'mode': 'accounting',
+        'interval': 'day',
+        'period': 'por'
+    }
+}
+
 # UC configuration 
 
 crsp_reservoirs = [
@@ -336,6 +362,13 @@ config_json = {
         'requests': lc_requests_daily,
         'rise_sites': lc_rise_sites,
         'sftp_push': lc_rise_rsync
+    },
+    'alb_accounting_rhel': {
+        'alt_path': r'/wrg/exec/pub/flat_files',
+        'hdb': 'uc',
+        'requests': alb_accounting_requests,
+        'rise_sites': None,
+        'sftp_push': None
     },
     'lc_rhel_weekly': {
         'alt_path': r'/wrg/exec/pub/flat_files',
