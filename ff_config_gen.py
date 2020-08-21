@@ -39,11 +39,11 @@ alb_accounting_sites = [
 ]
 
 alb_accounting_datatypes = [
-    17, 1158, 2742
+    17, 1158, 2742, 19, 42
 ]
 
 alb_accounting_sdis = [
-    20148
+    20148, 19907
 ]
 
 alb_accounting_requests = {
