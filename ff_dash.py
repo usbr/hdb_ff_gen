@@ -139,8 +139,8 @@ def get_js_refs():
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
   <script src="{jquery_js}"></script>
-  <script src="{bootstrap_js}"></script>
   <script src="{popper_js}"></script>
+  <script src="{bootstrap_js}"></script>
 ''' + f'''
 <!-- Icons -->
   <script src="{feather_js}"></script>

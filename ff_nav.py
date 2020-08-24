@@ -32,8 +32,8 @@ HEADER_STR = f'''
           <link rel="icon" href="{BOR_FLAVICON}">
           <link rel="stylesheet" href="{BOOTSTRAP_CSS}">
           <script src="{JQUERY_JS}"></script>
-          <script src="{BOOTSTRAP_JS}"></script>
-          <script src="{POPPER_JS}"></script>''' + '''
+          <script src="{POPPER_JS}"></script>
+          <script src="{BOOTSTRAP_JS}"></script>''' + '''
     <style>
         .dropdown-submenu {
           position: relative;

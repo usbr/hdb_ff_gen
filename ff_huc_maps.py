@@ -20,19 +20,12 @@ from shapely.ops import cascaded_union
 from ff_utils import get_fa_icon, get_icon_color, get_season
 from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords, get_huc
 from ff_utils import get_favicon, get_bor_seal
-from ff_utils import get_bor_js, get_bor_css
 from ff_utils import get_default_js, get_default_css
-
-bor_js = get_bor_js()
-bor_css = get_bor_css()
 
 default_js = get_default_js()
 default_css = get_default_css()
-
 folium.folium._default_js = default_js
 folium.folium._default_css = default_css
-# folium.folium._default_js = bor_js
-# folium.folium._default_css = bor_css
 
 def get_upstream_basin(huc12, to_huc_table):
     if huc12:

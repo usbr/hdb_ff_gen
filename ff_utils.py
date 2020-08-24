@@ -16,7 +16,7 @@ from requests import get as r_get
 from shapely.geometry import Point
 
 # STATIC_URL = f'http://127.0.0.1:8887'
-STATIC_URL = f'https://www.usbr.gov/uc/water/hydrodata/assets'
+STATIC_URL = 'https://www.usbr.gov/uc/water/hydrodata/assets'
 NRCS_CHARTS_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/basinCharts/POR'
 
 def get_plotly_js():
@@ -44,41 +44,11 @@ def get_bor_seal(orient='default', grey=False):
         color = 'grey'
     seal_dict = {
         'default': f'BofR-horiz-{color}.png',
-        'shield': f'BofR-shield-cmyk.png',
+        'shield': 'BofR-shield-cmyk.png',
         'vert': f'BofR-vert-{color}.png',
         'horz': f'BofR-horiz-{color}.png'
         }
     return f'{STATIC_URL}/img/{seal_dict[orient]}'
-
-def get_bor_js():
-    
-    return [
-        ('leaflet',
-          f'{STATIC_URL}/js/leaflet/leaflet.js'),
-        ('jquery',
-          f'{STATIC_URL}/js/jquery/3.4.0/jquery.min.js'),
-        ('bootstrap',
-          f'{STATIC_URL}/js/bootstrap/3.2.0/js/bootstrap.min.js'),
-        ('awesome_markers',
-          f'{STATIC_URL}/js/leaflet/leaflet.awesome-markers.js'),  # noqa
-        ]
-
-def get_bor_css():
-    
-    return [
-        ('leaflet_css',
-          f'{STATIC_URL}/css/leaflet/leaflet.css'),
-        ('bootstrap_css',
-          f'{STATIC_URL}/css/bootstrap/3.2.0/css/bootstrap.min.css'),
-        ('bootstrap_theme_css',
-          f'{STATIC_URL}/css/bootstrap/3.2.0/css/bootstrap-theme.min.css'),  # noqa
-        ('awesome_markers_font_css',
-          f'{STATIC_URL}/css/font-awesome.min.css'),  # noqa
-        ('awesome_markers_css',
-          f'{STATIC_URL}/css/leaflet/leaflet.awesome-markers.css'),  # noqa
-        ('awesome_rotate_css',
-          f'{STATIC_URL}/css/leaflet/leaflet.awesome.rotate.css'),  # noqa
-        ]
 
 def get_default_js():
     
@@ -88,12 +58,12 @@ def get_default_js():
          f'{STATIC_URL}/leaflet/js/leaflet.js'),
         ('jquery', 
          bootstrap_dict['jquery']),
+        ('popper', 
+         bootstrap_dict['popper']),
         ('bootstrap', 
          bootstrap_dict['js']),
         ('awesome_markers', 
          f'{STATIC_URL}/leaflet-awesome-markers/leaflet.awesome-markers.min.js'),
-        ('popper', 
-         bootstrap_dict['popper']),
     ]
 
 def get_default_css():
@@ -500,7 +470,7 @@ def get_colormap(low=50, high=150):
         vmin=50,
         vmax=150
     )
-    colormap.caption = '% of Average Precipitation or % Median Snow Water Equivalent'
+    colormap.caption = '% of Avg. Precip. or % Median Snow Water Equiv. (WY to date)'
     return colormap
 
 def filter_geo_json(geo_json_path, huc_level=2, filter_str=''):
