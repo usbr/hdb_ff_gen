@@ -435,8 +435,10 @@ def create_chart(df, meta):
     return fig
 
 if __name__ == '__main__':
+    
     from os import path
-
+    from ff_utils import get_plotly_js
+    
     def get_plot_config(img_filename):
         return {
             'modeBarButtonsToRemove': [
@@ -456,9 +458,8 @@ if __name__ == '__main__':
 
     def make_chart(df, meta, chart_filename, img_filename, plotly_js=None):
         if not plotly_js:
-            plotly_js = (
-                r'https://www.usbr.gov/uc/water/ff/static/js/plotly/1.48.2/plotly-latest.min.js'
-            )
+            plotly_js = get_plotly_js()
+            
         if True:#try:
             fig = create_chart(df.copy(), meta)
             plotly.offline.plot(
@@ -486,19 +487,19 @@ if __name__ == '__main__':
 #            )
 #            print(err_str)
 
-    site_id = 731
-    sdi = 1332
-    datatype_id = 19
+    site_id = 919
+    datatype_id = 17
     this_dir = path.dirname(path.realpath(__file__))
     test_dir = path.join(this_dir, 'test')
     data_dir = path.join(test_dir, 'data')
     site_dir = path.join(data_dir, f'{site_id}')
     chart_dir = path.join(site_dir, 'charts')
     csv_path = path.join(site_dir, 'csv', f'{datatype_id}.csv')
-    meta_path = path.join(data_dir, 'gauge_meta.csv')
+    meta_path = path.join(data_dir, 'meta.csv')
     if path.exists(csv_path) and path.exists(meta_path):
         df_meta = pd.read_csv(meta_path)
-        meta = df_meta[df_meta['site_datatype_id'] == sdi].iloc[0]
+        meta = df_meta[df_meta['site_id'] == site_id]
+        meta = meta[meta['datatype_id'] == datatype_id].iloc[0]
         df = pd.read_csv(
             csv_path,
             parse_dates=['datetime'],
