@@ -273,6 +273,15 @@ lc_rise_rsync = '''rsync -avzh -e "ssh -i /home/app_user/.ssh/nep_rise_rsync" --
 pn_sites = ['and', 'jck', 'sco', 'mck']
 pn_datatypes = ['af','fb','qu','qd']
 
+pn_requests = {
+    'pn_sites': {
+        'sids': pn_sites,
+        'dids': pn_datatypes,
+        'interval': 'day',
+        'period': 'por'
+    }
+}
+
 # GP configuration
 
 gp_sites = [
@@ -289,15 +298,6 @@ gp_sites = [
 
 gp_datatypes = ['qdx', 'af', 'fb', 'qd', 'qj', 'qrd', 'in', 'qehd', 'qsd']
 
-pn_requests = {
-    'pn_sites': {
-        'sids': pn_sites,
-        'dids': pn_datatypes,
-        'interval': 'day',
-        'period': 'por'
-    }
-}
-
 gp_requests = {
     'gp_sites': {
         'sids': gp_sites,
@@ -307,6 +307,80 @@ gp_requests = {
     }
 }
 
+# ECO config 
+
+eco_res_data = [
+    100001, 100065, 100002, 100081, 100010, 100089, 100156, 100120, 100091,
+    100017, 100100, 100257, 100003, 100038, 100031, 100113, 100032, 100049,
+    100163, 100275, 100053, 100118
+]
+
+eco_gages = [
+    100011, 100093, 100377, 100114, 100055, 100090, 100064, 100097, 100051,
+    100078, 100280, 100056, 100015, 101778, 101779, 101782, 100385, 100409,
+    100037, 100073, 100124, 100083, 100094, 101780, 100108, 100054, 100111,
+    101769, 100116, 100155, 100013, 100020, 101774, 100033, 100099, 100026,
+    100095, 100062, 100378, 100101, 100379, 101804, 100869, 100870, 100871,
+    100872, 101781, 100279, 100024, 100227, 100050, 100061, 100121, 100129,
+    100040, 101772, 100027, 100021, 101783, 100662, 100956, 100664, 101784,
+    101785, 101761, 100102, 100082, 100009, 100057, 100067, 100123, 101786,
+    100086, 100276, 100226, 100022, 100087, 100039, 100079, 100098, 100042,
+    100075, 100868, 100669, 100653, 100654, 100671, 100110, 100047, 100052,
+    100070, 100077, 100069, 100041, 101770, 100085, 101787, 100673, 100672,
+    100128, 100109, 100874, 100139, 100646
+]
+
+eco_res_datatypes = [17, 49]
+
+eco_gage_datatypes = [19]
+
+eco_rise_sites = None
+eco_rise_rsync = None
+
+eco_requests_daily = {
+    'reservoir_data': {
+        'sids': eco_res_data,
+        'dids': eco_res_datatypes,
+        'interval': 'day',
+        'period': 40
+    },
+    'gage_data': {
+        'sids': eco_gages,
+        'dids': eco_gage_datatypes,
+        'interval': 'day',
+        'period': 40
+    }
+}
+
+eco_requests_weekly = {
+    'reservoir_data': {
+        'sids': eco_res_data,
+        'dids': eco_res_datatypes,
+        'interval': 'day',
+        'period': 400
+    },
+    'gage_data': {
+        'sids': eco_gages,
+        'dids': eco_gage_datatypes,
+        'interval': 'day',
+        'period': 400
+    }
+}
+
+eco_requests_monthly = {
+    'reservoir_data': {
+        'sids': eco_res_data,
+        'dids': eco_res_datatypes,
+        'interval': 'day',
+        'period': 'por'
+    },
+    'gage_data': {
+        'sids': eco_gages,
+        'dids': eco_gage_datatypes,
+        'interval': 'day',
+        'period': 'por'
+    }
+}
 
 config_json = {
     'default': {
@@ -365,13 +439,6 @@ config_json = {
         'rise_sites': lc_rise_sites,
         'sftp_push': lc_rise_rsync
     },
-    'alb_accounting_rhel': {
-        'alt_path': r'/wrg/exec/pub/flat_files',
-        'hdb': 'uc',
-        'requests': alb_accounting_requests,
-        'rise_sites': None,
-        'sftp_push': None
-    },
     'lc_rhel_weekly': {
         'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'lc',
@@ -386,6 +453,13 @@ config_json = {
         'rise_sites': lc_rise_sites,
         'sftp_push': lc_rise_rsync
     },
+    'alb_accounting_rhel': {
+        'alt_path': r'/wrg/exec/pub/flat_files',
+        'hdb': 'uc',
+        'requests': alb_accounting_requests,
+        'rise_sites': None,
+        'sftp_push': None
+    },
     'pn_rhel_daily': {
         'alt_path': '/wrg/exec/pub/flat_files',
         'hdb': 'pn',
@@ -399,6 +473,27 @@ config_json = {
         'requests': gp_requests,
         'rise_sites': None,
         'sftp_push': False
+    },
+    'eco_rhel_daily': {
+        'alt_path': '/wrg/exec/pub/flat_files',
+        'hdb': 'eco',
+        'requests': eco_requests_daily,
+        'rise_sites': eco_rise_sites,
+        'sftp_push': eco_rise_rsync
+    },
+    'eco_rhel_weekly': {
+        'alt_path': r'/wrg/exec/pub/flat_files',
+        'hdb': 'eco',
+        'requests': eco_requests_weekly,
+        'rise_sites': eco_rise_sites,
+        'sftp_push': eco_rise_rsync
+    },
+    'eco_rhel_monthly': {
+        'alt_path': '',#r'/wrg/exec/pub/flat_files',
+        'hdb': 'eco',
+        'requests': eco_requests_monthly,
+        'rise_sites': eco_rise_sites,
+        'sftp_push': eco_rise_rsync
     },
 }
 

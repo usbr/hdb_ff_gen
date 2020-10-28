@@ -9,7 +9,7 @@ from os import path, makedirs
 from datetime import datetime as dt
 import pandas as pd
 
-def ff_to_rise(df, db_name, site_name, datatype_name,
+def ff_to_rise(df, db_name, site_id, datatype_id,
                interval='day', num_records=None, export_dir=None):
 
     this_dir = path.dirname(path.realpath(__file__))
@@ -32,8 +32,8 @@ def ff_to_rise(df, db_name, site_name, datatype_name,
     df['dateTime'] = pd.to_datetime(df['dateTime'])
     df['dateTime'] = df['dateTime'].dt.strftime('%Y-%m-%d %H:%M:%S-07:00')
     df['sourceCode'] = db_name
-    df['locationSourceCode'] = site_name
-    df['parameterSourceCode'] = datatype_name
+    df['locationSourceCode'] = site_id
+    df['parameterSourceCode'] = datatype_id
     df['modelNameSourceCode'] = None
     df['modelRunSourceCode'] = None
     df['modelRunMemberSourceCode'] = None
@@ -77,9 +77,9 @@ if __name__ == '__main__':
         test_path = path.join(test_data_dir, f'{obj_type}.csv')
         df_meta = pd.read_csv(test_path)
         for idx, row in df_meta.iterrows():
-            site_label = 'site_metadata.site_name'
+            site_label = 'site_metadata.site_id'
             site_name = row[site_label]
-            datatype_label = 'datatype_metadata.datatype_common_name'
+            datatype_label = 'datatype_metadata.datatype_id'
             datatype_name = row[datatype_label]
             print(f'Creating RISE json for {site_name} - {datatype_name}')
             sdi = row['site_datatype_id']
