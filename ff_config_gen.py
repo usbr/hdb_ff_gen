@@ -4,6 +4,8 @@ Created on Tue Apr 30 08:42:01 2019
 
 @author: buriona
 """
+#This is simply a helper file that creates the json config, not neccesary but nice
+
 
 # testing config (changes often)
 testing_sdis = [
