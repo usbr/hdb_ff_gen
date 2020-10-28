@@ -306,7 +306,6 @@ def get_parent_metadata(hdb, ids=[], logger=None):
     sys.exit(err_str)
 
 def swap_parent_meta(df_meta, parent_meta):
-    datatype_lbl = 'datatype_metadata.datatype_common_name'
     huc_lbl = 'site_metadata.hydrologic_unit'
     elev_lbl = 'site_metadata.elevation'
     long_lbl = 'site_metadata.longi'
