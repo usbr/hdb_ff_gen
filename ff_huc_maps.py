@@ -157,7 +157,7 @@ def get_awdb_sites(geo_df, awdb_meta):
     return awdb_meta[awdb_meta['stationTriplet'].isin(awdb_sites)]
 
 def get_awdb_meta(site_type='WTEQ'):
-    url_prefix = 'https://www.nrcs.usda.gov/Internet/WCIS/sitedata/metadata'
+    url_prefix = f'{NRCS_BASE_URL}/sitedata/metadata'
     awdb_meta_url = f'{url_prefix}/{site_type}/metadata.json'
     awdb_meta = pd.read_json(awdb_meta_url)
     return awdb_meta

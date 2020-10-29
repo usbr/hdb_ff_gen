@@ -35,7 +35,7 @@ Where config_schema_name is the key to the json dict with your desired ff_gen co
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Please make sure to update tests as appropriate. In fact please write them as I haven'y done any ;)
+Please make sure to update tests as appropriate. In fact please write them as I haven't done any ;)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
