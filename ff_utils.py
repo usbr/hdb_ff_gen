@@ -17,7 +17,8 @@ from shapely.geometry import Point
 
 # STATIC_URL = f'http://127.0.0.1:8887'
 STATIC_URL = 'https://www.usbr.gov/uc/water/hydrodata/assets'
-NRCS_CHARTS_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/basinCharts/POR'
+NRCS_BASE_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/AWS_PLOTS'
+NRCS_CHARTS_URL = f'{NRCS_BASE_URL}/basinCharts/POR'
 
 def get_plotly_js():
     
@@ -260,7 +261,7 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_dir=None):
     if not set(index_pg_codes) == set([200]):
         print(
             index_pg_urls, 
-            f'  Could not download index file, trying all basins...'
+            '  Could not download index file, trying all basins...'
         )
         try_all = True
         index_page_strs = ['' for i in index_pg_resps]

@@ -20,7 +20,7 @@ from shapely.ops import cascaded_union
 from ff_utils import get_fa_icon, get_icon_color, get_season
 from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords, get_huc
 from ff_utils import get_favicon, get_bor_seal
-from ff_utils import get_default_js, get_default_css
+from ff_utils import get_default_js, get_default_css, NRCS_BASE_URL
 
 default_js = get_default_js()
 default_css = get_default_css()
@@ -119,7 +119,7 @@ def add_awdb_markers(huc_map, meta):
             site_name = row['name']
             site_href_base = 'https://wcc.sc.egov.usda.gov/nwcc/site?sitenum='
             site_href = f'{site_href_base}{site_id}'
-            charts_href_base = 'https://www.nrcs.usda.gov/Internet/WCIS/AWS_PLOTS/siteCharts/POR/'
+            charts_href_base = f'{NRCS_BASE_URL}/siteCharts/POR/'
             seasonal_href = f'{charts_href_base}/WTEQ/{state}/{site_name.replace("#", "%233")}.html'
             if get_season() == 'summer':
                 seasonal_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
