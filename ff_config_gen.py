@@ -491,7 +491,7 @@ config_json = {
         'sftp_push': eco_rise_rsync
     },
     'eco_rhel_monthly': {
-        'alt_path': '',#r'/wrg/exec/pub/flat_files',
+        'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'eco',
         'requests': eco_requests_monthly,
         'rise_sites': eco_rise_sites,
