@@ -111,14 +111,15 @@ def make_json(df, json_filename, logger):
         print(json_err)
         logger.info(json_err)
 
-def make_rise(df, db_name, site_name, datatype_name, interval,
-              num_records, rise_dir, logger):
+def make_rise(df, db_name, site_id, site_name, datatype_id, datatype_name, 
+              interval, num_records, rise_dir, logger):
     try:
         df['datetime'] = df['datetime'].dt.strftime('%Y-%m-%d')
         ff_to_rise(
             df,
             db_name,
-            site_name,
+            site_id,
+            datatype_id,
             datatype_name,
             interval,
             num_records,
@@ -529,7 +530,9 @@ if __name__ == '__main__':
                         make_rise(
                             df.copy(),
                             db_name,
+                            site_ids[i],
                             site_names[i],
+                            datatype_ids[i],
                             datatype_names[i],
                             interval,
                             num_records,

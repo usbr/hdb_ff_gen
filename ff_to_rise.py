@@ -9,7 +9,7 @@ from os import path, makedirs
 from datetime import datetime as dt
 import pandas as pd
 
-def ff_to_rise(df, db_name, site_id, datatype_id,
+def ff_to_rise(df, db_name, site_id, datatype_id, datatype_name,
                interval='day', num_records=None, export_dir=None):
 
     this_dir = path.dirname(path.realpath(__file__))
