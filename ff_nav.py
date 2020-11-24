@@ -14,7 +14,7 @@ from ff_dash import create_dash
 from ff_utils import get_favicon, get_bor_seal, get_bootstrap
 
 IGNORE_FOLDERS = [
-    '.git', 'assets', 'mtom_viz_beta', 'status_maps', 'stf'
+    '.git', 'assets', 'mtom_viz_beta', 'status_maps', 'stf', 'shp'
 ]
 
 BOR_FLAVICON = get_favicon()
