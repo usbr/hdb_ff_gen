@@ -203,8 +203,8 @@ def update_gis_files(huc_level, logger, add_export_dir=None):
         print(gis_str)
         logger.info(gis_str)
         
-def get_data(hdb, sdi, interval, json_filename, period='POR', 
-             logger=None):
+def get_data(hdb, sdi, interval, json_filename, period='POR', logger=None):
+    
     def try_api(hdb, sdi, interval, t1, t2, logger=None):
         for i in range(5):
             try:
@@ -241,7 +241,10 @@ def get_data(hdb, sdi, interval, json_filename, period='POR',
         df_hdb = try_api(
             hdb=hdb, sdi=sdi, interval=interval, t1=s_date, t2=e_date
         )
-        df = df_hdb.combine_first(df_local)
+        df = pd.concat(
+            [df_hdb, df_local]
+        ).drop_duplicates(subset='datetime', keep='first').sort_index()
+
     else:
         df = try_api(
             hdb=hdb, sdi=sdi, interval=interval, t1='POR', t2='POR'

@@ -9,7 +9,7 @@ Created on Tue Apr 30 08:42:01 2019
 
 # testing config (changes often)
 testing_sdis = [
-    20148
+    1873
 ]
 testing_sites = [
     919
@@ -28,9 +28,9 @@ testing_requests = {
         'sdis': testing_sdis,
         'sids': testing_sites,
         'dids': testing_datatypes,
-        'mode': 'accounting',
+        # 'mode': 'accounting',
         'interval': 'day',
-        'period': 'por'
+        'period': 40
     }
 }
 
@@ -397,7 +397,7 @@ config_json = {
         'alt_path': None,
         'hdb': 'uc',
         'requests': testing_requests,
-        'rise_sites': [2688,2687],
+        'rise_sites': None,
         'sftp_push': None
     },
     'uc_test': {
