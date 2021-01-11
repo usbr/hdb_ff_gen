@@ -404,8 +404,8 @@ if __name__ == '__main__':
     hdb_config = get_eng_config(db=ff_config['hdb'])
     db_name = hdb_config['database']
     hdb = Hdb(hdb_config)
-    
-    rise_dir = path.join(this_dir, 'rise', db_name)
+    #******************************* remove replace statement once RISE gets it together **********
+    rise_dir = path.join(this_dir, 'rise', db_name.replace('lchdb', 'lchdb2'))
     makedirs(rise_dir, exist_ok=True)
     
     if args.gis:

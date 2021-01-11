@@ -31,7 +31,8 @@ def ff_to_rise(df, db_name, site_id, datatype_id, datatype_name,
 
     df['dateTime'] = pd.to_datetime(df['dateTime'])
     df['dateTime'] = df['dateTime'].dt.strftime('%Y-%m-%d %H:%M:%S-07:00')
-    df['sourceCode'] = db_name
+    #remove replace statement once RISE gets it together
+    df['sourceCode'] = db_name.replace('lchdb', 'lchdb2')
     df['locationSourceCode'] = site_id
     df['parameterSourceCode'] = datatype_id
     df['modelNameSourceCode'] = None
