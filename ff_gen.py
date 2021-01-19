@@ -404,8 +404,10 @@ if __name__ == '__main__':
     hdb_config = get_eng_config(db=ff_config['hdb'])
     db_name = hdb_config['database']
     hdb = Hdb(hdb_config)
-    #******************************* remove replace statement once RISE gets it together **********
+    ##################################################
+    #remove replace statement once RISE gets it together **********
     rise_dir = path.join(this_dir, 'rise', db_name.replace('lchdb', 'lchdb2'))
+    ######################################################
     makedirs(rise_dir, exist_ok=True)
     
     if args.gis:
@@ -450,14 +452,18 @@ if __name__ == '__main__':
         dids = type_config.get('dids', None)
         sdis = type_config.get('sdis', None)
         
-        df_meta = get_metadata(
-            hdb=hdb, sid_list=sids, did_list=dids, logger=logger
-        )
+        if sids or dids:
+            df_meta = get_metadata(
+                hdb=hdb, sid_list=sids, did_list=dids, logger=logger
+            )
+        else:
+            df_meta = pd.DataFrame()
+            
         if sdis:
             df_meta_sdi = get_metadata(
                 hdb=hdb, sdi_list=sdis, logger=logger
             )
-            df_meta = pd.concat([df_meta, df_meta_sdi])
+            df_meta = pd.concat([i for i in [df_meta, df_meta_sdi] if not i.empty])
             df_meta.drop_duplicates(
                 inplace=True, subset='site_datatype_id', keep='last'
             )
@@ -512,7 +518,6 @@ if __name__ == '__main__':
             created_site_str = (
                 f'    Creating hydroData files for '
                 f'{site_names[i]} - {datatype_names[i]}'
-
             )
             print(created_site_str)
             if args.log == 'verbose':

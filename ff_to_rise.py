@@ -18,6 +18,10 @@ def ff_to_rise(df, db_name, site_id, datatype_id, datatype_name,
     curr_date_str = dt.now().strftime('%Y-%m-%d %H:%M:00')
     rise_timestamp_str = dt.now().strftime('%Y%m%d%H%M%S')
     rise_filename = f'{db_name}_{rise_timestamp_str}.json'
+    #####################################################
+    #REMOVE WHEN THE RISE FOLKS CHANGE THE LCHDB NAME
+    rise_filename = rise_filename.replace('lchdb', 'lchdb2')
+    #####################################################
     if num_records.isnumeric():
         df = df.tail(int(num_records))
     df.rename(
@@ -31,8 +35,10 @@ def ff_to_rise(df, db_name, site_id, datatype_id, datatype_name,
 
     df['dateTime'] = pd.to_datetime(df['dateTime'])
     df['dateTime'] = df['dateTime'].dt.strftime('%Y-%m-%d %H:%M:%S-07:00')
+    #####################################################
     #remove replace statement once RISE gets it together
     df['sourceCode'] = db_name.replace('lchdb', 'lchdb2')
+    #######################################################
     df['locationSourceCode'] = site_id
     df['parameterSourceCode'] = datatype_id
     df['modelNameSourceCode'] = None

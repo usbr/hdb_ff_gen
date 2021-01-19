@@ -9,22 +9,18 @@ Created on Tue Apr 30 08:42:01 2019
 
 # testing config (changes often)
 testing_sdis = [
-    1873
+    7899, 7803, 9365, 9275, 9095, 9305, 9065, 9185, 9605
 ]
 testing_sites = [
-    921
-    # 4630, 3371, 4631, 4636, 4629, 3350, 4632, 4634, 4635, 3356, 3389, 
-    # 3373, 3455, 3383, 3349, 3352, 4637, 4638, 3399, 3373
+    
 ]
+
 testing_datatypes = [
-#     15, 17, 25, 29, 30, 31, 32, 33, 34, 39, 40, 42, 43, 46, 47, 49,
-#     123, 124, 1197, 1198, 1501, 89
-# ]
-    17#17, 1158, 2742
-] # AAO accounting test
+    
+]
 
 testing_requests = {
-    'area_test': {
+    'water_quality': {
         'sdis': testing_sdis,
         'sids': testing_sites,
         'dids': testing_datatypes,
@@ -394,9 +390,9 @@ config_json = {
     },
     'test': {
         'alt_path': None,
-        'hdb': 'lc',
+        'hdb': 'yao',
         'requests': testing_requests,
-        'rise_sites': [921],
+        'rise_sites': None,
         'sftp_push': None
     },
     'uc_test': {
@@ -410,7 +406,7 @@ config_json = {
         'alt_path': None,
         'hdb': 'lc',
         'requests': lc_requests_test,
-        'rise_sites': None,
+        'rise_sites': lc_rise_sites,
         'sftp_push': None
     },
     'uc_rhel_daily': {
