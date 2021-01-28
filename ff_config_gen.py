@@ -119,7 +119,7 @@ uc_gages = [
 ]
 
 uc_gages = list(set(uc_gages))
-uc_gage_datatypes = [19, 20, 31, 1191]
+uc_gage_datatypes = [19, 20, 31, 1191, 1211]
 
 uc_requests_test = {
     'reservoir_data': {
