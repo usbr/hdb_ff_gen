@@ -17,8 +17,9 @@ from shapely.geometry import Point
 
 # STATIC_URL = f'http://127.0.0.1:8887'
 STATIC_URL = 'https://www.usbr.gov/uc/water/hydrodata/assets'
-NRCS_BASE_URL = 'https://www.nrcs.usda.gov/Internet/WCIS/AWS_PLOTS'
-NRCS_CHARTS_URL = f'{NRCS_BASE_URL}/basinCharts/POR'
+NRCS_BASE_URL = 'https://www.nrcs.usda.gov/Internet/WCIS'
+NRCS_BASIN_CHARTS_URL = f'{NRCS_BASE_URL}/AWS_PLOTS/basinCharts/POR'
+NRCS_SITE_CHARTS_URL = f'{NRCS_BASE_URL}/AWS_PLOTS/siteCharts/POR'
 
 def get_plotly_js():
     

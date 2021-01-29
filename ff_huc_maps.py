@@ -20,7 +20,7 @@ from shapely.ops import cascaded_union
 from ff_utils import get_fa_icon, get_icon_color, get_season
 from ff_utils import add_optional_tilesets, add_huc_layer, clean_coords, get_huc
 from ff_utils import get_favicon, get_bor_seal
-from ff_utils import get_default_js, get_default_css, NRCS_BASE_URL
+from ff_utils import get_default_js, get_default_css, NRCS_SITE_CHARTS_URL, NRCS_BASE_URL
 
 default_js = get_default_js()
 default_css = get_default_css()
@@ -119,7 +119,7 @@ def add_awdb_markers(huc_map, meta):
             site_name = row['name']
             site_href_base = 'https://wcc.sc.egov.usda.gov/nwcc/site?sitenum='
             site_href = f'{site_href_base}{site_id}'
-            charts_href_base = f'{NRCS_BASE_URL}/siteCharts/POR/'
+            charts_href_base = f'{NRCS_SITE_CHARTS_URL}/POR/'
             seasonal_href = f'{charts_href_base}/WTEQ/{state}/{site_name.replace("#", "%233")}.html'
             if get_season() == 'summer':
                 seasonal_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
@@ -229,70 +229,73 @@ def create_huc_maps(hdb_meta, site_type_dir):
             huc12_geo_dicts[huc2] = json.load(f)
 
     for idx, row in hdb_meta.iterrows():
-        site_name = row['site_metadata.site_name']
-        print(f'    Creating map for {site_name}...')
-        site_id = row['site_id']
-        lat = float(row['site_metadata.lat'])
-        lon = float(row['site_metadata.longi'])
-        lat_long = [lat, lon]
-        huc12 = row['site_metadata.hydrologic_unit']
-        huc_map = folium.Map(tiles=None)
-        add_hdb_marker(huc_map, row)
-        if not huc12 or len(str(huc12)) < 12:
-            huc2 = get_huc(huc2_geo_df, lat, lon, level='2')
-            if huc2 and huc2 in huc2_list:
-                huc12 = get_huc(huc12_geo_dfs[huc2], lat, lon, level='12')
-
-        if str(huc12).isnumeric():
-            huc12 = str(huc12)
-            huc2 = huc12[:2]
-            huc_dict = deepcopy(huc12_geo_dicts[huc2])
-            upstream_huc_list = get_upstream_basin(huc12, huc_dict)
-            geo_df = huc12_geo_dfs[huc2]
-            geo_df = geo_df[geo_df['HUC12'].isin(upstream_huc_list)]
-            geo_df = combine_polygons(geo_df, site_name)
-            huc_geojson = json.loads(geo_df.to_json())
-            buffer_geojson, awdb_sites = define_buffer(geo_df, awdb_meta)
-            add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
-            add_awdb_markers(huc_map, awdb_sites)
-            bounds_list = geo_df['geometry'][0].bounds
-            bounds = [
-                (bounds_list[1], bounds_list[0]),
-                (bounds_list[3], bounds_list[2])
-            ]
-            if bounds:
-                huc_map.fit_bounds(bounds)
-        
-        add_huc_layer(huc_map, 2)
-        add_huc_layer(huc_map, 6) 
-        add_optional_tilesets(huc_map)
-        folium.LayerControl().add_to(huc_map)
-        FloatImage(
-            get_bor_seal(orient='shield'),
-            bottom=1,
-            left=1
-        ).add_to(huc_map)
-        # MousePosition(prefix="Location: ").add_to(huc_map)
-        maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
-        makedirs(maps_dir, exist_ok=True)
-        map_path = path.join(maps_dir,f'{site_id}_huc.html')
-        huc_map.save(map_path)
-        flavicon = (
-            f'<link rel="shortcut icon" '
-            f'href="{get_favicon()}"></head>'
-        )
-        with open(map_path, 'r') as html_file:
-            chart_file_str = html_file.read()
-
-        with open(map_path, 'w') as html_file:
-            chart_file_str = chart_file_str.replace(r'</head>', flavicon)
-            replace_str = (
-                '''left:1%;
-                        max-width:10%;
-                        max-height:10%;'''
+        try:
+            site_name = row['site_metadata.site_name']
+            print(f'    Creating map for {site_name}...')
+            site_id = row['site_id']
+            lat = float(row['site_metadata.lat'])
+            lon = float(row['site_metadata.longi'])
+            huc12 = row['site_metadata.hydrologic_unit']
+            huc_map = folium.Map(tiles=None)
+            add_hdb_marker(huc_map, row)
+            if not huc12 or len(str(huc12)) < 12:
+                huc2 = get_huc(huc2_geo_df, lat, lon, level='2')
+                if huc2 and huc2 in huc2_list:
+                    huc12 = get_huc(huc12_geo_dfs[huc2], lat, lon, level='12')
+    
+            if str(huc12).isnumeric():
+                huc12 = str(huc12)
+                huc2 = huc12[:2]
+                huc_dict = deepcopy(huc12_geo_dicts[huc2])
+                upstream_huc_list = get_upstream_basin(huc12, huc_dict)
+                geo_df = huc12_geo_dfs[huc2]
+                geo_df = geo_df[geo_df['HUC12'].isin(upstream_huc_list)]
+                geo_df = combine_polygons(geo_df, site_name)
+                huc_geojson = json.loads(geo_df.to_json())
+                buffer_geojson, awdb_sites = define_buffer(geo_df, awdb_meta)
+                add_upstream_layer(huc_map, huc_geojson, buffer_geojson)
+                add_awdb_markers(huc_map, awdb_sites)
+                bounds_list = geo_df['geometry'][0].bounds
+                bounds = [
+                    (bounds_list[1], bounds_list[0]),
+                    (bounds_list[3], bounds_list[2])
+                ]
+                if bounds:
+                    huc_map.fit_bounds(bounds)
+            
+            add_huc_layer(huc_map, 2)
+            add_huc_layer(huc_map, 6) 
+            add_optional_tilesets(huc_map)
+            folium.LayerControl().add_to(huc_map)
+            FloatImage(
+                get_bor_seal(orient='shield'),
+                bottom=1,
+                left=1
+            ).add_to(huc_map)
+            # MousePosition(prefix="Location: ").add_to(huc_map)
+            maps_dir = path.join(site_type_dir, f'{site_id}', 'maps')
+            makedirs(maps_dir, exist_ok=True)
+            map_path = path.join(maps_dir,f'{site_id}_huc.html')
+            huc_map.save(map_path)
+            flavicon = (
+                f'<link rel="shortcut icon" '
+                f'href="{get_favicon()}"></head>'
             )
-            chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
-            html_file.write(chart_file_str)
+            with open(map_path, 'r') as html_file:
+                chart_file_str = html_file.read()
+    
+            with open(map_path, 'w') as html_file:
+                chart_file_str = chart_file_str.replace(r'</head>', flavicon)
+                replace_str = (
+                    '''left:1%;
+                            max-width:10%;
+                            max-height:10%;'''
+                )
+                chart_file_str = chart_file_str.replace(r'left:1%;', replace_str)
+                html_file.write(chart_file_str)
+        
+        except Exception as err:
+            print(f'     Could not create huc map for {site_name} - {err}')
 
     return f'   Created HUC maps for {site_type_dir} successfully'
 
