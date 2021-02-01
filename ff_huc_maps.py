@@ -119,7 +119,7 @@ def add_awdb_markers(huc_map, meta):
             site_name = row['name']
             site_href_base = 'https://wcc.sc.egov.usda.gov/nwcc/site?sitenum='
             site_href = f'{site_href_base}{site_id}'
-            charts_href_base = f'{NRCS_SITE_CHARTS_URL}/POR/'
+            charts_href_base = f'{NRCS_SITE_CHARTS_URL}'
             seasonal_href = f'{charts_href_base}/WTEQ/{state}/{site_name.replace("#", "%233")}.html'
             if get_season() == 'summer':
                 seasonal_href = f'{charts_href_base}/PREC/{state}/{site_name}.html'
