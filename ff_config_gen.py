@@ -126,13 +126,13 @@ uc_requests_test = {
         'sids': uc_res_data[0:5],
         'dids': uc_res_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     },
     # 'gage_data': {
     #     'sids': uc_gages,
     #     'dids': uc_gage_datatypes,
     #     'interval': 'day',
-    #     'period': 40
+    #     'period': 100
     # }
 }
 
@@ -141,13 +141,13 @@ uc_requests_daily = {
         'sids': uc_res_data,
         'dids': uc_res_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     },
     'gage_data': {
         'sids': uc_gages,
         'dids': uc_gage_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     }
 }
 
@@ -156,13 +156,13 @@ uc_requests_weekly = {
         'sids': uc_res_data,
         'dids': uc_res_datatypes,
         'interval': 'day',
-        'period': 400
+        'period': 366
     },
     'gage_data': {
         'sids': uc_gages,
         'dids': uc_gage_datatypes,
         'interval': 'day',
-        'period': 400
+        'period': 366
     }
 }
 
@@ -225,13 +225,13 @@ lc_requests_daily = {
         'sids': lc_reservoirs,
         'dids': lc_res_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     },
     'gage_data': {
         'sids': lc_gages,
         'dids': lc_gage_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     },
 }
 
@@ -240,13 +240,13 @@ lc_requests_weekly = {
         'sids': lc_reservoirs,
         'dids': lc_res_datatypes,
         'interval': 'day',
-        'period': 400
+        'period': 366
     },
     'gage_data': {
         'sids': lc_gages,
         'dids': lc_gage_datatypes,
         'interval': 'day',
-        'period': 400
+        'period': 366
     }
 }
 
@@ -341,13 +341,13 @@ eco_requests_daily = {
         'sids': eco_res_data,
         'dids': eco_res_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     },
     'gage_data': {
         'sids': eco_gages,
         'dids': eco_gage_datatypes,
         'interval': 'day',
-        'period': 40
+        'period': 100
     }
 }
 
@@ -356,13 +356,13 @@ eco_requests_weekly = {
         'sids': eco_res_data,
         'dids': eco_res_datatypes,
         'interval': 'day',
-        'period': 400
+        'period': 366
     },
     'gage_data': {
         'sids': eco_gages,
         'dids': eco_gage_datatypes,
         'interval': 'day',
-        'period': 400
+        'period': 366
     }
 }
 
