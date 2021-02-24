@@ -401,7 +401,7 @@ config_json = {
         'hdb': 'uc',
         'requests': uc_requests_test,
         'rise_sites': uc_rise_sites,
-        'sftp_push': uc_rise_rsync
+        'sftp_push': None
     },
     'lc_test': {
         'alt_path': None,

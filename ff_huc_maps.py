@@ -263,8 +263,8 @@ def create_huc_maps(hdb_meta, site_type_dir):
                 if bounds:
                     huc_map.fit_bounds(bounds)
             
-            add_huc_layer(huc_map, 2)
-            add_huc_layer(huc_map, 6) 
+            # add_huc_layer(huc_map, 2)
+            # add_huc_layer(huc_map, 6) 
             add_optional_tilesets(huc_map)
             folium.LayerControl().add_to(huc_map)
             FloatImage(

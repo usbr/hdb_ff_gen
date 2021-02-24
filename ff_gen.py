@@ -146,6 +146,7 @@ def make_nav(data_dir, logger):
 
 def make_sitemap(site_type, df_meta, data_dir, logger):
     try:
+        print('Creating site map...')
         map_str = create_map(site_type, df_meta, data_dir)
         print(map_str)
         logger.info(map_str)
