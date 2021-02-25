@@ -429,7 +429,7 @@ if __name__ == '__main__':
     no_charts = False
     if args.no_charts:
         no_charts = args.no_charts
-        no_chart_str = 'No charts flag provided, no charts/csv/json will be created.'
+        no_chart_str = '    No charts flag provided, no charts/csv/json will be created.'
         print(no_chart_str)
         logger.info(no_chart_str)
         

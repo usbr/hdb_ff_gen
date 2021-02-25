@@ -24,8 +24,8 @@ from ff_utils import get_default_js, get_default_css, NRCS_SITE_CHARTS_URL, NRCS
 
 default_js = get_default_js()
 default_css = get_default_css()
-folium.folium.default_js = default_js
-folium.folium.default_css = default_css
+folium.folium.Map.default_js = default_js
+folium.folium.Map.default_css = default_css
 
 def get_upstream_basin(huc12, to_huc_table):
     if huc12:

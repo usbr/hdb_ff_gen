@@ -20,8 +20,8 @@ pd.options.mode.chained_assignment = None
 
 default_js = get_default_js()
 default_css = get_default_css()
-folium.folium.default_js = default_js
-folium.folium.default_css = default_css
+folium.folium.Map.default_js = default_js
+folium.folium.Map.default_css = default_css
 
 def get_bounds(meta):
     meta.drop_duplicates(subset='site_id', inplace=True)
@@ -255,7 +255,10 @@ if __name__ == '__main__':
     cli_desc = 'Creates site/folder leaflet map for accessing hydroData'
     parser = argparse.ArgumentParser(description=cli_desc)
     parser.add_argument("-V", "--version", help="show program version", action="store_true")
-    parser.add_argument("-p", "--path", help="Path to hydroData folder", required=True)
+    parser.add_argument(
+        "-p", "--path", help="Path to hydroData folder", required=True,
+        default='local'
+    )
     
     args = parser.parse_args()
     
