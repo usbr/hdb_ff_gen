@@ -20,8 +20,8 @@ pd.options.mode.chained_assignment = None
 
 default_js = get_default_js()
 default_css = get_default_css()
-folium.folium._default_js = default_js
-folium.folium._default_css = default_css
+folium.folium.default_js = default_js
+folium.folium.default_css = default_css
 
 def get_bounds(meta):
     meta.drop_duplicates(subset='site_id', inplace=True)
