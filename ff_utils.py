@@ -255,7 +255,7 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_dir=None):
     
     print(f'  Getting NRCS stats for HUC{huc_level}...')
     data_types = ['prec', 'wteq']
-    index_pg_urls = [f'{NRCS_CHARTS_URL}/{i.upper()}/assocHUC{huc_level}' 
+    index_pg_urls = [f'{NRCS_BASIN_CHARTS_URL}/{i.upper()}/assocHUC{huc_level}' 
                      for i in data_types]
     index_pg_resps = [r_get(i) for i in index_pg_urls]
     index_pg_codes = [i.status_code for i in index_pg_resps]
@@ -339,7 +339,7 @@ def get_huc_nrcs_stats(huc_level='6', try_all=False, add_export_dir=None):
 def get_nrcs_basin_stat(basin_name, huc_level='2', data_type='wteq'):
     
     stat_type_dict = {'wteq': 'Median', 'prec': 'Average'}
-    url = f'{NRCS_CHARTS_URL}/{data_type.upper()}/assocHUC{huc_level}/{basin_name}.html'
+    url = f'{NRCS_BASIN_CHARTS_URL}/{data_type.upper()}/assocHUC{huc_level}/{basin_name}.html'
     try:
         response = r_get(url)
         if not response.status_code == 200:
@@ -379,14 +379,16 @@ def add_huc_layer(huc_map, level=2, huc_geojson_path=None, embed=False,
             name=f'HUC {level}',
             embed=embed,
             style_function=huc_style,
-            # zoom_on_click=zoom_on_click,
+            zoom_on_click=zoom_on_click,
             show=show
         ).add_to(huc_map)
     except Exception as err:
         print(f'Could not add HUC {level} layer to map! - {err}')
+        print(f'url: {huc_geojson_path} failed at {datetime.utcnow():%Y-%m-%dT%H:%M:%S}')
         
 def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6', 
-                      gis_path='gis', huc_filter='', use_topo=False):
+                      gis_path='gis', huc_filter='', use_topo=False,
+                      zoom_on_click=False):
     
     huc_str = f'HUC{huc_level}'
     stat_type_dict = {'swe': 'Median', 'prec': 'Avg.'}
@@ -423,18 +425,23 @@ def add_huc_chropleth(m, data_type='swe', show=False, huc_level='6',
             tooltip=tooltip
         ).add_to(m)
     else:
-        json_path = f'{STATIC_URL}/gis/HUC{huc_level}.geojson'
-        folium.GeoJson(
-            json_path,
-            name=layer_name,
-            embed=False,
-            overlay=True,
-            control=True,
-            smooth_factor=2.0,
-            style_function=style_function,
-            show=show,
-            tooltip=tooltip
-        ).add_to(m)
+        try:
+            json_path = f'{STATIC_URL}/gis/HUC{huc_level}.geojson'
+            folium.GeoJson(
+                json_path,
+                name=layer_name,
+                embed=False,
+                overlay=True,
+                control=True,
+                smooth_factor=2.0,
+                style_function=style_function,
+                zoom_on_click=zoom_on_click,
+                show=show,
+                tooltip=tooltip
+            ).add_to(m)
+        except Exception as err:
+            print(f'Could not add {data_type} HUC {huc_level} layer to map! - {err}')
+            print(f'url: {json_path} failed at {datetime.utcnow():%Y-%m-%dT%H:%M:%S}')
 
 def style_chropleth(feature, data_type='swe', huc_level='2', huc_filter=''):
     colormap = get_colormap()

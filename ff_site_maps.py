@@ -187,20 +187,24 @@ def create_map(site_type, meta, data_dir):
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
 
-        # for huc_level in ['2', '4', '6', '8']:
-        #     show_layer = True if huc_level == '2' else False
-        #     add_huc_layer(
-        #         sitetype_map, 
-        #         level=huc_level, 
-        #         show=show_layer
-        #     )
-        #     for data_type in ['swe', 'prec']:
-        #         add_huc_chropleth(
-        #             sitetype_map, 
-        #             data_type=data_type, 
-        #             show=False, 
-        #             huc_level=huc_level
-        #         )
+        for huc_level in ['2', '4', '6', '8']:
+            show_layer = True if huc_level == '2' else False
+            print(f'adding huc{huc_level} boundary')
+            add_huc_layer(
+                sitetype_map, 
+                level=huc_level, 
+                show=show_layer
+            )
+            print('done')
+            for data_type in ['swe', 'prec']:
+                print(f'adding {data_type} for huc{huc_level}')
+                add_huc_chropleth(
+                    sitetype_map, 
+                    data_type=data_type, 
+                    show=False, 
+                    huc_level=huc_level
+                )
+                print('done')
         add_optional_tilesets(sitetype_map)
         folium.LayerControl('topleft').add_to(sitetype_map)
         FloatImage(
@@ -257,7 +261,7 @@ if __name__ == '__main__':
     parser.add_argument("-V", "--version", help="show program version", action="store_true")
     parser.add_argument(
         "-p", "--path", help="Path to hydroData folder", required=True,
-        default='local'
+        default='reservoir_data'
     )
     
     args = parser.parse_args()
@@ -279,6 +283,12 @@ if __name__ == '__main__':
     data_dir = path.join(*path_components[:-1])
     meta_path = path.join(site_type_dir, 'meta.csv')
     meta = pd.read_csv(meta_path)
-
-    print(create_map(site_type, meta, data_dir))
+    
+    # import http
+    # http.client.HTTPConnection.debuglevel = 1
+    for i in range(0,20):
+        
+        print(f'test #{i}')
+        log_str = create_map(site_type, meta, data_dir)
+        print(log_str)
     

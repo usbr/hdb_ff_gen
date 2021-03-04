@@ -151,6 +151,21 @@ uc_requests_daily = {
     }
 }
 
+uc_requests_daily_rise = {
+    'reservoir_data': {
+        'sids': uc_res_data,
+        'dids': uc_res_datatypes,
+        'interval': 'day',
+        'period': 40
+    },
+    'gage_data': {
+        'sids': uc_gages,
+        'dids': uc_gage_datatypes,
+        'interval': 'day',
+        'period': 40
+    }
+}
+
 uc_requests_weekly = {
     'reservoir_data': {
         'sids': uc_res_data,
@@ -232,6 +247,21 @@ lc_requests_daily = {
         'dids': lc_gage_datatypes,
         'interval': 'day',
         'period': 365
+    },
+}
+
+lc_requests_daily_rise = {
+    'reservoir_data': {
+        'sids': lc_reservoirs,
+        'dids': lc_res_datatypes,
+        'interval': 'day',
+        'period': 40
+    },
+    'gage_data': {
+        'sids': lc_gages,
+        'dids': lc_gage_datatypes,
+        'interval': 'day',
+        'period': 40
     },
 }
 
@@ -351,6 +381,21 @@ eco_requests_daily = {
     }
 }
 
+eco_requests_daily_rise = {
+    'reservoir_data': {
+        'sids': eco_res_data,
+        'dids': eco_res_datatypes,
+        'interval': 'day',
+        'period': 40
+    },
+    'gage_data': {
+        'sids': eco_gages,
+        'dids': eco_gage_datatypes,
+        'interval': 'day',
+        'period': 40
+    }
+}
+
 eco_requests_weekly = {
     'reservoir_data': {
         'sids': eco_res_data,
@@ -414,6 +459,13 @@ config_json = {
         'alt_path': '/wrg/exec/pub/flat_files',
         'hdb': 'uc',
         'requests': uc_requests_daily,
+        'rise_sites': None,
+        'sftp_push': None
+    },
+    'uc_rhel_daily_rise': {
+        'alt_path': '/wrg/exec/pub/flat_files',
+        'hdb': 'uc',
+        'requests': uc_requests_daily_rise,
         'rise_sites': uc_rise_sites,
         'sftp_push': uc_rise_rsync
     },
@@ -435,6 +487,13 @@ config_json = {
         'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'lc',
         'requests': lc_requests_daily,
+        'rise_sites': None,
+        'sftp_push': None
+    },
+    'lc_rhel_daily_rise': {
+        'alt_path': r'/wrg/exec/pub/flat_files',
+        'hdb': 'lc',
+        'requests': lc_requests_daily_rise,
         'rise_sites': lc_rise_sites,
         'sftp_push': lc_rise_rsync
     },
@@ -477,6 +536,13 @@ config_json = {
         'alt_path': '/wrg/exec/pub/flat_files',
         'hdb': 'eco',
         'requests': eco_requests_daily,
+        'rise_sites': None,
+        'sftp_push': None
+    },
+    'eco_rhel_daily_rise': {
+        'alt_path': '/wrg/exec/pub/flat_files',
+        'hdb': 'eco',
+        'requests': eco_requests_daily_rise,
         'rise_sites': eco_rise_sites,
         'sftp_push': eco_rise_rsync
     },
