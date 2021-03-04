@@ -187,24 +187,22 @@ def create_map(site_type, meta, data_dir):
         sitetype_map.fit_bounds(bounds)
         add_markers(sitetype_map, meta.copy())
 
-        for huc_level in ['2', '4', '6', '8']:
-            show_layer = True if huc_level == '2' else False
-            print(f'adding huc{huc_level} boundary')
-            add_huc_layer(
-                sitetype_map, 
-                level=huc_level, 
-                show=show_layer
-            )
-            print('done')
-            for data_type in ['swe', 'prec']:
-                print(f'adding {data_type} for huc{huc_level}')
-                add_huc_chropleth(
-                    sitetype_map, 
-                    data_type=data_type, 
-                    show=False, 
-                    huc_level=huc_level
-                )
-                print('done')
+        # for huc_level in ['2', '4', '6', '8']:
+        #     show_layer = True if huc_level == '2' else False
+        #     print(f'adding huc{huc_level} boundary')
+        #     add_huc_layer(
+        #         sitetype_map, 
+        #         level=huc_level, 
+        #         show=show_layer
+        #     )
+        #     for data_type in ['swe', 'prec']:
+        #         print(f'adding {data_type} for huc{huc_level}')
+        #         add_huc_chropleth(
+        #             sitetype_map, 
+        #             data_type=data_type, 
+        #             show=False, 
+        #             huc_level=huc_level
+        #         )
         add_optional_tilesets(sitetype_map)
         folium.LayerControl('topleft').add_to(sitetype_map)
         FloatImage(
