@@ -460,7 +460,7 @@ if __name__ == '__main__':
         if not plotly_js:
             plotly_js = get_plotly_js()
             
-        if True:#try:
+        try:
             fig = create_chart(df.copy(), meta)
             plotly.offline.plot(
                 fig,
@@ -481,11 +481,11 @@ if __name__ == '__main__':
             with open(chart_filename, 'w') as html_file:
                 html_file.write(chart_file_str.replace(r'</head>', flavicon))
 
-#        except Exception as err:
-#            err_str = (
-#                f'     Error creating chart - {chart_filename} - {err}'
-#            )
-#            print(err_str)
+        except Exception as err:
+            err_str = (
+                f'     Error creating chart - {chart_filename} - {err}'
+            )
+            print(err_str)
 
     site_id = 919
     datatype_id = 17

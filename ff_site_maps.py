@@ -210,8 +210,7 @@ def create_map(site_type, meta, data_dir):
             bottom=1,
             left=1
         ).add_to(sitetype_map)
-        get_colormap().add_to(sitetype_map)
-        # MousePosition(prefix="Location: ").add_to(sitetype_map)
+        # get_colormap().add_to(sitetype_map)
         legend = folium.Element(get_legend())
         sitetype_map.get_root().html.add_child(legend)
         sitetype_map.save(map_path)
