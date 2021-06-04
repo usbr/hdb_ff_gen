@@ -14,7 +14,7 @@ from ff_dash import create_dash
 from ff_utils import get_favicon, get_bor_seal, get_bootstrap
 
 IGNORE_FOLDERS = [
-    '.git', 'assets', 'mtom_viz_beta', 'status_maps', 'stf', 'shp'
+    '.git', 'assets', 'status_maps', 'stf', 'crmms'
 ]
 
 BOR_FLAVICON = get_favicon()
@@ -313,7 +313,7 @@ def create_nav(data_dir, nav_filename='nav.html'):
     }
     write_file(write_nav_dict)
 
-    return f'\n  Navigation files created.'
+    return '\n  Navigation files created.'
 
 if __name__ == '__main__':
 
