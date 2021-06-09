@@ -426,6 +426,72 @@ eco_requests_monthly = {
     }
 }
 
+# KBO config 
+
+kbo_site_ids = [
+    200053, 200069, 200071, 200072, 200003, 200008, 200019, 200035, 200037, 
+    200041, 200052, 200073, 200001, 200020, 200025, 200042, 200044, 200047, 
+    200050, 200054, 200009, 200010, 200015, 200018, 200023, 200027, 200029, 
+    200030, 200038, 200051, 200055, 200059, 200060, 200074, 200002, 200024, 
+    200028, 200031, 200048, 200057, 200058, 200062, 200070, 200004, 200006, 
+    200011, 200013, 200014, 200032, 200045, 200049, 200005, 200016, 200017, 
+    200026, 200033, 200039, 200007, 200040, 200043, 200046, 200056, 200061, 
+    200012, 200021, 200022
+]
+
+kbo_datatypes = [
+    1019, 200053, 72, 1013, 200035, 200037, 200041, 200019, 200008, 50, 200047,
+    200052, 2378, 42, 7, 200020, 200042, 200044, 200001, 1397, 200025, 200018,
+    200050, 200054, 41, 1393, 2575, 1394, 1705, 1011, 200015, 200023, 200038,
+    200027, 200029, 200030, 1056, 1590, 200048, 121, 200051, 200002, 8, 11,
+    115, 200055, 200028, 200031, 1228, 200024, 1538, 1589, 17, 2289, 18, 65,
+    66, 120, 1707, 200049, 200011, 5, 116, 1048, 200004, 200006, 200013,
+    200014, 200032, 49, 1018, 26, 3, 9, 200005, 200016, 200017, 200033, 200039,
+    200026, 200046, 19, 1049, 1546, 114, 119, 1002, 1005, 200007, 200040,
+    200043, 1208, 200012, 200056, 16, 24, 25, 2574, 200022, 1012, 1708, 200021,
+    200034
+]
+
+kbo_rise_sites = None
+kbo_rise_rsync = None
+
+kbo_requests_daily = {
+    'klamath_basin_data': {
+        'sids': kbo_site_ids,
+        'dids': kbo_datatypes,
+        'interval': 'day',
+        'period': 365
+    },
+}
+
+kbo_requests_daily_rise = {
+    'klamath_basin_data': {
+        'sids': kbo_site_ids,
+        'dids': kbo_datatypes,
+        'interval': 'day',
+        'period': 40
+    },
+}
+
+kbo_requests_weekly = {
+    'klamath_basin_data': {
+        'sids': kbo_site_ids,
+        'dids': kbo_datatypes,
+        'interval': 'day',
+        'period': 1830
+    },
+}
+
+kbo_requests_monthly = {
+    'klamath_basin_data': {
+        'sids': kbo_site_ids,
+        'dids': kbo_datatypes,
+        'interval': 'day',
+        'period': 'por'
+    },
+}
+
+
 config_json = {
     'default': {
         'alt_path': None,
@@ -559,6 +625,34 @@ config_json = {
         'requests': eco_requests_monthly,
         'rise_sites': eco_rise_sites,
         'sftp_push': eco_rise_rsync
+    },
+    'kbo_rhel_daily': {
+        'alt_path': None,
+        'hdb': 'kbo',
+        'requests': kbo_requests_daily,
+        'rise_sites': None,
+        'sftp_push': None
+    },
+    'kbo_rhel_daily_rise': {
+        'alt_path': None,
+        'hdb': 'kbo',
+        'requests': kbo_requests_daily_rise,
+        'rise_sites': kbo_rise_sites,
+        'sftp_push': kbo_rise_rsync
+    },
+    'kbo_rhel_weekly': {
+        'alt_path': None,
+        'hdb': 'kbo',
+        'requests': kbo_requests_weekly,
+        'rise_sites': kbo_rise_sites,
+        'sftp_push': kbo_rise_rsync
+    },
+    'kbo_rhel_monthly': {
+        'alt_path': None,
+        'hdb': 'kbo',
+        'requests': kbo_requests_monthly,
+        'rise_sites': kbo_rise_sites,
+        'sftp_push': kbo_rise_rsync
     },
 }
 
