@@ -465,9 +465,12 @@ if __name__ == '__main__':
                 hdb=hdb, sdi_list=sdis, logger=logger
             )
             df_meta = pd.concat([i for i in [df_meta, df_meta_sdi] if not i.empty])
-            df_meta.drop_duplicates(
-                inplace=True, subset='site_datatype_id', keep='last'
-            )
+            
+        df_meta.drop_duplicates(
+            inplace=True, 
+            subset=['site_datatype_id', 'site_metadata.db_site_code'], 
+            keep='last'
+        )
         
         if type_config.get('mode', 'default') == 'accounting':
             df_meta = accounting_meta(hdb=hdb, df_meta=df_meta, logger=logger)
