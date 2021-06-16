@@ -623,28 +623,28 @@ config_json = {
         'sftp_push': eco_rise_rsync
     },
     'kbo_rhel_daily': {
-        'alt_path': None,
+        'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'kbo',
         'requests': kbo_requests_daily,
         'rise_sites': None,
         'sftp_push': None
     },
     'kbo_rhel_daily_rise': {
-        'alt_path': None,
+        'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'kbo',
         'requests': kbo_requests_daily_rise,
         'rise_sites': kbo_rise_sites,
         'sftp_push': kbo_rise_rsync
     },
     'kbo_rhel_weekly': {
-        'alt_path': None,
+        'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'kbo',
         'requests': kbo_requests_weekly,
         'rise_sites': kbo_rise_sites,
         'sftp_push': kbo_rise_rsync
     },
     'kbo_rhel_monthly': {
-        'alt_path': None,
+        'alt_path': r'/wrg/exec/pub/flat_files',
         'hdb': 'kbo',
         'requests': kbo_requests_monthly,
         'rise_sites': kbo_rise_sites,
