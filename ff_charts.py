@@ -258,7 +258,7 @@ def create_stat_traces(df, datatype_name, units):
         traces.append(trace)
     return traces
 
-def get_anno_text(df, df_stats, units, avg_period="(81'-10')"):
+def get_anno_text(df, df_stats, units, avg_period="(91'-20')"):
     curr_wy = max(df.columns)
     last_row = df.loc[df[curr_wy].last_valid_index()]
     curr_month = last_row.name.month
@@ -317,9 +317,9 @@ def create_chart(df, meta):
         df_wy = df_wy.resample('1M').sum(min_count=25)
     df_wy.dropna(axis='columns', how='all', inplace=True)
     percentiles = [0.10, 0.30, 0.50, 0.70, 0.90]
-    if (sum(el in df_wy.columns for el in range(1981, 2011)) / 30) > 0.75:
-        df_30yr = df_wy.filter(items=range(1981, 2011), axis='columns')
-        avg_period = "('81-'10)"
+    if (sum(el in df_wy.columns for el in range(1991, 2021)) / 30) > 0.75:
+        df_30yr = df_wy.filter(items=range(1991, 2021), axis='columns')
+        avg_period = "('91-'20)"
     else:
         df_30yr = df_wy.copy()
         avg_period = f"(POR)"
