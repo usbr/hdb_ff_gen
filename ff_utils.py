@@ -185,12 +185,31 @@ def get_icon_color(row, source='hdb'):
     return icon_color
 
 def add_optional_tilesets(folium_map):
+    url_list = ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', 
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+                'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', 
+                'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}']
+    name_list = ['ESRI World Topo Map', 'ESRI World Street Map', 'ESRI Nat Geo', 'USGS Imagery Topo', 'USGS Topo', ]
+    attr_list = ['Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+                 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+                 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+                 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>', 
+                 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>']
+    for url, name, attr in zip(url_list, name_list, attr_list):
+      folium.TileLayer(
+          tiles=url,
+          name=name,
+          attr=attr,
+          subdomains='mytilesubdomain').add_to(folium_map)
     
     tilesets = {
-        "Terrain": 'Stamen Terrain',
+#        these maps are no longer supported by Stamen
+#        check back for 'Watercolor'        
+#        "Terrain": 'Stamen Terrain',
         'Street Map': 'OpenStreetMap',
-        'Toner': 'Stamen Toner',
-        'Watercolor': 'Stamen Watercolor',
+#        'Toner': 'Stamen Toner',
+#        'Watercolor': 'Stamen Watercolor',
         'Positron': 'CartoDB positron',
         'Dark Matter': 'CartoDB dark_matter',
     }
